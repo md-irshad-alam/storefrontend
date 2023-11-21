@@ -14,31 +14,32 @@ import { addstore } from "../Redux/Actions";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import axios from "axios";
 function Store() {
-  const data = useSelector((item) => item.store);
-  const [inputval, setinutvla] = useState({
-    store: "",
-    remarks: "",
-  });
+  const [store_name, setStore] = useState("");
+  const [remarks, setRemarks] = useState("");
+  const [isActive, setActive] = useState(false);
   const [query, setquery] = useState("");
-  const [itmes, setdata] = useState([]);
+
+  const [data, setdata] = useState([]);
+  const [items, setitem] = useState([]);
   const dispatch = useDispatch();
   const history = useNavigate();
-  const handleChange = (e) => {
-    setinutvla({ ...inputval, [e.target.name]: e.target.value });
-  };
 
   const handlesubmit = (e) => {
-    if (inputval.store.length > 2 && inputval.remarks.length > 2) {
-      dispatch(addstore(inputval));
-      toast.success("Store added successfully", {
-        position: "bottom-right",
+    axios
+      .post("http://localhost:3100/api/store/add-store", {
+        store_name,
+        remarks,
+        isActive,
+      })
+      .then((res) => {
+        toast.success(responce.data.message);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(error.response.data.message);
       });
-    } else {
-      toast.warn("Invalid input data", {
-        position: "bottom-right",
-      });
-    }
   };
 
   const handlesearch = () => {
@@ -47,20 +48,46 @@ function Store() {
       const searchResult =
         data.length != 0
           ? data.filter((item) =>
-              item.store.toLowerCase().includes(lowercaseValue)
+              data.store_name.toLowerCase().includes(lowercaseValue)
             )
           : data.filter((item) =>
-              item.store.toLowerCase().includes(lowercaseValue)
+              item.store_name.toLowerCase().includes(lowercaseValue)
             );
-      setdata(searchResult);
+      setitem(searchResult);
     }
   };
-  const searchvalue = query ? itmes : data;
+
+  const editStore = () => {
+    axios
+      .put("http://localhost:3100/api/store/update-store", {
+        store_name,
+      })
+      .then((res) => {
+        toast.success(responce.data.message);
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
+  };
+  const getStore = () => {};
+  useEffect(() => {
+    axios
+      .get("http://localhost:3100/api/store/get-store")
+      .then((res) => {
+        console.log(res);
+        setdata(res.data);
+        toast.success(responce.data.message);
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
+  }, [data]);
 
   useEffect(() => {
     handlesearch();
   }, [query]);
 
+  const searchvalue = query ? items : data;
   return (
     <Container>
       <h4>Store</h4>
@@ -70,10 +97,9 @@ function Store() {
             <Form.Group>
               <Form.Label>Store</Form.Label>
               <Form.Control
-                onChange={handleChange}
+                onChange={(ev) => setStore(ev.target.value)}
                 type="text"
                 placeholder="store"
-                name="store"
                 required
               />
             </Form.Group>
@@ -84,11 +110,10 @@ function Store() {
                 Remarks <span>location</span>
               </Form.Label>
               <Form.Control
-                onChange={handleChange}
                 type="text"
                 placeholder="remarks / location"
-                name="remarks"
                 required
+                onChange={(ev) => setRemarks(ev.target.value)}
               />
             </Form.Group>
           </Col>
@@ -122,7 +147,7 @@ function Store() {
                 </tr>
               </thead>
               <tbody>
-                {searchvalue.length !== 0 ? (
+                {/* {searchvalue.length !== 0 ? (
                   searchvalue.map((item, index) => {
                     return (
                       <tr>
@@ -134,7 +159,7 @@ function Store() {
                   })
                 ) : (
                   <tr className="text-center ">No Data Found</tr>
-                )}
+                )} */}
               </tbody>
             </Table>
           </Col>

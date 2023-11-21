@@ -8,44 +8,32 @@ import Row from "react-bootstrap/Row";
 import Card from "react-bootstrap/Card";
 import style from "../../ModuleCss/Login.css";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import axios from "axios";
 function LoginForm() {
   const [Term, setTerm] = useState(false);
   const [validated, setvalidated] = useState(false);
-  
-  
-
-
-  const ValidPassword = (password) => {
-    if (password.length > 0) {
-      const Regexpass =
-        /^(?=.*[a-z]{2,})(?=.*[A-Z]{3,})(?=.*[0-9]{2,})(?=.*[!@#\$%\^&\*]).{8,}$/;
-      const validpass = Regexpass.test(password);
-      return validpass;
-    } else {
-      return "";
-    }
-  };
-  
-  const handleregister = () => {
-    axios.post("http://localhost:3100/api/auth/register",
-    )
-      .then((responce) = {
-      
-    })
-  }
+  const [email, setEmail] = useState("");
+  const [password, setPass] = useState("");
 
   const handleSubmit = (event) => {
     const form = event.currentTarget;
     event.preventDefault();
-    const isPasswordValid = ValidPassword(Password);
-    if (form.checkValidity() === false || !isPasswordValid) {
+    if (form.checkValidity() === false) {
     } else {
-      const Data = {
-        Email: Email,
-        Password: Password,
-      };
-      console.log(Data);
+      axios
+        .post("https://erp-backend-ditn.onrender.com/api/auth/login", {
+          email,
+          password,
+        })
+        .then((responce) => {
+          console.log(responce);
+          toast.success(responce.data.message);
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error(error.response.data.message);
+        });
     }
     setvalidated(true);
   };
@@ -54,7 +42,6 @@ function LoginForm() {
     <div className="container mt-2">
       <Card className="w-400 m-auto p-2">
         <Card.Title>Login Form</Card.Title>
-
         <Form
           noValidate
           validated={validated}
@@ -65,10 +52,10 @@ function LoginForm() {
             <Form.Label>Email Id : </Form.Label>
             <Form.Control
               required
-              type="email Id"
-              placeholder="First Name"
+              type="email"
+              placeholder="Email ID"
               name="fname"
-              onChange={(event) => setname({ [event.target.name]: event.target.value})}
+              onChange={(event) => setEmail(event.target.value)}
             />
           </Form.Group>
 
@@ -77,16 +64,10 @@ function LoginForm() {
             <Form.Control
               required
               type="password"
-              placeholder="*****"
+              placeholder="password"
               onChange={(event) => setPass(event.target.value)}
             />
-            <Form.Control.Feedback type="invalid">
-              {ValidPassword(Password) === false
-                ? "Password strength is Weak"
-                : ""}
-            </Form.Control.Feedback>
           </Form.Group>
-
           <Button type="submit" style={{ marginTop: "10px" }}>
             Login
           </Button>

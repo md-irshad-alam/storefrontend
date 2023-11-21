@@ -63,7 +63,7 @@ function RegisterForm() {
     if (form.checkValidity() === false) {
     } else {
       axios
-        .post("http://localhost:3100/api/auth/register", {
+        .post("https://erp-backend-ditn.onrender.com/api/auth/register", {
           fname,
           lname,
           email,

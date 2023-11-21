@@ -17,26 +17,25 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { BiEdit } from "react-icons/bi";
+import axios from "axios";
+
 function Color() {
   const [query, setquery] = useState("");
   const [data, setdata] = useState([]);
   const dispatch = useDispatch();
   const storedaa = useSelector((item) => item.color);
-  const [inputval, setinputval] = useState("");
+  const [color, setcolor] = useState("");
   const history = useNavigate();
-  const handlechange = (event) => {
-    const data = {
-      color: event.target.value,
-    };
-    setinputval(data);
-  };
 
   const handlesubmit = (event) => {
     if (inputval.color.length > 1) {
-      dispatch(AddColor(inputval));
-      toast.success("Color added suessfully ", {
-        position: "bottom-right",
-      });
+      axios.post(
+        "https://erp-backend-ditn.onrender.com//api/color/add-color",
+        {color}
+      )
+      .then((responce)=> console.log(responce))
+      .catch((error)=> console.log(error))
+     
     } else {
       toast.warn("invalid input ", {
         position: "bottom-right",
@@ -66,7 +65,7 @@ function Color() {
               <Form.Control
                 type="text"
                 placeholder="Color"
-                onChange={handlechange}
+                onChange={(event) => setcolor(event.target.value)}
                 name="color"
                 value={inputval.color}
               />
@@ -100,7 +99,7 @@ function Color() {
               </tr>
             </thead>
             <tbody className="text-center">
-              {searchvalue.map((item, index) => {
+              {/* {searchvalue.map((item, index) => {
                 return (
                   <tr>
                     <td>{index === 0 ? index + 1 : index + 1}</td>
@@ -110,7 +109,7 @@ function Color() {
                     </td>
                   </tr>
                 );
-              })}
+              })} */}
             </tbody>
           </Table>
         </Row>
