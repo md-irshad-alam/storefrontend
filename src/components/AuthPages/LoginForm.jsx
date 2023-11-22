@@ -75,7 +75,7 @@ function LoginForm() {
         <Card.Text className="mt-4 font-medium">
           Already Registered{" "}
           <Link
-            to={"/register"}
+            to={"/auth/register"}
             className="text-blue active:text-orange cursor-pointer visited:text-purple-600 "
           >
             Click Here

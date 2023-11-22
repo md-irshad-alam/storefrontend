@@ -220,7 +220,7 @@ function RegisterForm() {
           <Card.Text className="mt-4 font-medium">
             Create an account{" "}
             <Link
-              to={"/login"}
+              to={"/auth/login"}
               className="text-blue active:text-orange cursor-pointer visited:text-purple-600 "
             >
               Click Here

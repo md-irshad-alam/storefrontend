@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { AiOutlineMenu } from "react-icons/ai";
+import { AiOutlineMenu, AiOutlineLogin } from "react-icons/ai";
 import { FiShoppingCart } from "react-icons/fi";
 import { BsChatLeft } from "react-icons/bs";
 import { RiNotification3Line } from "react-icons/ri";
@@ -8,6 +8,8 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import avatar from "../data/avatar.jpg";
 import { Cart, Chat, Notification, UserProfile } from ".";
 import { useStateContext } from "../contexts/ContextProvider";
+import { Button } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
   <button
@@ -35,6 +37,8 @@ const Navbar = () => {
     screenSize,
   } = useStateContext();
 
+  const history = useNavigate();
+
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
 
@@ -56,7 +60,7 @@ const Navbar = () => {
   const handleActiveMenu = () => setActiveMenu(!activeMenu);
 
   return (
-    <div className="flex justify-between p-2 md:ml-6 md:mr-6 relative w-full">
+    <div className="flex justify-between items-center p-2 md:ml-6 md:mr-6 relative w-full">
       <NavButton
         title="Menu"
         customFunc={handleActiveMenu}
@@ -84,8 +88,12 @@ const Navbar = () => {
           color={currentColor}
           icon={<RiNotification3Line />}
         />
-
-        <div
+        <Link to="/auth/login">
+          <Button size="sm" color="white" className="h- h-fit">
+            Login
+          </Button>
+        </Link>
+        {/* <div
           className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg"
           onClick={() => handleClick("userProfile")}
         >
@@ -101,7 +109,7 @@ const Navbar = () => {
             </span>
           </p>
           <MdKeyboardArrowDown className="text-gray-400 text-14" />
-        </div>
+        </div> */}
 
         {isClicked.cart && <Cart />}
         {isClicked.chat && <Chat />}

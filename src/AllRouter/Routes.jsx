@@ -38,8 +38,8 @@ function AllRoutes() {
       <ContextProvider>
         <ToastContainer />
         <Routes>
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/register" element={<RegisterForm />} />
+          <Route path="/auth/login" element={<LoginForm />} />
+          <Route path="/auth/register" element={<RegisterForm />} />
           <Route path="/product" element={<AddProduct />} />
           <Route path="/productlist" element={<Product_List />} />
           <Route path="/add_module" element={<ProductModule />} />
