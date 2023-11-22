@@ -83,11 +83,11 @@ function Store() {
       });
   }, [data]);
 
-  useEffect(() => {
-    handlesearch();
-  }, [query]);
-
+  // useEffect(() => {
+  //   handlesearch();
+  // }, [query]);
   const searchvalue = query ? items : data;
+
   return (
     <Container>
       <h4>Store</h4>
