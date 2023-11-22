@@ -1,0 +1,25 @@
+.Container{
+    width: 28rem;
+}
+
+.formInput{
+    width: 100%;
+    margin-bottom: 15px;
+}
+.Card{
+    padding: 10px;
+    vertical-align: middle;
+    border: 2px solid red ;
+}
+.toregister{
+    color: blue;
+    font-weight: 500;
+}
+.toregister:hover{
+    color: rgb(248, 51, 25);
+
+}
+
+.Card a{
+    text-decoration: none;
+}
