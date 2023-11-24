@@ -17,7 +17,9 @@ function ProductModule() {
   const val = useSelector((state) => state.categories);
   const [rows1, setTable1Rows] = useState([{ id: 1 }]);
   const [rows2, setTable2Rows] = useState([{ id: 1 }]);
-
+  const [table1Data, settable1] = useState('')
+  const [table2Data, settable2] = useState('');
+  
   const handleAddRowTable1 = () => {
     const newRow = { id: rows1.length + 1 };
     setTable1Rows([...rows1, newRow]);

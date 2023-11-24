@@ -1,5 +1,5 @@
-import Reducer from "./Actions";
-import { createStore, combineReducers } from "redux";
+import { createStore, combineReducers } from 'redux';
+import Reducer from './Actions';
 
 const Store = createStore(Reducer);
 
