@@ -1,113 +1,112 @@
 // action creator
 export const addCategory = (category) => ({
-  type: "ADD_CATEGORY",
+  type: 'ADD_CATEGORY',
   payload: category,
 });
 export const editCategory = (catoId, category) => ({
-  type: "Edit_CATEGORY",
+  type: 'Edit_CATEGORY',
   payload: {
     catoId,
     category,
   },
 });
 export const addstore = (store) => ({
-  type: "ADD_STORE",
+  type: 'ADD_STORE',
   payload: store,
 });
 export const AddColor = (color) => ({
-  type: "Add_Color",
+  type: 'Add_Color',
   payload: color,
 });
 export const AddCountry = (country) => ({
-  type: "Add_Country",
+  type: 'Add_Country',
   payload: country,
 });
 export const Addcurency = (curency) => ({
-  type: "Add_Courency",
+  type: 'Add_Courency',
   payload: curency,
 });
 export const EditCountry = (id, country) => ({
-  type: "EDIT_COUNTRY",
+  type: 'EDIT_COUNTRY',
   payload: {
     id,
     country,
   },
 });
 export const AddState = (state) => ({
-  type: "Add_STATE",
+  type: 'Add_STATE',
   payload: {
-    id,
     state,
   },
 });
 export const EditState = (stateId, state) => ({
-  type: "EDIT_STATE",
+  type: 'EDIT_STATE',
   payload: {
     stateId,
     state,
   },
 });
 export const AddDesignation = (designation) => ({
-  type: "Designation",
+  type: 'Designation',
   payload: designation,
 });
 export const EditDesignation = (DesiId, designation) => ({
-  type: "Edit_Designation",
+  type: 'Edit_Designation',
   payload: {
     DesiId,
     designation,
   },
 });
 export const AddHeels = (heel) => ({
-  type: "Heel",
+  type: 'Heel',
   payload: heel,
 });
 export const EditHeels = (Heelid, heel) => ({
-  type: "Edit_Heel",
+  type: 'Edit_Heel',
   payload: {
     Heelid,
     heel,
   },
 });
 export const AddUom = (uom) => ({
-  type: "Uom",
+  type: 'Uom',
   payload: uom,
 });
 export const EditUom = (Uomid, uom) => ({
-  type: "Edit_Uom",
+  type: 'Edit_Uom',
   payload: {
     Uomid,
     uom,
   },
 });
 export const AddGroup = (group) => ({
-  type: "Add_Group",
+  type: 'Add_Group',
   payload: group,
 });
 export const EditGroup = (groupId, group) => ({
-  type: "Edit_Group",
+  type: 'Edit_Group',
   payload: {
     groupId,
     group,
   },
 });
 export const AddIngredient = (gredient) => ({
-  type: "Add_gredient",
+  type: 'Add_gredient',
   payload: gredient,
 });
 export const EditIngredient = (gredId, Grendient) => ({
-  type: "Edit_gredient",
+  type: 'Edit_gredient',
   payload: {
     gredId,
     Grendient,
   },
 });
 export const AddForepart = (forepart) => ({
-  type: "Add_Forepart",
+  type: 'Add_Forepart',
   payload: forepart,
 });
 export const EditForepart = (forId, forepart) => ({
-  type: "Edit_Forepart",
+  type: 'Edit_Forepart',
   payload: {
     forId,
     forepart,
@@ -121,29 +120,29 @@ const initalstate = {
   country: [
     {
       id: 1,
-      country: "india",
+      country: 'india',
     },
     {
       id: 2,
-      country: "japan",
+      country: 'japan',
     },
     {
       id: 3,
-      country: "nepal",
+      country: 'nepal',
     },
   ],
   state: [
     {
       id: 1,
-      state: "jharkhand",
+      state: 'jharkhand',
     },
     {
       id: 2,
-      state: "Bihar",
+      state: 'Bihar',
     },
     {
       id: 3,
-      state: "Utter predesh",
+      state: 'Utter predesh',
     },
   ],
   designation: [],
@@ -157,12 +156,12 @@ const initalstate = {
 // Reducer
 const Reducer = (state = initalstate, action) => {
   switch (action.type) {
-    case "ADD_CATEGORY":
+    case 'ADD_CATEGORY':
       return {
         ...state,
         categories: [...state.categories, action.payload],
       };
-    case "Edit_CATEGORY":
+    case 'Edit_CATEGORY': {
       const { catoId, category } = action.payload;
       const editcategory = state.categories.map((item) =>
         item.id === catoId ? { ...item, category } : item
@@ -172,55 +171,59 @@ const Reducer = (state = initalstate, action) => {
         ...state,
         categories: editcategory,
       };
-    case "ADD_STORE":
+    }
+
+    case 'ADD_STORE':
       return {
         ...state,
         store: [...state.store, action.payload],
       };
-    case "Add_Color":
+    case 'Add_Color':
       return {
         ...state,
         color: [...state.color, action.payload],
       };
-    case "Add_Country":
+    case 'Add_Country':
       return {
         ...state,
         country: [...state.country, action.payload],
       };
-    case "EDIT_COUNTRY":
+    case 'EDIT_COUNTRY': {
       const { id, country } = action.payload;
       const updatedCountries = state.country.map((c) =>
         c.id === id ? { ...c, country } : c
       );
-      console.log(updatedCountries);
+
       return {
         ...state,
         country: updatedCountries,
       };
+    }
     // state
-    case "Add_STATE":
+    case 'Add_STATE':
       return {
         ...state,
         state: [...state.state, action.payload],
       };
 
-    case "EDIT_STATE":
+    case 'EDIT_STATE': {
       var { stateId, state } = action.payload;
       const updatedState = state.state.map((c) =>
         c.id === stateId ? { ...c, state } : c
       );
-      console.log(updatedState);
+
       return {
         ...state,
         state: updatedState,
       };
+    }
     // designation
-    case "Designation":
+    case 'Designation':
       return {
         ...state,
         designation: [...state.designation, action.payload],
       };
-    case "Edit_Designation":
+    case 'Edit_Designation': {
       const { DesiId, designation } = action.payload;
       const editdesi = state.designation.map((item) =>
         item.id === DesiId ? { ...item, designation } : item
@@ -229,12 +232,13 @@ const Reducer = (state = initalstate, action) => {
         ...state,
         designation: editdesi,
       };
-    case "Heel":
+    }
+    case 'Heel':
       return {
         ...state,
         heel: [...state.heel, action.payload],
       };
-    case "Edit_Heel":
+    case 'Edit_Heel': {
       const { Heelid, heel } = action.payload;
       const editheel = state.heel.map((item) =>
         item.id === Heelid ? { ...item, heel } : item
@@ -243,12 +247,13 @@ const Reducer = (state = initalstate, action) => {
         ...state,
         heel: editheel,
       };
-    case "Uom":
+    }
+    case 'Uom':
       return {
         ...state,
         uom: [...state.uom, action.payload],
       };
-    case "Edit_Uom":
+    case 'Edit_Uom': {
       const { Uomid, uom } = action.payload;
       const edituom = state.uom.map((item) =>
         item.id === Uomid ? { ...item, uom } : item
@@ -257,38 +262,36 @@ const Reducer = (state = initalstate, action) => {
         ...state,
         uom: edituom,
       };
+    }
     // group
-    case "Add_Group":
+    case 'Add_Group':
       return {
         ...state,
         group: [...state.group, action.payload],
       };
-    case "Edit_Group":
-      const { groupId, group } = action.payload;
-      const editGroup = state.group.map((item) =>
-        item.id === groupId ? { ...item, group } : item
-      );
-    case "Add_gredient":
+
+    case 'Add_gredient':
       return {
         ...state,
         gredient: [...state.gredient, action.payload],
       };
-    case "Edit_gredient":
+    case 'Edit_gredient': {
       const { gredId, Grendient } = action.payload;
       const editgredient = state.gredient.map((item) =>
         item.id === gredId ? { ...item, gredint: Grendient } : item
       );
-      console.log(editgredient);
+
       return {
         ...state,
         gredient: editgredient,
       };
-    case "Add_Forepart":
+    }
+    case 'Add_Forepart':
       return {
         ...state,
         forepart: [...state.forepart, action.payload],
       };
-    case "Edit_Forepart":
+    case 'Edit_Forepart': {
       const { forId, forepart } = action.payload;
       const editForepart = state.forepart.map((item) =>
         item.id === forId ? { ...item, forepart } : item
@@ -298,10 +301,8 @@ const Reducer = (state = initalstate, action) => {
         ...state,
         forepart: editForepart,
       };
-      return {
-        ...state,
-        group: editGroup,
-      };
+    }
+
     default:
       return state;
   }

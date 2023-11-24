@@ -1,7 +1,7 @@
-import React from "react";
-import { useReducer } from "react";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from 'react';
+import { useReducer } from 'react';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
   Container,
@@ -12,27 +12,27 @@ import {
   Table,
   Button,
   Modal,
-} from "react-bootstrap";
+} from 'react-bootstrap';
 
-import { useEffect } from "react";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { AddIngredient, EditIngredient } from "../../Redux/Actions";
-import { BiEdit } from "react-icons/bi";
+import { useEffect } from 'react';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { AddIngredient, EditIngredient } from '../../Redux/Actions';
+import { BiEdit } from 'react-icons/bi';
 
 function Ingredients() {
   const [smShow, setSmShow] = useState(false);
-  const [query, setquery] = useState("");
+  const [query, setquery] = useState('');
   const [data, setdata] = useState([]);
   const dispatch = useDispatch();
   const [inputval, setinputval] = useState({
     id: 0,
-    gredint: "",
-    detail: "",
+    gredint: '',
+    detail: '',
   });
   const [inputdata, setinputdata] = useState();
   const [countryId, setid] = useState();
-  const [modelval, setmodalval] = useState("");
+  const [modelval, setmodalval] = useState('');
   const history = useNavigate();
 
   const storedaa = useSelector((item) => item.gredient);
@@ -41,7 +41,7 @@ function Ingredients() {
     setinputval({ ...inputval, [event.target.name]: event.target.value });
   };
 
-  const handlesubmit = (event) => {
+  const handlesubmit = () => {
     const { id, gredint, detail } = inputval;
     const newObject = {
       id: Math.floor(100 + Math.random() * 900),
@@ -51,12 +51,12 @@ function Ingredients() {
     console.log(newObject);
     dispatch(AddIngredient(inputval));
     if (inputval.gredint.length > 1 && inputval.detail.length > 1) {
-      toast.success("Color added suessfully ", {
-        position: "bottom-right",
+      toast.success('Color added suessfully ', {
+        position: 'bottom-right',
       });
     } else {
-      toast.warn("invalid input ", {
-        position: "bottom-right",
+      toast.warn('invalid input ', {
+        position: 'bottom-right',
       });
     }
   };
@@ -86,56 +86,56 @@ function Ingredients() {
   return (
     <Container>
       <h4>Add Ingredient</h4>
-      <Card className="p-4 mb-4 mt-4">
+      <Card className='p-4 mb-4 mt-4'>
         <Row>
-          <Col md={12} lg={6} className="mb-4">
+          <Col md={12} lg={6} className='mb-4'>
             <Form.Group>
               <Form.Label>
-                Ingredient <span className="text-red-600">*</span>{" "}
+                Ingredient <span className='text-red-600'>*</span>{' '}
               </Form.Label>
               <Form.Control
-                type="text"
+                type='text'
                 onChange={handlechange}
-                name="gredint"
+                name='gredint'
                 value={inputval.color}
               />
             </Form.Group>
           </Col>
-          <Col md={12} lg={6} className="">
+          <Col md={12} lg={6} className=''>
             <Form.Group>
               <Form.Label>
-                Details <span className="text-red-600">*</span>{" "}
+                Details <span className='text-red-600'>*</span>{' '}
               </Form.Label>
               <Form.Control
-                type="text"
+                type='text'
                 onChange={handlechange}
-                name="detail"
+                name='detail'
                 value={inputval.color}
               />
             </Form.Group>
           </Col>
         </Row>
-        <div className="flex gap-x-4 justify-end items-center mt-4">
+        <div className='flex gap-x-4 justify-end items-center mt-4'>
           <Button onClick={() => handlesubmit()}>save</Button>
-          <Button variant="danger" onClick={(e) => history("/")}>
+          <Button variant='danger' onClick={(e) => history('/')}>
             cancel
           </Button>
         </div>
       </Card>
-      <Card className="p-4 mt-4">
+      <Card className='p-4 mt-4'>
         <Row>
           <Table bordered>
-            <thead className="p-3 align-middle text-center bg-green-800">
-              <tr className=" bg-red-500 ">
+            <thead className='p-3 align-middle text-center bg-green-800'>
+              <tr className=' bg-red-500 '>
                 <th>S.No.</th>
 
-                <th className="flex items-center">
+                <th className='flex items-center'>
                   <Form.Control
-                    type="text"
-                    placeholder="search"
+                    type='text'
+                    placeholder='search'
                     onChange={(e) => setquery(e.target.value)}
-                    size="sm"
-                    className="search_input"
+                    size='sm'
+                    className='search_input'
                   />
                   ingredients
                 </th>
@@ -143,7 +143,7 @@ function Ingredients() {
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody className="text-center">
+            <tbody className='text-center'>
               {Array.isArray(searchvalue) &&
                 searchvalue.map((item, index) => {
                   return (
@@ -154,9 +154,9 @@ function Ingredients() {
                       <td>{item.detail}</td>
                       <td>
                         <Button
-                          size="sm"
+                          size='sm'
                           onClick={() => handlemodal(item.id)}
-                          className="me-2"
+                          className='me-2'
                         >
                           <BiEdit />
                         </Button>
@@ -169,35 +169,35 @@ function Ingredients() {
         </Row>
       </Card>
       <Modal
-        size="lg"
+        size='lg'
         show={smShow}
         onHide={() => setSmShow(false)}
-        aria-labelledby="example-modal-sizes-title-sm"
+        aria-labelledby='example-modal-sizes-title-sm'
       >
         <Modal.Header closeButton>
-          <Modal.Title id="example-modal-sizes-title-sm">
+          <Modal.Title id='example-modal-sizes-title-sm'>
             Edit Ingredient
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row>
-            <Col md={6} className="mt-4">
-              <Form.Group className="flex gap-x-4 items-center">
+            <Col md={6} className='mt-4'>
+              <Form.Group className='flex gap-x-4 items-center'>
                 <Form.Label>Ingredient </Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Country"
-                  name="gredint"
+                  type='text'
+                  placeholder='Country'
+                  name='gredint'
                   onChange={(e) => setmodalval(e.target.value)}
                 />
               </Form.Group>
             </Col>
 
-            <div className="flex justify-end gap-x-4 mt-4">
-              <Button variant="primary" onClick={() => handleCountryedit()}>
+            <div className='flex justify-end gap-x-4 mt-4'>
+              <Button variant='primary' onClick={() => handleCountryedit()}>
                 Submit
               </Button>
-              <Button variant="danger">Cancel</Button>
+              <Button variant='danger'>Cancel</Button>
             </div>
           </Row>
         </Modal.Body>
