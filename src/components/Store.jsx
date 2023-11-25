@@ -87,6 +87,15 @@ function Store() {
         toast.error(error.response.data.message);
       });
   };
+  const handleDelete = (id) => {
+    axios
+      .delete(` http://localhost:3100/api/store/delete-store/${id}`)
+      .then((res) => {
+        Fetchdata();
+        toast.success('Store are deleted Successfylly ');
+      })
+      .catch((error) => toast.error(error.message));
+  };
 
   const handlemodal = (id) => {
     setEditId(id);
@@ -151,9 +160,9 @@ function Store() {
             />
           </Col>
         </Row>
-        <Row className='mt-4 w-3/4 m-auto '>
-          <Col>
-            <Table className='m-auto  '>
+        <Row className='mt-4 lg:w-3/4 sm:w-full m-auto '>
+          <div className=' overflow-auto block'>
+            <Table className='m-auto ' bordered>
               <thead>
                 <tr>
                   <th>S.No.</th>
@@ -170,15 +179,19 @@ function Store() {
                         <td>{index === 0 ? index + 1 : index}</td>
                         <td>{item.store_name}</td>
                         <td>{item.remarks}</td>
-                        <td>
+                        <td className='flex gap-x-1 items-center justify-center'>
                           <Button
                             size='sm'
                             onClick={() => handlemodal(item._id)}
                             className='me-2'
                           >
-                            <BiEdit />
+                            <BiEdit color='white' />
                           </Button>
-                          <Button>
+                          <Button
+                            size='sm'
+                            variant='danger'
+                            onClick={() => handleDelete(item._id)}
+                          >
                             <AiOutlineDelete />
                           </Button>
                         </td>
@@ -190,7 +203,7 @@ function Store() {
                 )}
               </tbody>
             </Table>
-          </Col>
+          </div>
         </Row>
       </Card>
       <Modal
@@ -229,7 +242,7 @@ function Store() {
               </Form.Group>
             </Col>
 
-            <div className='flex justify-end gap-x-4 mt-4'>
+            <div className='flex gap-x-4 mt-4 m-auto justify-center'>
               <Button variant='primary' onClick={() => editStore()}>
                 Submit
               </Button>
