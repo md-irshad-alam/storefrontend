@@ -1,26 +1,29 @@
-import React, { useEffect } from "react";
-import { AiOutlineMenu, AiOutlineLogin } from "react-icons/ai";
-import { FiShoppingCart } from "react-icons/fi";
-import { BsChatLeft } from "react-icons/bs";
-import { RiNotification3Line } from "react-icons/ri";
-import { MdKeyboardArrowDown } from "react-icons/md";
+import React, { useEffect } from 'react';
+import { AiOutlineMenu, AiOutlineLogin } from 'react-icons/ai';
+import { FiShoppingCart } from 'react-icons/fi';
+import { BsChatLeft } from 'react-icons/bs';
+import { RiNotification3Line } from 'react-icons/ri';
+import { MdKeyboardArrowDown } from 'react-icons/md';
 
-import avatar from "../data/avatar.jpg";
-import { Cart, Chat, Notification, UserProfile } from ".";
-import { useStateContext } from "../contexts/ContextProvider";
-import { Button } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import avatar from '../data/avatar.jpg';
+import { Cart, Chat, Notification, UserProfile } from '.';
+import { useStateContext } from '../contexts/ContextProvider';
+import { Button } from 'react-bootstrap';
+import { toast } from 'react-toastify';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
   <button
-    type="button"
+    type='button'
     onClick={() => customFunc()}
     style={{ color }}
-    className="relative text-xl rounded-full p-3 hover:bg-light-gray"
+    className='relative text-xl rounded-full p-3 hover:bg-light-gray'
   >
     <span
       style={{ background: dotColor }}
-      className="absolute inline-flex rounded-full h-2 w-2 right-2 top-2"
+      className='absolute inline-flex rounded-full h-2 w-2 right-2 top-2'
     />
     {icon}
   </button>
@@ -38,16 +41,17 @@ const Navbar = () => {
   } = useStateContext();
 
   const history = useNavigate();
-
+  const { userdetails } = useStateContext();
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
 
     handleResize();
 
-    return () => window.removeEventListener("resize", handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
+  const useDetails = useSelector((ele) => ele.user);
 
   useEffect(() => {
     if (screenSize <= 900) {
@@ -56,60 +60,78 @@ const Navbar = () => {
       setActiveMenu(true);
     }
   }, [screenSize]);
+  const usertoken = sessionStorage.getItem('token');
+  const handleLogout = () => {
+    sessionStorage.removeItem('token');
+    history('/auth/login');
+    // try {
+    //   axios
+    //     .post('http://localhost:3100/api/auth/logout', {
+    //       usertoken,
+    //       userdetails,
+    //     })
+    //     .then((responce) => {
+    //       sessionStorage.removeItem('token');
+    //       toast.success(responce.data.message);
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    // } catch (error) {}
+  };
 
   const handleActiveMenu = () => setActiveMenu(!activeMenu);
 
   return (
-    <div className="flex justify-between items-center p-2 md:ml-6 md:mr-6 relative w-full">
+    <div className='flex justify-between items-center p-2 md:ml-6 md:mr-6 relative w-full'>
       <NavButton
-        title="Menu"
+        title='Menu'
         customFunc={handleActiveMenu}
         color={currentColor}
         icon={<AiOutlineMenu />}
       />
-      <div className="flex">
+      <div className='flex'>
         <NavButton
-          title="Cart"
-          customFunc={() => handleClick("cart")}
+          title='Cart'
+          customFunc={() => handleClick('cart')}
           color={currentColor}
           icon={<FiShoppingCart />}
         />
         <NavButton
-          title="Chat"
-          dotColor="#03C9D7"
-          customFunc={() => handleClick("chat")}
+          title='Chat'
+          dotColor='#03C9D7'
+          customFunc={() => handleClick('chat')}
           color={currentColor}
           icon={<BsChatLeft />}
         />
         <NavButton
-          title="Notification"
-          dotColor="rgb(254, 201, 15)"
-          customFunc={() => handleClick("notification")}
+          title='Notification'
+          dotColor='rgb(254, 201, 15)'
+          customFunc={() => handleClick('notification')}
           color={currentColor}
           icon={<RiNotification3Line />}
         />
-        <Link to="/auth/login">
-          <Button size="sm" color="white" className="h- h-fit">
-            Login
-          </Button>
-        </Link>
-        {/* <div
-          className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg"
-          onClick={() => handleClick("userProfile")}
+
+        <div
+          className='flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg'
+          onClick={() => handleClick('userProfile')}
         >
           <img
-            className="rounded-full w-8 h-8"
+            className='rounded-full w-8 h-8'
             src={avatar}
-            alt="user-profile"
+            alt='user-profile'
           />
-          <p>
-            <span className="text-gray-400 text-14">Hi,</span>{" "}
-            <span className="text-gray-400 font-bold ml-1 text-14">
-              Michael
-            </span>
-          </p>
-          <MdKeyboardArrowDown className="text-gray-400 text-14" />
-        </div> */}
+          {useDetails.map((ele) => {
+            return (
+              <p>
+                <span className='text-gray-400 font-bold ml-1 text-14'>
+                  {ele.fname + ' ' + ele.lname}
+                </span>
+              </p>
+            );
+          })}
+          <MdKeyboardArrowDown className='text-gray-400 text-14' />
+        </div>
 
         {isClicked.cart && <Cart />}
         {isClicked.chat && <Chat />}
