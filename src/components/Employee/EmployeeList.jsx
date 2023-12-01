@@ -3,8 +3,6 @@ import { useState } from "react";
 import {
   Button,
   Card,
-  CardFooter,
-  CardTitle,
   Col,
   Container,
   Form,
@@ -16,11 +14,7 @@ import { FaEdit } from "react-icons/fa";
 
 function EmployeeList() {
   const [smShow, setSmShow] = useState(false);
-  const [lgShow, setLgShow] = useState(false);
-  const handleform = () => {
-    console.log("btn clicked ");
-    setSmShow(false);
-  };
+
   return (
     <Container>
       <Card className="lg md:xl:w-soloForm p-4 m-auto relative top-20 sm:border-none">

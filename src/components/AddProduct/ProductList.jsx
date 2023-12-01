@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Form, Card, FloatingLabel, Button, Table } from "react-bootstrap";
+import React, { useState } from "react";
+import { Form, Card, Button } from "react-bootstrap";
 import style from "../../ModuleCss/Add_Product.module.css";
 import data from "../Data";
 import { toast } from "react-toastify";
@@ -8,31 +8,32 @@ import { AiOutlineEye } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 function Product_List() {
   const [filterdata, setFilterdata] = useState([]);
-  const [items, setItems] = useState(data); // Assuming 'data' is your default data source
+  const [items, setItems] = useState(data);
   const [query, setQuery] = useState("");
-  const [itemdata, setItemdata] = useState([]);
+
   const [selcetdCato, setselectcato] = useState("");
   const [selcetColor, setselctColor] = useState("");
   const [selcetdType, setselectType] = useState("");
   const { id } = useParams();
   console.log(id);
   const history = useNavigate();
-  const handleSearch = () => {
-    const lowercaseValue = query.toLowerCase();
-    const searchResult =
-      filterdata.length != 0
-        ? filterdata.filter((item) =>
-            item.type.toLowerCase().includes(lowercaseValue)
-          )
-        : data.filter((item) =>
-            item.type.toLowerCase().includes(lowercaseValue)
-          );
 
-    setFilterdata(searchResult);
-  };
-  const CancelSearch = () => {
-    window.location.reload();
-  };
+  // const handleSearch = () => {
+  //   const lowercaseValue = query.toLowerCase();
+  //   const searchResult =
+  //     filterdata.length != 0
+  //       ? filterdata.filter((item) =>
+  //           item.type.toLowerCase().includes(lowercaseValue)
+  //         )
+  //       : data.filter((item) =>
+  //           item.type.toLowerCase().includes(lowercaseValue)
+  //         );
+
+  //   setFilterdata(searchResult);
+  // };
+  // const CancelSearch = () => {
+  //   window.location.reload();
+  // };
 
   const handleCategory = (event) => {
     const category = event.target.value;
