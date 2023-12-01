@@ -9,29 +9,46 @@ import {
   Col,
   Table,
   Button,
+  Modal,
 } from 'react-bootstrap';
 
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { BiEdit } from 'react-icons/bi';
+import { AiOutlineDelete } from 'react-icons/ai';
 function Store() {
   const [store_name, setStore] = useState('');
   const [remarks, setRemarks] = useState('');
   const [isActive, setActive] = useState(false);
-  const [query, setquery] = useState('');
-
+  const [search, setquery] = useState('');
+  const [smShow, setSmShow] = useState(false);
   const [data, setdata] = useState([]);
   const [items, setitem] = useState([]);
+
+  const [editId, setEditId] = useState();
   const history = useNavigate();
+
+  const Fetchdata = () => {
+    axios
+      .get(`http://localhost:3100/api/store/get-store`)
+      .then((res) => {
+        setdata(res.data.stores);
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
+  };
 
   const handlesubmit = () => {
     axios
-      .post('https://erp-backend-ditn.onrender.com/api/store/add-store', {
+      .post('http://localhost:3100/api/store/add-store', {
         store_name,
         remarks,
         isActive,
       })
       .then((res) => {
+        Fetchdata();
         toast.success(res.data.message);
       })
       .catch((error) => {
@@ -40,49 +57,60 @@ function Store() {
   };
 
   const handlesearch = () => {
-    if (query.length > 1) {
-      const lowercaseValue = query.toLowerCase();
-      const searchResult =
-        data.length != 0
-          ? data.filter((item) =>
-              data.store_name.toLowerCase().includes(lowercaseValue)
+    const lowercaseValue = search.toLowerCase();
+    const searchWords = lowercaseValue.split(' ');
+
+    const searchResult =
+      data.length !== 0
+        ? data.filter((item) =>
+            searchWords.every((word) =>
+              item.store_name.toLowerCase().includes(word)
             )
-          : data.filter((item) =>
-              item.store_name.toLowerCase().includes(lowercaseValue)
-            );
-      setitem(searchResult);
-    }
+          )
+        : [];
+
+    setitem(searchResult);
   };
 
   const editStore = () => {
     axios
-      .put('http://localhost:3100/api/store/update-store', {
+      .put(`http://localhost:3100/api/store/update-store/${editId}`, {
         store_name,
+        remarks,
       })
       .then((res) => {
         toast.success(res.data.message);
+        setSmShow(true);
+        Fetchdata();
       })
       .catch((error) => {
         toast.error(error.response.data.message);
       });
   };
+  const handleDelete = (id) => {
+    axios
+      .delete(` http://localhost:3100/api/store/delete-store/${id}`)
+      .then((res) => {
+        Fetchdata();
+        toast.success('Store are deleted Successfylly ');
+      })
+      .catch((error) => toast.error(error.message));
+  };
+
+  const handlemodal = (id) => {
+    setEditId(id);
+    setSmShow(true);
+  };
 
   useEffect(() => {
-    axios
-      .get('https://erp-backend-ditn.onrender.com/api/store/get-store')
-      .then((res) => {
-        setdata(res.data);
-        toast.success(res.data.message);
-      })
-      .catch((error) => {
-        toast.error(error.response.data.message);
-      });
-  }, [data]);
+    Fetchdata();
+  }, []);
 
-  // useEffect(() => {
-  //   handlesearch();
-  // }, [query]);
-  const searchvalue = query ? items : data;
+  useEffect(() => {
+    handlesearch();
+  }, [search]);
+
+  const getdata = search ? items : data;
 
   return (
     <Container>
@@ -132,35 +160,97 @@ function Store() {
             />
           </Col>
         </Row>
-        <Row className='mt-4 w-3/4 m-auto '>
-          <Col>
-            <Table className='m-auto  '>
+        <Row className='mt-4 lg:w-3/4 sm:w-full m-auto '>
+          <div className=' overflow-auto block'>
+            <Table className='m-auto ' bordered>
               <thead>
                 <tr>
                   <th>S.No.</th>
                   <th>Store</th>
                   <th>Remarks</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {/* {searchvalue.length !== 0 ? (
-                  searchvalue.map((item, index) => {
+                {getdata.length !== 0 ? (
+                  getdata.map((item, index) => {
                     return (
-                      <tr>
+                      <tr key={index}>
                         <td>{index === 0 ? index + 1 : index}</td>
-                        <td>{item.store}</td>
+                        <td>{item.store_name}</td>
                         <td>{item.remarks}</td>
+                        <td className='flex gap-x-1 items-center justify-center'>
+                          <Button
+                            size='sm'
+                            onClick={() => handlemodal(item._id)}
+                            className='me-2'
+                          >
+                            <BiEdit color='white' />
+                          </Button>
+                          <Button
+                            size='sm'
+                            variant='danger'
+                            onClick={() => handleDelete(item._id)}
+                          >
+                            <AiOutlineDelete />
+                          </Button>
+                        </td>
                       </tr>
                     );
                   })
                 ) : (
-                  <tr className="text-center ">No Data Found</tr>
-                )} */}
+                  <tr className='text-center '>No Data Found</tr>
+                )}
               </tbody>
             </Table>
-          </Col>
+          </div>
         </Row>
       </Card>
+      <Modal
+        size='md'
+        show={smShow}
+        onHide={() => setSmShow(false)}
+        aria-labelledby='example-modal-sizes-title-sm'
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id='example-modal-sizes-title-sm'>
+            Edit Store
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Row>
+            <Col md={6} className='mt-4'>
+              <Form.Group className='flex gap-x-4 items-center'>
+                <Form.Label>Store </Form.Label>
+                <Form.Control
+                  type='text'
+                  placeholder='Store'
+                  name='store_name'
+                  onChange={(event) => setStore(event.target.value)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6} className='mt-4'>
+              <Form.Group className='flex gap-x-4 items-center'>
+                <Form.Label>Remarks </Form.Label>
+                <Form.Control
+                  type='text'
+                  placeholder='Remarks'
+                  name='remarks'
+                  onChange={(event) => setRemarks(event.target.value)}
+                />
+              </Form.Group>
+            </Col>
+
+            <div className='flex gap-x-4 mt-4 m-auto justify-center'>
+              <Button variant='primary' onClick={() => editStore()}>
+                Submit
+              </Button>
+              <Button variant='danger'>Cancel</Button>
+            </div>
+          </Row>
+        </Modal.Body>
+      </Modal>
     </Container>
   );
 }

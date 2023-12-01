@@ -19,7 +19,8 @@ export const ContextProvider = ({ children }) => {
   const [tabledata, setTabledata] = useState([]);
   const [prodData, SetProductionRef] = useState({});
   const [ClintData, SetClintRef] = useState({});
-
+  const [userdetails, setuserDetails] = useState(null);
+ 
   const setMode = (e) => {
     setCurrentMode(e.target.value);
     localStorage.setItem('themeMode', e.target.value);
@@ -30,12 +31,14 @@ export const ContextProvider = ({ children }) => {
     localStorage.setItem('colorMode', color);
   };
 
-  const handleClick = (clicked) => setIsClicked({ ...initialState, [clicked]: true });
-
+  const handleClick = (clicked) =>
+    setIsClicked({ ...initialState, [clicked]: true });
+  const token = sessionStorage.getItem('token');
   return (
     // eslint-disable-next-line react/jsx-no-constructed-context-values
     <StateContext.Provider
       value={{
+        token,
         currentColor,
         currentMode,
         activeMenu,
@@ -58,6 +61,8 @@ export const ContextProvider = ({ children }) => {
         SetProductionRef,
         ClintData,
         SetClintRef,
+        userdetails,
+        setuserDetails,
       }}
     >
       {children}
