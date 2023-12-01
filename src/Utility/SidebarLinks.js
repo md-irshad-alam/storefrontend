@@ -15,7 +15,15 @@ export const Links = [
       },
     ],
   },
-
+  {
+    title: "Stock",
+    links:[
+      {
+        name:"stock-list",
+        sendto:"stock-list"
+      }
+    ]
+  },
   {
     titleIcon: <CgScreen />,
     title: 'Master',

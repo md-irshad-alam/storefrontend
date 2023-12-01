@@ -10,7 +10,7 @@ import SizeTypeForm from '../components/SizeTypeForm';
 import AddEmployee from '../components/Employee/AddEmployee';
 import EmployeeList from '../components/Employee/EmployeeList';
 import { ToastContainer } from 'react-toastify';
-import { ContextProvider, useStateContext } from '../contexts/ContextProvider';
+import { ContextProvider } from '../contexts/ContextProvider';
 import Add_Category from '../components/Mixing/Add_Category';
 import Ecommerce from '../pages/Ecommerce';
 import Customers from '../pages/Customers';
@@ -30,9 +30,9 @@ import GroupMaster from '../components/Master/Group.jsx';
 import Catogery_Type from '../components/Mixing/Catogery_Type.jsx';
 import Ingredients from '../components/Mixing/ingredients.jsx';
 import ForePart_category from '../components/Master/ForePart_Category.jsx';
-import ForgotPass from '../components/AuthPages/ForgotPass.jsx';
-import PrivateRoute from './privateRoute.js';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import StockList from '../components/Stock/StockList.jsx';
+import AdjustStock from '../components/Stock/AdjustStock.jsx';
+
 function AllRoutes() {
   const [login, setlogin] = useState(false);
   const history = useNavigate();
@@ -43,43 +43,38 @@ function AllRoutes() {
       <ContextProvider>
         <ToastContainer />
         <Routes>
-          {token === null || token === undefined ? (
-            <Route path='/auth/login' element={<LoginForm />} />
-          ) : (
-            <>
-              <Route path='/auth/reset_password' element={<ForgotPass />} />
-              <Route path='/product' element={<AddProduct />} />
-              <Route path='/productlist' element={<Product_List />} />
-              <Route path='/add_module' element={<ProductModule />} />
-              <Route path='/add_category' element={<Add_Category />} />
-              <Route path='/category_list' element={<Catogery_List />} />
-              <Route path='/category_type' element={<Catogery_Type />} />
-              <Route path='/view_product' element={<ViewProduct />} />
-              <Route path='/table' element={<SizeWeight />} />
-              <Route path='/sz' element={<SizeTypeForm />} />
-              <Route path='/employee' element={<AddEmployee />} />
-              <Route path='/employeelist' element={<EmployeeList />} />
-              <Route path='/add_weight' element={<Add_Stdwt />} />
-              <Route path='/store' element={<Store />} />
-              <Route path='/color' element={<Color />} />
-              <Route path='/country' element={<Country />} />
-              <Route path='/state' element={<State />} />
-              <Route path='/heel' element={<Heels />} />
-              <Route path='/uom' element={<Uom />} />
-              <Route path='/designation' element={<Designation />} />
-              <Route path='/group' element={<GroupMaster />} />
-              <Route path='/gredient' element={<Ingredients />} />
-              <Route path='/forpart' element={<ForePart_category />} />
-              <Route path='/' element={<Ecommerce />} />
-              {/* aturab code  */}
-              <Route path='/ecommerce' element={<Ecommerce />} />
-              <Route path='/customers' element={<Customers />} />
-              <Route path='/edit-customer/:id' element={<EditCustomer />} />
-              <Route path='/view-customer/:id' element={<ViewCustomer />} />
-            </>
-          )}
-
+          <Route path='/auth/login' element={<LoginForm />} />
           <Route path='/auth/register' element={<RegisterForm />} />
+          <Route path='/product' element={<AddProduct />} />
+          <Route path='/productlist' element={<Product_List />} />
+          <Route path='/add_module' element={<ProductModule />} />
+          <Route path='/add_category' element={<Add_Category />} />
+          <Route path='/category_list' element={<Catogery_List />} />
+          <Route path='/category_type' element={<Catogery_Type />} />
+          <Route path='/view_product' element={<ViewProduct />} />
+          <Route path='/table' element={<SizeWeight />} />
+          <Route path='/sz' element={<SizeTypeForm />} />
+          <Route path='/employee' element={<AddEmployee />} />
+          <Route path='/employeelist' element={<EmployeeList />} />
+          <Route path='/add_weight' element={<Add_Stdwt />} />
+          <Route path='/store' element={<Store />} />
+          <Route path='/color' element={<Color />} />
+          <Route path='/country' element={<Country />} />
+          <Route path='/state' element={<State />} />
+          <Route path='/heel' element={<Heels />} />
+          <Route path='/uom' element={<Uom />} />
+          <Route path='/designation' element={<Designation />} />
+          <Route path='/group' element={<GroupMaster />} />
+          <Route path='/gredient' element={<Ingredients />} />
+          <Route path='/forpart' element={<ForePart_category />} />
+          {/* aturab code  */}
+          <Route path='/' element={<Ecommerce />} />
+          <Route path='/ecommerce' element={<Ecommerce />} />
+          <Route path='/customers' element={<Customers />} />
+          <Route path='/edit-customer/:id' element={<EditCustomer />} />
+          <Route path='/view-customer/:id' element={<ViewCustomer />} />
+          <Route path='/stock-list' element={<StockList />} />
+          <Route path='/adjust-stock' element={<AdjustStock />} />
         </Routes>
       </ContextProvider>
     </div>
