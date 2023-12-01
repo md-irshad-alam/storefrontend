@@ -31,6 +31,8 @@ import GroupMaster from "../components/Master/Group.jsx";
 import Catogery_Type from "../components/Mixing/Catogery_Type.jsx";
 import Ingredients from "../components/Mixing/ingredients.jsx";
 import ForePart_category from "../components/Master/ForePart_Category.jsx";
+import StockList from "../components/Stock/StockList.jsx";
+import AdjustStock from "../components/Stock/AdjustStock.jsx";
 
 function AllRoutes() {
   return (
@@ -68,6 +70,8 @@ function AllRoutes() {
           <Route path="/customers" element={<Customers />} />
           <Route path="/edit-customer/:id" element={<EditCustomer />} />
           <Route path="/view-customer/:id" element={<ViewCustomer />} />
+          <Route path="/stock-list" element={<StockList/>}/>
+          <Route path="/adjust-stock" element={<AdjustStock/>}/>
         </Routes>
       </ContextProvider>
     </div>
