@@ -10,7 +10,7 @@ import SizeTypeForm from '../components/SizeTypeForm';
 import AddEmployee from '../components/Employee/AddEmployee';
 import EmployeeList from '../components/Employee/EmployeeList';
 import { ToastContainer } from 'react-toastify';
-import { ContextProvider, useStateContext } from '../contexts/ContextProvider';
+import { ContextProvider } from '../contexts/ContextProvider';
 import Add_Category from '../components/Mixing/Add_Category';
 import Ecommerce from '../pages/Ecommerce';
 import Customers from '../pages/Customers';
@@ -30,9 +30,9 @@ import GroupMaster from '../components/Master/Group.jsx';
 import Catogery_Type from '../components/Mixing/Catogery_Type.jsx';
 import Ingredients from '../components/Mixing/ingredients.jsx';
 import ForePart_category from '../components/Master/ForePart_Category.jsx';
-import ForgotPass from '../components/AuthPages/ForgotPass.jsx';
-import PrivateRoute from './privateRoute.js';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import StockList from '../components/Stock/StockList.jsx';
+import AdjustStock from '../components/Stock/AdjustStock.jsx';
+
 function AllRoutes() {
   const [login, setlogin] = useState(false);
   const history = useNavigate();
