@@ -4,7 +4,7 @@ import RegisterForm from '../components/AuthPages/SignUp';
 import AddProduct from '../components/AddProduct/AddProduct';
 import ViewProduct from '../components/AddProduct/ViewProduct';
 import Catogery_List from '../components/Mixing/Catogery_List.jsx';
-
+import { Routes, Route } from 'react-router';
 import SizeWeight from '../components/AddProduct/Size&weight';
 import SizeTypeForm from '../components/SizeTypeForm';
 import AddEmployee from '../components/Employee/AddEmployee';
@@ -32,10 +32,9 @@ import Ingredients from '../components/Mixing/ingredients.jsx';
 import ForePart_category from '../components/Master/ForePart_Category.jsx';
 import StockList from '../components/Stock/StockList.jsx';
 import AdjustStock from '../components/Stock/AdjustStock.jsx';
+import ForgotPass from '../components/AuthPages/ForgotPass.jsx';
 
 function AllRoutes() {
-  const [login, setlogin] = useState(false);
-  const history = useNavigate();
   const token = sessionStorage.getItem('token');
 
   return (

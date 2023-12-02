@@ -189,7 +189,7 @@ const Reducer = (state = initalstate, action) => {
     case 'add_user':
       return {
         ...state,
-        user: [state.user, action.payload],
+        user: [action.payload],
       };
     case 'ADD_STORE':
       return {

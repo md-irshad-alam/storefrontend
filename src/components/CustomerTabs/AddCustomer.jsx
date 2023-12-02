@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import axios from 'axios';
 const AddCustomer = () => {
   const [formData, setFormData] = useState({});
   const [countryData, setCountryData] = useState([]);
@@ -17,10 +17,11 @@ const AddCustomer = () => {
   /* creating the random Id's */
 
   const handleChange = (e) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
+    // setFormData((prevState) => ({
+    //   ...prevState,
+    //   [e.target.name]: e.target.value,
+    // }));
+    setFormData({ [e.target.name]: e.target.value });
   };
 
   useEffect(() => {
@@ -67,7 +68,7 @@ const AddCustomer = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-
+    console.log(formData);
     toast.success('Added Customer Successfully.');
     setTimeout(() => {
       navigate(`/edit-customer/${randomId}`);
@@ -77,42 +78,41 @@ const AddCustomer = () => {
   /* this logic is not working properly */
 
   const handleSameAsAbove = () => {
-    setSameAsAbove((prev) => !prev);
-
-    if (!sameAsAbove) {
-      setFormData({
-        ...formData,
-        shipAddress: formData.address,
-        shipCountry: formData.country,
-        shipState: formData.state,
-        shipDistrict: formData.district,
-        shipPoliceStation: formData['police-station'],
-        ship_postalCode: formData['postal-code'],
-        shipEmail: formData.email,
-        shipMobile: formData['bill-mobile'],
-        shipGSTNo: formData['GST No.'],
-        shipTINNo: formData['Tin No.'],
-        shipPan: formData.pan,
-        shipPhone: formData['bill-phone'],
-      });
-      console.log(formData);
-    } else {
-      setFormData({
-        ...formData,
-        shipAddress: '',
-        shipCountry: '',
-        shipState: '',
-        shipDistrict: '',
-        shipPoliceStation: '',
-        ship_postalCode: '',
-        shipEmail: '',
-        shipMobile: '',
-        shipGSTNo: '',
-        shipTINNo: '',
-        shipPan: '',
-        shipPhone: '',
-      });
-    }
+    // setSameAsAbove((prev) => !prev);
+    // if (!sameAsAbove) {
+    //   setFormData({
+    //     ...formData,
+    //     shipAddress: formData.address,
+    //     shipCountry: formData.country,
+    //     shipState: formData.state,
+    //     shipDistrict: formData.district,
+    //     shipPoliceStation: formData['police-station'],
+    //     ship_postalCode: formData['postal-code'],
+    //     shipEmail: formData.email,
+    //     shipMobile: formData['bill-mobile'],
+    //     shipGSTNo: formData['GST No.'],
+    //     shipTINNo: formData['Tin No.'],
+    //     shipPan: formData.pan,
+    //     shipPhone: formData['bill-phone'],
+    //   });
+    //   console.log(formData);
+    // } else {
+    //   setFormData({
+    //     ...formData,
+    //     shipAddress: '',
+    //     shipCountry: '',
+    //     shipState: '',
+    //     shipDistrict: '',
+    //     shipPoliceStation: '',
+    //     ship_postalCode: '',
+    //     shipEmail: '',
+    //     shipMobile: '',
+    //     shipGSTNo: '',
+    //     shipTINNo: '',
+    //     shipPan: '',
+    //     shipPhone: '',
+    //   });
+    // }
   };
 
   return (
@@ -219,7 +219,7 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   id='customerCode'
-                  name='customerCode'
+                  name='customer_code'
                   type='text'
                   autoComplete='customerCode'
                   onChange={handleChange}
@@ -249,7 +249,7 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='address'
+                  name='ship_address'
                   id='address'
                   autoComplete='address'
                   onChange={handleChange}
@@ -336,7 +336,7 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='police-station'
+                  name='police_station'
                   id='police-station'
                   autoComplete='police-station'
                   onChange={handleChange}
@@ -354,8 +354,8 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='postal-code'
-                  id='postal-code'
+                  name='pin'
+                  id='postal_code'
                   autoComplete='postal-code'
                   onChange={handleChange}
                   className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
@@ -392,7 +392,7 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='bill-mobile'
+                  name='mobile'
                   id='bill-mobile'
                   autoComplete='bill-mobile'
                   onChange={handleChange}
@@ -411,7 +411,7 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='GST No.'
+                  name='gstin'
                   id='GST No.'
                   autoComplete='GST No.'
                   onChange={handleChange}
@@ -430,7 +430,7 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='Tin No.'
+                  name='pan_no.'
                   id='Tin No.'
                   autoComplete='Tin No.'
                   onChange={handleChange}
@@ -468,9 +468,9 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='bill-phone'
+                  name='phone'
                   id='bill-phone'
-                  autoComplete='bill-phone'
+                  autoComplete='phone'
                   onChange={handleChange}
                   className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
@@ -516,7 +516,7 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='shipAddress'
+                  name='ship_address'
                   id='shipAddress'
                   autoComplete='shipAddress'
                   onChange={handleChange}
@@ -536,8 +536,8 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <select
                   id='shipCountry'
-                  name='shipCountry'
-                  autoComplete='shipCountry'
+                  name='country'
+                  autoComplete='country'
                   onChange={handleCountryChange}
                   className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
                 >
@@ -561,7 +561,7 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <select
                   id='shipState'
-                  name='shipState'
+                  name='state'
                   autoComplete='shipState'
                   onChange={handleChange}
                   className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
@@ -585,9 +585,9 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='shipDistrict'
+                  name='district'
                   id='shipDistrict'
-                  autoComplete='shipDistrict'
+                  autoComplete='district'
                   onChange={handleChange}
                   className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
@@ -603,7 +603,7 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='ship_police-station'
+                  name='police_station'
                   id='ship_police-station'
                   autoComplete='ship_police-station'
                   onChange={handleChange}
@@ -613,7 +613,7 @@ const AddCustomer = () => {
             </div>
             <div className='sm:col-span-2'>
               <label
-                htmlFor='ship_postal-code'
+                htmlFor='postal_code'
                 className='block text-sm font-medium leading-6 text-gray-900'
               >
                 ZIP / Postal code
@@ -621,7 +621,7 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='ship_postal-code'
+                  name='postal_code'
                   id='ship_postal-code'
                   autoComplete='ship_postal-code'
                   onChange={handleChange}
@@ -632,7 +632,7 @@ const AddCustomer = () => {
 
             <div className='sm:col-span-3'>
               <label
-                htmlFor='shipEmail'
+                htmlFor='email'
                 className='block text-sm font-medium leading-6 text-gray-900'
               >
                 Email
@@ -640,9 +640,9 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='email'
-                  name='shipEmail'
+                  name='email'
                   id='shipEmail'
-                  autoComplete='shipEmail'
+                  autoComplete='email'
                   onChange={handleChange}
                   className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
@@ -651,7 +651,7 @@ const AddCustomer = () => {
 
             <div className='sm:col-span-2'>
               <label
-                htmlFor='ship-mobile'
+                htmlFor='mobile'
                 className='block text-sm font-medium leading-6 text-gray-900'
               >
                 Mobile
@@ -659,7 +659,7 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='ship-mobile'
+                  name='mobile'
                   id='ship-mobile'
                   autoComplete='ship-mobile'
                   onChange={handleChange}
@@ -670,7 +670,7 @@ const AddCustomer = () => {
 
             <div className='sm:col-span-3'>
               <label
-                htmlFor='ship-GST No.'
+                htmlFor='gstin'
                 className='block text-sm font-medium leading-6 text-gray-900'
               >
                 GST No.
@@ -678,9 +678,9 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='ship-GST No.'
+                  name='gstin'
                   id='ship-GST No.'
-                  autoComplete='ship-GST No.'
+                  autoComplete='gstin'
                   onChange={handleChange}
                   className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
@@ -689,7 +689,7 @@ const AddCustomer = () => {
 
             <div className='sm:col-span-3'>
               <label
-                htmlFor='ship-Tin No.'
+                htmlFor='tin_no'
                 className='block text-sm font-medium leading-6 text-gray-900'
               >
                 TIN No.
@@ -697,9 +697,9 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='ship-Tin No.'
+                  name='tin_no'
                   id='ship-Tin No.'
-                  autoComplete='ship-Tin No.'
+                  autoComplete='tin_no'
                   onChange={handleChange}
                   className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
@@ -708,7 +708,7 @@ const AddCustomer = () => {
 
             <div className='sm:col-span-3'>
               <label
-                htmlFor='ship-pan'
+                htmlFor='pan'
                 className='block text-sm font-medium leading-6 text-gray-900'
               >
                 Pan
@@ -716,9 +716,9 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='ship-pan'
+                  name='pan'
                   id='ship-pan'
-                  autoComplete='ship-pan'
+                  autoComplete='pan'
                   onChange={handleChange}
                   className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
@@ -727,7 +727,7 @@ const AddCustomer = () => {
 
             <div className='sm:col-span-3'>
               <label
-                htmlFor='ship-phone'
+                htmlFor='phone'
                 className='block text-sm font-medium leading-6 text-gray-900'
               >
                 Phone
@@ -735,9 +735,9 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='ship-phone'
+                  name='phone'
                   id='ship-phone'
-                  autoComplete='ship-phone'
+                  autoComplete='phone'
                   onChange={handleChange}
                   className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
