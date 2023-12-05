@@ -1,15 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import Country from '../Master/Country';
+import { v4 as uuidv4 } from 'uuid';
 const AddCustomer = () => {
-  const [formData, setFormData] = useState({});
-  const [countryData, setCountryData] = useState([]);
-  const [stateData, setStateData] = useState([]);
-  const [selectCountry, setSelectCountry] = useState('');
-  const [sameAsAbove, setSameAsAbove] = useState(false);
+  const [contry, setcountry] = useState('');
+  const [contry2, setcountry2] = useState('');
+  const [billDetails, setFormData] = useState({});
+  const [shipDetails, setbillmData] = useState({});
+  const [formdata, setmaindata] = useState({});
 
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+  const [selectedCountry2, setSelectedCountry2] = useState('');
+  const [selectedState2, setSelectedState2] = useState('');
+  const [countries, setCountries] = useState([]);
+  const [countries2, setCountries2] = useState([]);
+  const [states, setStates] = useState([]);
+  const [states2, setStates2] = useState([]);
+  const [uniqueid, setUUId] = useState('');
+
+  const [sameAsAbove, setSameAsAbove] = useState(false);
+  const [initials, setinitilas] = useState('');
+  const [customer_name, set_Custumer] = useState('');
+  const [currency, setCurency] = useState('');
+  const [company, setCompany] = useState('');
+  const [customer_code, setcustumer] = useState('');
+  const [validError, setValiderror] = useState('');
   const navigate = useNavigate();
 
   /* creating the random Id's */
@@ -17,104 +37,312 @@ const AddCustomer = () => {
   /* creating the random Id's */
 
   const handleChange = (e) => {
-    // setFormData((prevState) => ({
-    //   ...prevState,
-    //   [e.target.name]: e.target.value,
-    // }));
-    setFormData({ [e.target.name]: e.target.value });
+    setFormData((formdata) => ({
+      ...formdata,
+      [e.target.name]: e.target.value,
+    }));
   };
 
-  useEffect(() => {
-    const getCountries = async () => {
-      const res = await fetch(
-        'https://referential.p.rapidapi.com/v1/country?fields=iso_a2&limit=250',
-        {
-          method: 'GET',
-          headers: {
-            'X-RapidAPI-Key':
-              'eff51e33a2msh3c4977c37096d34p117ce3jsnad1634fb6450',
-            'X-RapidAPI-Host': 'referential.p.rapidapi.com',
-          },
-        }
-      );
+  const handlemainchange = (event) => {
+    setmaindata((prev) => ({
+      ...prev,
+      [event.target.name]: event.target.value,
+    }));
+  };
 
-      const data = await res.json();
-      setCountryData(data);
-    };
+  const billdetailsChange = (event) => {
+    setbillmData((state) => ({
+      ...state,
+      [event.target.name]: event.target.value,
+    }));
+  };
+  const addbilladdress = () => {
+    try {
+      if (typeof billDetails === 'object' && billDetails.length != 0) {
+        const {
+          address,
+          country,
+          district,
+          state,
+          postal_code,
+          email,
+          mobile,
+          gstin,
+          tin_no,
+          pan,
+          phone,
+        } = billDetails;
 
-    getCountries();
-  }, []);
-
-  const handleCountryChange = async (e) => {
-    setSelectCountry(e.target.value);
-    setFormData((prevState) => ({ ...prevState, country: e.target.value }));
-
-    /* handling the state api */
-    const res = await fetch(
-      `https://referential.p.rapidapi.com/v1/state?iso_a2=${e.target.value}`,
-      {
-        method: 'GET',
-        headers: {
-          'X-RapidAPI-Key':
-            'eff51e33a2msh3c4977c37096d34p117ce3jsnad1634fb6450',
-          'X-RapidAPI-Host': 'referential.p.rapidapi.com',
-        },
+        axios
+          .post('http://localhost:3100/api/customer/bill-address', {
+            address,
+            country,
+            district,
+            state,
+            postal_code,
+            email,
+            mobile,
+            gstin,
+            tin_no,
+            pan,
+            phone,
+          })
+          .then((res) => {
+            localStorage.setItem('billId', res.data.bill_details._id);
+          })
+          .catch((error) => console.log(error));
+      } else {
+        toast.warn('invalid input');
       }
-    );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const addshipaddress = () => {
+    try {
+      if (typeof billDetails === 'object' && billDetails.length != 0) {
+        const {
+          address,
+          country,
+          district,
+          state,
+          postal_code,
+          email,
+          mobile,
+          gstin,
+          tin_no,
+          pan,
+          phone,
+        } = shipDetails;
 
-    const data = await res.json();
-    setStateData(data);
+        axios
+          .post('http://localhost:3100/api/customer/ship-address', {
+            address,
+            country,
+            district,
+            state,
+            postal_code,
+            email,
+            mobile,
+            gstin,
+            tin_no,
+            pan,
+            phone,
+          })
+          .then((res) => {
+            console.log(res);
+            localStorage.setItem('shipId', res.data.ship_address._id);
+          })
+          .catch((error) => console.log(error));
+      } else {
+        toast.warn('invalid input');
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
-    toast.success('Added Customer Successfully.');
-    setTimeout(() => {
-      navigate(`/edit-customer/${randomId}`);
-    }, 2000);
+    try {
+      if (typeof formdata === 'object' && formdata.length != 0) {
+        const {
+          initials,
+          customer_name,
+          currency,
+          contact_person,
+          contact_mobile,
+          contact_phone,
+          fax,
+          company,
+        } = formdata;
+        const ship_address = localStorage.getItem('shipId');
+        const bill_address = localStorage.getItem('billId');
+        axios
+          .post('http://localhost:3100/api/customer/add-customer', {
+            initials,
+            customer_name,
+            currency,
+            customer_code: uniqueid,
+            contact_person,
+            contact_mobile,
+            contact_phone,
+            fax,
+            company,
+            bill_address,
+            ship_address,
+          })
+          .then((res) => {
+            navigate('/customers');
+            toast.success(res.data.message);
+            localStorage.removeItem('billId');
+            localStorage.removeItem('shipId');
+          })
+          .catch((err) => toast.error(err.response.data.message));
+      } else {
+        toast.warn('invalid input');
+      }
+    } catch (error) {
+      toast.error('something went wrong');
+    }
   };
 
-  /* this logic is not working properly */
+  const handleSameAsAbove = () => {};
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await fetch(
+          `https://referential.p.rapidapi.com/v1/country?fields=iso_a2&limit=250`,
+          {
+            method: 'GET',
+            headers: {
+              'X-RapidAPI-Key':
+                'eff51e33a2msh3c4977c37096d34p117ce3jsnad1634fb6450',
+              'X-RapidAPI-Host': 'referential.p.rapidapi.com',
+            },
+          }
+        );
+        const data = await response.json();
 
-  const handleSameAsAbove = () => {
-    // setSameAsAbove((prev) => !prev);
-    // if (!sameAsAbove) {
-    //   setFormData({
-    //     ...formData,
-    //     shipAddress: formData.address,
-    //     shipCountry: formData.country,
-    //     shipState: formData.state,
-    //     shipDistrict: formData.district,
-    //     shipPoliceStation: formData['police-station'],
-    //     ship_postalCode: formData['postal-code'],
-    //     shipEmail: formData.email,
-    //     shipMobile: formData['bill-mobile'],
-    //     shipGSTNo: formData['GST No.'],
-    //     shipTINNo: formData['Tin No.'],
-    //     shipPan: formData.pan,
-    //     shipPhone: formData['bill-phone'],
-    //   });
-    //   console.log(formData);
-    // } else {
-    //   setFormData({
-    //     ...formData,
-    //     shipAddress: '',
-    //     shipCountry: '',
-    //     shipState: '',
-    //     shipDistrict: '',
-    //     shipPoliceStation: '',
-    //     ship_postalCode: '',
-    //     shipEmail: '',
-    //     shipMobile: '',
-    //     shipGSTNo: '',
-    //     shipTINNo: '',
-    //     shipPan: '',
-    //     shipPhone: '',
-    //   });
-    // }
+        setCountries(data);
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      }
+    };
+
+    fetchCountries();
+  }, []);
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await fetch(
+          `https://referential.p.rapidapi.com/v1/country?fields=iso_a2&limit=250`,
+          {
+            method: 'GET',
+            headers: {
+              'X-RapidAPI-Key':
+                'eff51e33a2msh3c4977c37096d34p117ce3jsnad1634fb6450',
+              'X-RapidAPI-Host': 'referential.p.rapidapi.com',
+            },
+          }
+        );
+        const data = await response.json();
+
+        setCountries2(data);
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      }
+    };
+
+    fetchCountries();
+  }, []);
+
+  // Fetch states data when the selected country changes
+  useEffect(() => {
+    const fetchStates = async () => {
+      if (selectedCountry) {
+        try {
+          const countryCode = selectedCountry.iso_a2;
+          console.log(countryCode);
+          const response = await fetch(
+            `https://referential.p.rapidapi.com/v1/state?iso_a2=${countryCode}`,
+            {
+              method: 'GET',
+              headers: {
+                'X-RapidAPI-Key':
+                  'eff51e33a2msh3c4977c37096d34p117ce3jsnad1634fb6450',
+                'X-RapidAPI-Host': 'referential.p.rapidapi.com',
+              },
+            }
+          );
+
+          const data = await response.json();
+          setStates(data);
+        } catch (error) {
+          console.error('Error fetching states:', error);
+        }
+      }
+    };
+
+    fetchStates();
+  }, [selectedCountry]);
+
+  useEffect(() => {
+    const fetchStates = async () => {
+      if (selectedCountry2) {
+        try {
+          const countryCode = selectedCountry2.iso_a2;
+
+          const response = await fetch(
+            `https://referential.p.rapidapi.com/v1/state?iso_a2=${countryCode}`,
+            {
+              method: 'GET',
+              headers: {
+                'X-RapidAPI-Key':
+                  'eff51e33a2msh3c4977c37096d34p117ce3jsnad1634fb6450',
+                'X-RapidAPI-Host': 'referential.p.rapidapi.com',
+              },
+            }
+          );
+          const data = await response.json();
+
+          setStates2(data);
+        } catch (error) {
+          console.error('Error fetching states:', error);
+        }
+      }
+    };
+
+    fetchStates();
+  }, [selectedCountry2]);
+
+  const handleCountryChange = (event) => {
+    let { name, value } = event.target;
+    const selectedCountry = countries.find(
+      (country) => country.value === event.target.value
+    );
+
+    setSelectedCountry(selectedCountry);
+    setFormData((formdata) => ({
+      ...formdata,
+      [event.target.name]: event.target.value,
+    }));
+    console.log(billDetails);
   };
 
+  const handleStateChange = (event) => {
+    let { name, value } = event.target;
+    setSelectedState(event.target.value);
+    setFormData((formdata) => ({
+      ...formdata,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  const handleCountryChange2 = (event) => {
+    const selectedCountry = countries.find(
+      (country) => country.value === event.target.value
+    );
+
+    setSelectedCountry2(selectedCountry);
+    setbillmData((formdata) => ({
+      ...formdata,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  const handleStateChange2 = (event) => {
+    setSelectedState2(event.target.value);
+    setbillmData((formdata) => ({
+      ...formdata,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  useEffect(() => {
+    const uniqueId = uuidv4();
+    setUUId(uniqueId);
+  }, []);
   return (
     <div>
       <form onSubmit={handleFormSubmit}>
@@ -139,8 +367,8 @@ const AddCustomer = () => {
                   id='initials'
                   name='initials'
                   autoComplete='initials'
-                  onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
+                  onChange={handlemainchange}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
                 >
                   <option>Mr.</option>
                   <option>Ms.</option>
@@ -162,8 +390,8 @@ const AddCustomer = () => {
                   name='customer_name'
                   id='customer_name'
                   autoComplete='customer_name'
-                  onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  onChange={handlemainchange}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -181,8 +409,8 @@ const AddCustomer = () => {
                   name='company'
                   type='text'
                   autoComplete='company'
-                  onChange={handleChange}
-                  className='px-1.5 focus:outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  onChange={handlemainchange}
+                  className='px-1.5 focus:outline-none block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -199,8 +427,8 @@ const AddCustomer = () => {
                   id='currency'
                   name='currency'
                   autoComplete='currency'
-                  onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6'
+                  onChange={handlemainchange}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6'
                 >
                   <option>Rupees</option>
                   <option>Dollar</option>
@@ -220,17 +448,19 @@ const AddCustomer = () => {
                 <input
                   id='customerCode'
                   name='customer_code'
+                  value={uniqueid}
+                  disabled
                   type='text'
                   autoComplete='customerCode'
-                  onChange={handleChange}
-                  className='px-1.5 focus:outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  onChange={handlemainchange}
+                  className='px-1.5 focus:outline-none block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
           </div>
         </div>
 
-        <div className='border-b border-gray-900/10 pb-12'>
+        <div className='border-b border-gray-900/10 pb-12 mt-4 mb-4'>
           <h2 className='text-2xl font-semibold leading-7 text-gray-900'>
             Bill to Details Form.
           </h2>
@@ -249,11 +479,11 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='ship_address'
+                  name='address'
                   id='address'
                   autoComplete='address'
                   onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -270,14 +500,13 @@ const AddCustomer = () => {
                 <select
                   id='country'
                   name='country'
-                  autoComplete='country'
                   onChange={handleCountryChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
                 >
                   <option selected>select country</option>
-                  {countryData.map((item) => (
-                    <option key={item.key} value={item.iso_a2}>
-                      {item.value}
+                  {countries.map((country) => (
+                    <option key={country.cca2} value={country.value}>
+                      {country.value}
                     </option>
                   ))}
                 </select>
@@ -295,15 +524,16 @@ const AddCustomer = () => {
                 <select
                   id='state'
                   name='state'
-                  autoComplete='state'
-                  onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
+                  onChange={handleStateChange}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
                 >
-                  {stateData.map((item) => (
-                    <option key={item.key} value={item.value}>
-                      {item.value}
-                    </option>
-                  ))}
+                  {states.length != 0
+                    ? states.map((state) => (
+                        <option key={state.key} value={state.value}>
+                          {state.value}
+                        </option>
+                      ))
+                    : ''}
                 </select>
               </div>
             </div>
@@ -322,7 +552,7 @@ const AddCustomer = () => {
                   id='district'
                   autoComplete='district'
                   onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -331,16 +561,16 @@ const AddCustomer = () => {
                 htmlFor='police-station'
                 className='block text-sm font-medium leading-6 text-gray-900'
               >
-                Police Station
+                Station
               </label>
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='police_station'
+                  name='station'
                   id='police-station'
                   autoComplete='police-station'
                   onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -353,12 +583,12 @@ const AddCustomer = () => {
               </label>
               <div className='mt-2'>
                 <input
-                  type='text'
-                  name='pin'
+                  type='number'
+                  name='postal_code'
                   id='postal_code'
                   autoComplete='postal-code'
                   onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -377,7 +607,7 @@ const AddCustomer = () => {
                   id='email'
                   autoComplete='email'
                   onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -391,12 +621,12 @@ const AddCustomer = () => {
               </label>
               <div className='mt-2'>
                 <input
-                  type='text'
+                  type='tel'
                   name='mobile'
                   id='bill-mobile'
                   autoComplete='bill-mobile'
                   onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -415,7 +645,7 @@ const AddCustomer = () => {
                   id='GST No.'
                   autoComplete='GST No.'
                   onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -430,11 +660,11 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='pan_no.'
+                  name='tin_no'
                   id='Tin No.'
                   autoComplete='Tin No.'
                   onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -453,7 +683,7 @@ const AddCustomer = () => {
                   id='pan'
                   autoComplete='pan'
                   onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -467,19 +697,30 @@ const AddCustomer = () => {
               </label>
               <div className='mt-2'>
                 <input
-                  type='text'
+                  type='tel'
                   name='phone'
                   id='bill-phone'
                   autoComplete='phone'
                   onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
           </div>
+          <Row className=' justify-center'>
+            <Col className='col-12'>
+              <Button
+                size='sm'
+                className='mt-3 block w-fit pl-2 pr-2'
+                onClick={() => addbilladdress()}
+              >
+                Add billing address
+              </Button>
+            </Col>
+          </Row>
         </div>
 
-        <div className='border-b border-gray-900/10 pb-12'>
+        <div className='border-b border-gray-900/10 pb-12 mt-4 mb-4'>
           <h2 className='font-semibold leading-7 text-gray-900 text-2xl'>
             Ship to Details.
           </h2>
@@ -487,7 +728,7 @@ const AddCustomer = () => {
             Ship the package to the customer
           </p>
 
-          <div className='mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6'>
+          <div className='mt-10  grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 '>
             <div className='sm:col-span-4'>
               <div className='flex items-center gap-x-3'>
                 <input
@@ -516,11 +757,11 @@ const AddCustomer = () => {
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='ship_address'
+                  name='address'
                   id='shipAddress'
                   autoComplete='shipAddress'
-                  onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  onChange={billdetailsChange}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -537,14 +778,13 @@ const AddCustomer = () => {
                 <select
                   id='shipCountry'
                   name='country'
-                  autoComplete='country'
-                  onChange={handleCountryChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
+                  onChange={handleCountryChange2}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
                 >
                   <option selected>select country</option>
-                  {countryData.map((item) => (
-                    <option key={item.key} value={item.iso_a2}>
-                      {item.value}
+                  {countries2.map((country) => (
+                    <option key={country.cca2} value={country.value}>
+                      {country.value}
                     </option>
                   ))}
                 </select>
@@ -563,14 +803,16 @@ const AddCustomer = () => {
                   id='shipState'
                   name='state'
                   autoComplete='shipState'
-                  onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
+                  onChange={handleStateChange2}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
                 >
-                  {stateData.map((item) => (
-                    <option key={item.key} value={item.value}>
-                      {item.value}
-                    </option>
-                  ))}
+                  {states2.length != 0
+                    ? states2.map((state) => (
+                        <option key={state.key} value={state.value}>
+                          {state.value}
+                        </option>
+                      ))
+                    : ''}
                 </select>
               </div>
             </div>
@@ -588,8 +830,8 @@ const AddCustomer = () => {
                   name='district'
                   id='shipDistrict'
                   autoComplete='district'
-                  onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  onChange={billdetailsChange}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -598,16 +840,16 @@ const AddCustomer = () => {
                 htmlFor='ship_police-station'
                 className='block text-sm font-medium leading-6 text-gray-900'
               >
-                Police Station
+                Station
               </label>
               <div className='mt-2'>
                 <input
                   type='text'
-                  name='police_station'
+                  name='station'
                   id='ship_police-station'
                   autoComplete='ship_police-station'
-                  onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  onChange={billdetailsChange}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -624,8 +866,8 @@ const AddCustomer = () => {
                   name='postal_code'
                   id='ship_postal-code'
                   autoComplete='ship_postal-code'
-                  onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  onChange={billdetailsChange}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -643,8 +885,8 @@ const AddCustomer = () => {
                   name='email'
                   id='shipEmail'
                   autoComplete='email'
-                  onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  onChange={billdetailsChange}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -658,12 +900,12 @@ const AddCustomer = () => {
               </label>
               <div className='mt-2'>
                 <input
-                  type='text'
+                  type='tel'
                   name='mobile'
                   id='ship-mobile'
                   autoComplete='ship-mobile'
-                  onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  onChange={billdetailsChange}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -681,8 +923,8 @@ const AddCustomer = () => {
                   name='gstin'
                   id='ship-GST No.'
                   autoComplete='gstin'
-                  onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  onChange={billdetailsChange}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -700,8 +942,8 @@ const AddCustomer = () => {
                   name='tin_no'
                   id='ship-Tin No.'
                   autoComplete='tin_no'
-                  onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  onChange={billdetailsChange}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -719,8 +961,8 @@ const AddCustomer = () => {
                   name='pan'
                   id='ship-pan'
                   autoComplete='pan'
-                  onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  onChange={billdetailsChange}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
             </div>
@@ -734,14 +976,101 @@ const AddCustomer = () => {
               </label>
               <div className='mt-2'>
                 <input
-                  type='text'
+                  type='tel'
                   name='phone'
                   id='ship-phone'
                   autoComplete='phone'
-                  onChange={handleChange}
-                  className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  onChange={billdetailsChange}
+                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
               </div>
+            </div>
+          </div>
+
+          <Row>
+            <Col className='col-12'>
+              <Button
+                size='sm'
+                className='mt-3 block w-fit pl-2 pr-2'
+                onClick={() => addshipaddress()}
+              >
+                Add shiping address
+              </Button>
+            </Col>
+          </Row>
+        </div>
+
+        <div className='mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6'>
+          <div className='sm:col-span-3'>
+            <label
+              htmlFor='phone'
+              className='block text-sm font-medium leading-6 text-gray-900'
+            >
+              Contact Person
+            </label>
+            <div className='mt-2'>
+              <input
+                type='tel'
+                name='contact_person'
+                id='ship-phone'
+                autoComplete='phone'
+                onChange={handlemainchange}
+                className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+              />
+            </div>
+          </div>
+          <div className='sm:col-span-3'>
+            <label
+              htmlFor='mobile'
+              className='block text-sm font-medium leading-6 text-gray-900'
+            >
+              Mobile *
+            </label>
+            <div className='mt-2'>
+              <input
+                type='tel'
+                name='contact_mobile'
+                id='ship-phone'
+                autoComplete='phone'
+                onChange={handlemainchange}
+                className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+              />
+            </div>
+          </div>
+          <div className='sm:col-span-3'>
+            <label
+              htmlFor='fax'
+              className='block text-sm font-medium leading-6 text-gray-900'
+            >
+              FAX
+            </label>
+            <div className='mt-2'>
+              <input
+                type='tel'
+                name='fax'
+                id='ship-phone'
+                autoComplete='phone'
+                onChange={handlemainchange}
+                className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+              />
+            </div>
+          </div>
+          <div className='sm:col-span-3'>
+            <label
+              htmlFor='contact_phone'
+              className='block text-sm font-medium leading-6 text-gray-900'
+            >
+              Phone
+            </label>
+            <div className='mt-2'>
+              <input
+                type='tel'
+                name='contact_phone'
+                id='ship-phone'
+                autoComplete='phone'
+                onChange={handlemainchange}
+                className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+              />
             </div>
           </div>
         </div>

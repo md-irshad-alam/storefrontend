@@ -33,6 +33,7 @@ import ForePart_category from '../components/Master/ForePart_Category.jsx';
 import StockList from '../components/Stock/StockList.jsx';
 import AdjustStock from '../components/Stock/AdjustStock.jsx';
 import ForgotPass from '../components/AuthPages/ForgotPass.jsx';
+import CountryStateSelector from '../components/CustomerTabs/text.jsx';
 
 function AllRoutes() {
   const token = sessionStorage.getItem('token');
@@ -75,6 +76,7 @@ function AllRoutes() {
               <Route path='/customers' element={<Customers />} />
               <Route path='/edit-customer/:id' element={<EditCustomer />} />
               <Route path='/view-customer/:id' element={<ViewCustomer />} />
+              <Route path='/text' element={<CountryStateSelector />} />
             </>
           )}
 
