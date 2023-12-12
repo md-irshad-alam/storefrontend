@@ -17,64 +17,103 @@ import {
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { AddForepart, EditForepart } from '../../Redux/Actions';
+import { AiOutlineDelete } from 'react-icons/ai';
 import { BiEdit } from 'react-icons/bi';
-
+import axios from 'axios';
 function ForePart_category() {
-  const [smShow, setSmShow] = useState(false);
   const [query, setquery] = useState('');
   const [data, setdata] = useState([]);
-  const dispatch = useDispatch();
-  const [inputval, setinputval] = useState('');
-  const [countryId, setid] = useState();
-  const [modelval, setmodalval] = useState('');
+  const [items, setitem] = useState([]);
+  const [ForePartCategory, setforpart] = useState('');
+  const [isActive, setActive] = useState(false);
+  const [smShow, setSmShow] = useState(false);
+  const [editId, setEditId] = useState('');
+
   const history = useNavigate();
-
-  const storedaa = useSelector((item) => item.forepart);
-
-  const handlechange = (event) => {
-    const data = {
-      id: Math.floor(100 + Math.random() * 900),
-      forepart: event.target.value,
-    };
-    setinputval(data);
+  const Fetchdata = () => {
+    axios
+      .get(`http://localhost:3000/api/ForePartCategory/get-ForePartCategory`)
+      .then((res) => {
+        console.log(res.data);
+        setdata(res.data.countries);
+      })
+      .catch((error) => {
+        console.log(error);
+        // toast.error(error.response.data.message);
+      });
   };
-
   const handlesubmit = () => {
-    if (inputval.forepart.length > 1) {
-      dispatch(AddForepart(inputval));
-      toast.success('Color added suessfully ', {
-        position: 'bottom-right',
+    axios
+      .post('http://localhost:3000/api/ForePartCategory/add-ForePartCategory', {
+        ForePartCategory,
+        isActive,
+      })
+      .then((responce) => {
+        Fetchdata();
+        toast.success(responce.data.message);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(error.response.data.message);
       });
-    } else {
-      toast.warn('invalid input ', {
-        position: 'bottom-right',
-      });
-    }
   };
+
   const handlesearch = () => {
     const lowercaseValue = query.toLowerCase();
-    const searchResult = storedaa.filter((item) =>
-      item.forpart.toLowerCase().includes(lowercaseValue)
-    );
-
-    setdata(searchResult);
+    const searchWords = lowercaseValue.split(' ');
+    const searchResult =
+      data.length !== 0
+        ? data.filter((item) =>
+            searchWords.every((word) =>
+              item.ForePartCategory.toLowerCase().includes(word)
+            )
+          )
+        : [];
+    setitem(searchResult);
   };
+
+  const editForePartCategory = () => {
+    axios
+      .put(
+        `http://localhost:3000/api/ForePartCategory/update-ForePartCategory/${editId}`,
+        {
+          ForePartCategory,
+        }
+      )
+      .then((res) => {
+        toast.success(res.data.message);
+        setSmShow(false);
+        Fetchdata();
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
+  };
+
   const handlemodal = (id) => {
-    setid(id);
+    setEditId(id);
     setSmShow(true);
   };
 
-  const handleCountryedit = () => {
-    dispatch(EditForepart(countryId, modelval));
-    setSmShow(false);
+  const deleteForePartCategory = (id) => {
+    axios
+      .delete(
+        `http://localhost:3000/api/ForePartCategory/delete-ForePartCategory/${id}`
+      )
+      .then((res) => {
+        Fetchdata();
+        toast.success(res.data.message);
+      })
+      .catch((error) => toast.error(error.response.data.message));
   };
-
-  const searchvalue = query ? data : storedaa;
-
   useEffect(() => {
     handlesearch();
   }, [query]);
+
+  useEffect(() => {
+    Fetchdata();
+  }, []);
+  const getdata = query ? items : data;
   return (
     <Container>
       <h4>ForePart Category</h4>
@@ -85,9 +124,8 @@ function ForePart_category() {
               <Form.Label>ForePart Category</Form.Label>
               <Form.Control
                 type='text'
-                onChange={handlechange}
+                onChange={(ev) => setforpart(ev.target.value)}
                 name='forpart'
-                value={inputval.forpart}
               />
             </Form.Group>
           </Col>
@@ -120,20 +158,23 @@ function ForePart_category() {
               </tr>
             </thead>
             <tbody className='text-center'>
-              {Array.isArray(searchvalue) &&
-                searchvalue.map((item, index) => {
+              {getdata !== undefined &&
+                getdata.map((item, index) => {
                   return (
                     <tr>
-                      <td>{index === 0 ? index + 1 : index + 1}</td>
+                      <td>{index + 1}</td>
 
-                      <td>{item.forepart}</td>
-                      <td>
+                      <td>{item.ForePartCategory}</td>
+                      <td className='flex flex-row gap-x-2 justify-center'>
+                        <Button size='sm' onClick={() => handlemodal(item._id)}>
+                          <BiEdit />
+                        </Button>
                         <Button
                           size='sm'
-                          onClick={() => handlemodal(item.id)}
-                          className='me-2'
+                          variant='danger'
+                          onClick={() => deleteForePartCategory(item._id)}
                         >
-                          <BiEdit />
+                          <AiOutlineDelete />
                         </Button>
                       </td>
                     </tr>
@@ -161,17 +202,19 @@ function ForePart_category() {
                 <Form.Label>ForePart </Form.Label>
                 <Form.Control
                   type='text'
-                  placeholder='Country'
-                  onChange={(e) => setmodalval(e.target.value)}
+                  placeholder='ForePartCategory'
+                  onChange={(e) => setforpart(e.target.value)}
                 />
               </Form.Group>
             </Col>
 
             <div className='flex justify-end gap-x-4 mt-4'>
-              <Button variant='primary' onClick={() => handleCountryedit()}>
+              <Button variant='primary' onClick={() => editForePartCategory()}>
                 Submit
               </Button>
-              <Button variant='danger'>Cancel</Button>
+              <Button variant='danger' onClick={() => setSmShow(false)}>
+                Cancel
+              </Button>
             </div>
           </Row>
         </Modal.Body>

@@ -17,64 +17,112 @@ import {
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { AddGroup, EditGroup } from '../../Redux/Actions';
-
+import axios from 'axios';
+import { AiOutlineDelete } from 'react-icons/ai';
 import { BiEdit } from 'react-icons/bi';
 function GroupMaster() {
-  const [smShow, setSmShow] = useState(false);
   const [query, setquery] = useState('');
   const [data, setdata] = useState([]);
-  const dispatch = useDispatch();
-  const [inputval, setinputval] = useState('');
-  const [countryId, setid] = useState();
-  const [modelval, setmodalval] = useState('');
+  const [items, setitem] = useState([]);
+  const [group_name, setArticleGroupMaster] = useState('');
+  const [isActive, setActive] = useState(false);
+  const [smShow, setSmShow] = useState(false);
+  const [editId, setEditId] = useState('');
+
   const history = useNavigate();
-
-  const storedaa = useSelector((item) => item.group);
-
-  const handlechange = (event) => {
-    const data = {
-      id: Math.floor(100 + Math.random() * 900),
-      group: event.target.value,
-    };
-    setinputval(data);
+  const Fetchdata = () => {
+    axios
+      .get(
+        `http://localhost:3000/api/ArticleGroupMaster/get-ArticleGroupMaster`
+      )
+      .then((res) => {
+        console.log(res.data);
+        setdata(res.data.countries);
+      })
+      .catch((error) => {
+        console.log(error);
+        // toast.error(error.response.data.message);
+      });
   };
-
   const handlesubmit = () => {
-    dispatch(AddGroup(inputval));
-    if (inputval.country.length > 1) {
-      toast.success('Color added suessfully ', {
-        position: 'bottom-right',
-      });
+    if (group_name.length > 1) {
+      axios
+        .post(
+          'http://localhost:3000/api/ArticleGroupMaster/add-ArticleGroupMaster',
+          {
+            group_name,
+            isActive,
+          }
+        )
+        .then((responce) => {
+          Fetchdata();
+          toast.success(responce.data.message);
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error(error.response.data.message);
+        });
     } else {
-      toast.warn('invalid input ', {
-        position: 'bottom-right',
-      });
+      toast.warn('invalid input ');
     }
   };
+
   const handlesearch = () => {
     const lowercaseValue = query.toLowerCase();
-    const searchResult = storedaa.filter((item) =>
-      item.group.toLowerCase().includes(lowercaseValue)
-    );
-
-    setdata(searchResult);
+    const searchWords = lowercaseValue.split(' ');
+    const searchResult =
+      data.length !== 0
+        ? data.filter((item) =>
+            searchWords.every((word) =>
+              item.group_name.toLowerCase().includes(word)
+            )
+          )
+        : [];
+    setitem(searchResult);
   };
+
+  const editArticleGroupMaster = () => {
+    axios
+      .put(
+        `http://localhost:3000/api/ArticleGroupMaster/update-ArticleGroupMaster/${editId}`,
+        {
+          group_name,
+        }
+      )
+      .then((res) => {
+        toast.success(res.data.message);
+        setSmShow(false);
+        Fetchdata();
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
+  };
+
   const handlemodal = (id) => {
-    setid(id);
+    setEditId(id);
     setSmShow(true);
   };
 
-  const handleCountryedit = () => {
-    dispatch(EditGroup(countryId, modelval));
-    setSmShow(false);
+  const deleteArticleGroupMaster = (id) => {
+    axios
+      .delete(
+        `http://localhost:3000/api/ArticleGroupMaster/delete-ArticleGroupMaster/${id}`
+      )
+      .then((res) => {
+        Fetchdata();
+        toast.success(res.data.message);
+      })
+      .catch((error) => toast.error(error.response.data.message));
   };
-
-  const searchvalue = query ? data : storedaa;
-
   useEffect(() => {
     handlesearch();
   }, [query]);
+
+  useEffect(() => {
+    Fetchdata();
+  }, []);
+  const getdata = query ? items : data;
   return (
     <Container>
       <h4>Add Group</h4>
@@ -86,9 +134,8 @@ function GroupMaster() {
               <Form.Control
                 type='text'
                 placeholder='group'
-                onChange={handlechange}
+                onChange={(e) => setArticleGroupMaster(e.target.value)}
                 name='color'
-                value={inputval.color}
               />
             </Form.Group>
           </Col>
@@ -120,20 +167,23 @@ function GroupMaster() {
               </tr>
             </thead>
             <tbody className='text-center'>
-              {Array.isArray(searchvalue) &&
-                searchvalue.map((item, index) => {
+              {getdata !== undefined &&
+                getdata.map((item, index) => {
                   return (
                     <tr>
-                      <td>{index === 0 ? index + 1 : index + 1}</td>
+                      <td>{index + 1}</td>
 
-                      <td>{item.group}</td>
-                      <td>
+                      <td>{item.group_name}</td>
+                      <td className='flex flex-row gap-x-2 justify-center'>
+                        <Button size='sm' onClick={() => handlemodal(item._id)}>
+                          <BiEdit />
+                        </Button>
                         <Button
                           size='sm'
-                          onClick={() => handlemodal(item.id)}
-                          className='me-2'
+                          variant='danger'
+                          onClick={() => deleteArticleGroupMaster(item._id)}
                         >
-                          <BiEdit />
+                          <AiOutlineDelete />
                         </Button>
                       </td>
                     </tr>
@@ -162,13 +212,16 @@ function GroupMaster() {
                 <Form.Control
                   type='text'
                   placeholder='Country'
-                  onChange={(e) => setmodalval(e.target.value)}
+                  onChange={(e) => setArticleGroupMaster(e.target.value)}
                 />
               </Form.Group>
             </Col>
 
             <div className='flex justify-end gap-x-4 mt-4'>
-              <Button variant='primary' onClick={() => handleCountryedit()}>
+              <Button
+                variant='primary'
+                onClick={() => editArticleGroupMaster()}
+              >
                 Submit
               </Button>
               <Button variant='danger'>Cancel</Button>

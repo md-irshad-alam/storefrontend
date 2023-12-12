@@ -17,75 +17,113 @@ import {
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { AddCountry, EditCountry } from '../../Redux/Actions';
-
+import { AiOutlineDelete } from 'react-icons/ai';
 import { BiEdit } from 'react-icons/bi';
+import axios from 'axios';
 function State() {
-  const [smShow, setSmShow] = useState(false);
   const [query, setquery] = useState('');
   const [data, setdata] = useState([]);
-  const dispatch = useDispatch();
-  const [inputval, setinputval] = useState('');
-  const [countryId, setid] = useState();
-  const [modelval, setmodalval] = useState('');
+  const [items, setitem] = useState([]);
+  const [state, setstate] = useState('');
+  const [isActive, setActive] = useState(false);
+  const [smShow, setSmShow] = useState(false);
+  const [editId, setEditId] = useState('');
+  const [country, setCountry] = useState('');
+  const [cntdata, setcntdata] = useState([]);
   const history = useNavigate();
-
-  const storedaa = useSelector((item) => {
-    const data = {
-      state: item.state,
-      country: item.country,
-    };
-    return data;
-  });
-
-  const handlechange = (event) => {
-    const data = {
-      id: Math.floor(100 + Math.random() * 900),
-      country: event.target.value,
-    };
-    setinputval(data);
+  const Fetchdata = () => {
+    axios
+      .get(`http://localhost:3000/api/state/get-stateMaster`)
+      .then((res) => {
+        console.log(res.data);
+        setdata(res.data.countries);
+      })
+      .catch((error) => {
+        console.log(error);
+        // toast.error(error.response.data.message);
+      });
+  };
+  const Fetchcountry = () => {
+    axios
+      .get(`http://localhost:3000/api/country/get-country`)
+      .then((res) => {
+        setcntdata(res.data.countries);
+      })
+      .catch((error) => {
+        console.log(error);
+        // toast.error(error.response.data.message);
+      });
   };
 
   const handlesubmit = () => {
-    dispatch(AddCountry(inputval));
-    if (inputval.country.length > 1) {
-      toast.success('Color added suessfully ', {
-        position: 'bottom-right',
+    axios
+      .post('http://localhost:3000/api/state/add-stateMaster', {
+        state,
+        country,
+        isActive,
+      })
+      .then((responce) => {
+        Fetchdata();
+        toast.success(responce.data.message);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(error.response.data.message);
       });
-    } else {
-      toast.warn('invalid input ', {
-        position: 'bottom-right',
-      });
-    }
   };
+
   const handlesearch = () => {
     const lowercaseValue = query.toLowerCase();
-    const searchResult = storedaa.state.filter((item) =>
-      item.state.toLowerCase().includes(lowercaseValue)
-    );
-
-    const data = {
-      state: searchResult,
-      country: storedaa.country,
-    };
-    console.log(data);
-    setdata(data);
+    const searchWords = lowercaseValue.split(' ');
+    const searchResult =
+      data.length !== 0
+        ? data.filter((item) =>
+            searchWords.every((word) => item.state.toLowerCase().includes(word))
+          )
+        : [];
+    setitem(searchResult);
   };
+
+  const editState = () => {
+    axios
+      .put(`http://localhost:3000/api/state/update-stateMaster/${editId}`, {
+        state,
+        country,
+      })
+      .then((res) => {
+        toast.success(res.data.message);
+        setSmShow(false);
+        Fetchdata();
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
+  };
+
   const handlemodal = (id) => {
-    setid(id);
+    setEditId(id);
     setSmShow(true);
   };
 
-  const handleCountryedit = () => {
-    dispatch(EditCountry(countryId, modelval));
-    setSmShow(false);
+  const deletestate = (id) => {
+    axios
+      .delete(`http://localhost:3000/api/state/delete-stateMaster/${id}`)
+      .then((res) => {
+        Fetchdata();
+        toast.success(res.data.message);
+      })
+      .catch((error) => toast.error(error.response.data.message));
   };
 
-  const searchvalue = query ? data : storedaa;
-  console.log(searchvalue);
   useEffect(() => {
     handlesearch();
   }, [query]);
+
+  useEffect(() => {
+    Fetchdata();
+    Fetchcountry();
+  }, []);
+  const getdata = query ? items : data;
   return (
     <Container>
       <h4>Add State</h4>
@@ -93,13 +131,24 @@ function State() {
         <Row>
           <Col md={12} lg={6}>
             <Form.Group>
+              <Form.Label>Country</Form.Label>
+              <Form.Select onChange={(e) => setCountry(e.target.value)}>
+                <option value=''>Choose country</option>
+                {cntdata !== undefined &&
+                  cntdata.map((ele, id) => {
+                    return <option value={ele.country}>{ele.country}</option>;
+                  })}
+              </Form.Select>
+            </Form.Group>
+          </Col>
+          <Col md={12} lg={6}>
+            <Form.Group>
               <Form.Label>State</Form.Label>
               <Form.Control
                 type='text'
                 placeholder='State'
-                onChange={handlechange}
+                onChange={(e) => setstate(e.target.value)}
                 name='color'
-                value={inputval.color}
               />
             </Form.Group>
           </Col>
@@ -133,28 +182,32 @@ function State() {
               </tr>
             </thead>
             <tbody className='text-center'>
-              {Array.isArray(searchvalue.state) &&
-                searchvalue.state.map((item, index) => {
-                  const countryfind = searchvalue.country.find(
-                    (country) => country.id === item.id
-                  );
-                  return (
-                    <tr>
-                      <td>{index === 0 ? index + 1 : index + 1}</td>
-                      <td>{countryfind ? countryfind.country : ''}</td>
-                      <td>{item.state}</td>
-                      <td>
-                        <Button
-                          size='sm'
-                          onClick={() => handlemodal(item.id)}
-                          className='me-2'
-                        >
-                          <BiEdit />
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
+              {getdata !== undefined
+                ? getdata.map((item, index) => {
+                    return (
+                      <tr>
+                        <td>{index + 1}</td>
+                        <td>{item.country}</td>
+                        <td>{item.state}</td>
+                        <td className='flex flex-row gap-x-2 justify-center'>
+                          <Button
+                            size='sm'
+                            onClick={() => handlemodal(item._id)}
+                          >
+                            <BiEdit />
+                          </Button>
+                          <Button
+                            size='sm'
+                            variant='danger'
+                            onClick={() => deletestate(item._id)}
+                          >
+                            <AiOutlineDelete />
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                : 'loding...'}
             </tbody>
           </Table>
         </Row>
@@ -167,24 +220,36 @@ function State() {
       >
         <Modal.Header closeButton>
           <Modal.Title id='example-modal-sizes-title-sm'>
-            Edit Country
+            Edit state
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row>
             <Col md={6} className='mt-4'>
               <Form.Group className='flex gap-x-4 items-center'>
-                <Form.Label>Country </Form.Label>
+                <Form.Label>state </Form.Label>
                 <Form.Control
                   type='text'
-                  placeholder='Country'
-                  onChange={(e) => setmodalval(e.target.value)}
+                  placeholder='state'
+                  onChange={(e) => setstate(e.target.value)}
                 />
+              </Form.Group>
+            </Col>
+            <Col md={6} className='mt-4'>
+              <Form.Group className='flex gap-x-4 items-center'>
+                <Form.Label>Country </Form.Label>
+                <Form.Select onChange={(e) => setCountry(e.target.value)}>
+                  <option value=''>Choose country</option>
+                  {cntdata !== undefined &&
+                    cntdata.map((ele, id) => {
+                      return <option value={ele.country}>{ele.country}</option>;
+                    })}
+                </Form.Select>
               </Form.Group>
             </Col>
 
             <div className='flex justify-end gap-x-4 mt-4'>
-              <Button variant='primary' onClick={() => handleCountryedit()}>
+              <Button variant='primary' onClick={() => editState()}>
                 Submit
               </Button>
               <Button variant='danger'>Cancel</Button>

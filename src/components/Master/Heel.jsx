@@ -19,62 +19,106 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { AddHeels, EditHeels } from '../../Redux/Actions';
 import { BiEdit } from 'react-icons/bi';
-
+import { AiOutlineDelete } from 'react-icons/ai';
+import axios from 'axios';
 function Heels() {
-  const [smShow, setSmShow] = useState(false);
   const [query, setquery] = useState('');
   const [data, setdata] = useState([]);
-  const dispatch = useDispatch();
-  const [inputval, setinputval] = useState('');
-  const [countryId, setid] = useState();
-  const [modelval, setmodalval] = useState('');
+  const [items, setitem] = useState([]);
+  const [HeelCategory, setHeelCategory] = useState('');
+  const [isActive, setActive] = useState(false);
+  const [smShow, setSmShow] = useState(false);
+  const [editId, setEditId] = useState('');
+
   const history = useNavigate();
-
-  const storedaa = useSelector((item) => item.heel);
-
-  const handlechange = (event) => {
-    const data = {
-      id: Math.floor(100 + Math.random() * 900),
-      heel: event.target.value,
-    };
-    setinputval(data);
+  const Fetchdata = () => {
+    axios
+      .get(`http://localhost:3000/api/HeelCategory/get-HeelCategory`)
+      .then((res) => {
+        console.log(res.data);
+        setdata(res.data.countries);
+      })
+      .catch((error) => {
+        console.log(error);
+        // toast.error(error.response.data.message);
+      });
   };
-
   const handlesubmit = () => {
-    dispatch(AddHeels(inputval));
-    if (inputval.country.length > 1) {
-      toast.success('Color added suessfully ', {
-        position: 'bottom-right',
-      });
+    if (HeelCategory.length > 1) {
+      axios
+        .post('http://localhost:3000/api/HeelCategory/add-HeelCategory', {
+          HeelCategory,
+          isActive,
+        })
+        .then((responce) => {
+          Fetchdata();
+          toast.success(responce.data.message);
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error(error.response.data.message);
+        });
     } else {
-      toast.warn('invalid input ', {
-        position: 'bottom-right',
-      });
+      toast.warn('invalid input ');
     }
   };
+
   const handlesearch = () => {
     const lowercaseValue = query.toLowerCase();
-    const searchResult = storedaa.filter((item) =>
-      item.heel.toLowerCase().includes(lowercaseValue)
-    );
-
-    setdata(searchResult);
+    const searchWords = lowercaseValue.split(' ');
+    const searchResult =
+      data.length !== 0
+        ? data.filter((item) =>
+            searchWords.every((word) =>
+              item.HeelCategory.toLowerCase().includes(word)
+            )
+          )
+        : [];
+    setitem(searchResult);
   };
+
+  const editHeelCategory = () => {
+    axios
+      .put(
+        `http://localhost:3000/api/HeelCategory/update-HeelCategory/${editId}`,
+        {
+          HeelCategory,
+        }
+      )
+      .then((res) => {
+        toast.success(res.data.message);
+        setSmShow(false);
+        Fetchdata();
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
+  };
+
   const handlemodal = (id) => {
-    setid(id);
+    setEditId(id);
     setSmShow(true);
   };
 
-  const handleCountryedit = () => {
-    dispatch(EditHeels(countryId, modelval));
-    setSmShow(false);
+  const deleteHeelCategory = (id) => {
+    axios
+      .delete(
+        `http://localhost:3000/api/HeelCategory/delete-HeelCategory/${id}`
+      )
+      .then((res) => {
+        Fetchdata();
+        toast.success(res.data.message);
+      })
+      .catch((error) => toast.error(error.response.data.message));
   };
-
-  const searchvalue = query ? data : storedaa;
-  console.log(searchvalue);
   useEffect(() => {
     handlesearch();
   }, [query]);
+
+  useEffect(() => {
+    Fetchdata();
+  }, []);
+  const getdata = query ? items : data;
   return (
     <Container>
       <h4>Heel Category</h4>
@@ -86,9 +130,8 @@ function Heels() {
               <Form.Control
                 type='text'
                 placeholder='heel'
-                onChange={handlechange}
+                onChange={(e) => setHeelCategory(e.target.value)}
                 name='color'
-                value={inputval.color}
               />
             </Form.Group>
           </Col>
@@ -121,20 +164,23 @@ function Heels() {
               </tr>
             </thead>
             <tbody className='text-center'>
-              {Array.isArray(searchvalue) &&
-                searchvalue.map((item, index) => {
+              {getdata !== undefined &&
+                getdata.map((item, index) => {
                   return (
                     <tr>
-                      <td>{index === 0 ? index + 1 : index + 1}</td>
+                      <td>{index + 1}</td>
 
-                      <td>{item.heel}</td>
-                      <td>
+                      <td>{item.HeelCategory}</td>
+                      <td className='flex flex-row gap-x-2 justify-center'>
+                        <Button size='sm' onClick={() => handlemodal(item._id)}>
+                          <BiEdit />
+                        </Button>
                         <Button
                           size='sm'
-                          onClick={() => handlemodal(item.id)}
-                          className='me-2'
+                          variant='danger'
+                          onClick={() => deleteHeelCategory(item._id)}
                         >
-                          <BiEdit />
+                          <AiOutlineDelete />
                         </Button>
                       </td>
                     </tr>
@@ -152,24 +198,24 @@ function Heels() {
       >
         <Modal.Header closeButton>
           <Modal.Title id='example-modal-sizes-title-sm'>
-            Edit Country
+            Edit HeelCategory
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row>
             <Col md={6} className='mt-4'>
               <Form.Group className='flex gap-x-4 items-center'>
-                <Form.Label>Country </Form.Label>
+                <Form.Label>HeelCategory </Form.Label>
                 <Form.Control
                   type='text'
-                  placeholder='Country'
-                  onChange={(e) => setmodalval(e.target.value)}
+                  placeholder='HeelCategory'
+                  onChange={(e) => setHeelCategory(e.target.value)}
                 />
               </Form.Group>
             </Col>
 
             <div className='flex justify-end gap-x-4 mt-4'>
-              <Button variant='primary' onClick={() => handleCountryedit()}>
+              <Button variant='primary' onClick={() => editHeelCategory()}>
                 Submit
               </Button>
               <Button variant='danger'>Cancel</Button>

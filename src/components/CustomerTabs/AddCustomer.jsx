@@ -89,8 +89,9 @@ const AddCustomer = () => {
           })
           .then((res) => {
             localStorage.setItem('billId', res.data.bill_details._id);
+            toast.success('billing address added ');
           })
-          .catch((error) => console.log(error));
+          .catch((error) => toast.error('Faild to add billing addres'));
       } else {
         toast.warn('invalid input');
       }
@@ -132,8 +133,9 @@ const AddCustomer = () => {
           .then((res) => {
             console.log(res);
             localStorage.setItem('shipId', res.data.ship_address._id);
+            toast.success('shiping address added');
           })
-          .catch((error) => console.log(error));
+          .catch((error) => toast.error('faild to add ship address'));
       } else {
         toast.warn('invalid input');
       }
@@ -175,8 +177,8 @@ const AddCustomer = () => {
           .then((res) => {
             navigate('/customers');
             toast.success(res.data.message);
-            localStorage.removeItem('billId');
-            localStorage.removeItem('shipId');
+            // localStorage.removeItem('billId');
+            // localStorage.removeItem('shipId');
           })
           .catch((err) => toast.error(err.response.data.message));
       } else {

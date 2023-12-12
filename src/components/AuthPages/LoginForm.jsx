@@ -29,7 +29,7 @@ function LoginForm() {
     if (form.checkValidity() === false) {
     } else {
       axios
-        .post('http://localhost:3100/api/auth/login', {
+        .post('http://localhost:3000/api/auth/login', {
           email,
           password,
         })

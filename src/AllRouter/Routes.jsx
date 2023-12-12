@@ -34,6 +34,7 @@ import StockList from '../components/Stock/StockList.jsx';
 import AdjustStock from '../components/Stock/AdjustStock.jsx';
 import ForgotPass from '../components/AuthPages/ForgotPass.jsx';
 import CountryStateSelector from '../components/CustomerTabs/text.jsx';
+import Curency from '../components/Master/Currency.jsx';
 
 function AllRoutes() {
   const token = sessionStorage.getItem('token');
@@ -70,6 +71,7 @@ function AllRoutes() {
               <Route path='/group' element={<GroupMaster />} />
               <Route path='/gredient' element={<Ingredients />} />
               <Route path='/forpart' element={<ForePart_category />} />
+              <Route path='/curency' element={<Curency />} />
               <Route path='/' element={<Ecommerce />} />
               {/* aturab code  */}
               <Route path='/ecommerce' element={<Ecommerce />} />

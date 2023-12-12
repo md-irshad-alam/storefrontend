@@ -13,53 +13,65 @@ import {
   Button,
   Modal,
 } from 'react-bootstrap';
-
+import { AiOutlineDelete } from 'react-icons/ai';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { AddUom, EditUom } from '../../Redux/Actions';
 
 import { BiEdit } from 'react-icons/bi';
-function Uom() {
+import axios from 'axios';
+function UOM() {
   const [smShow, setSmShow] = useState(false);
   const [query, setquery] = useState('');
   const [data, setdata] = useState([]);
   const dispatch = useDispatch();
-  const [inputval, setinputval] = useState('');
-  const [countryId, setid] = useState();
+  const [UOM, setuom] = useState('');
+  const [items, setitem] = useState([]);
+  const [uomId, setid] = useState();
   const [modelval, setmodalval] = useState('');
+  const [isActive, setActive] = useState(false);
   const history = useNavigate();
 
-  const storedaa = useSelector((item) => item.uom);
-
-  const handlechange = (event) => {
-    const data = {
-      id: Math.floor(100 + Math.random() * 900),
-      uom: event.target.value,
-    };
-    setinputval(data);
+  const Fetchdata = () => {
+    axios
+      .get('http://localhost:3000/api/UOM/get-UOM')
+      .then((res) => {
+        setdata(res.data.countries);
+      })
+      .catch((error) => toast.error(error.response.data.message));
   };
 
   const handlesubmit = () => {
-    dispatch(AddUom(inputval));
-    if (inputval.country.length > 1) {
-      toast.success('Color added suessfully ', {
-        position: 'bottom-right',
-      });
+    if (UOM) {
+      axios
+        .post('http://localhost:3000/api/UOM/add-UOM', {
+          UOM,
+          isActive,
+        })
+        .then((responce) => {
+          Fetchdata();
+          toast.success(responce.data.message);
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error(error.response.data.message);
+        });
     } else {
-      toast.warn('invalid input ', {
-        position: 'bottom-right',
-      });
+      toast.warn('invalid input ');
     }
   };
 
   const handlesearch = () => {
     const lowercaseValue = query.toLowerCase();
-    const searchResult = storedaa.filter((item) =>
-      item.uom.toLowerCase().includes(lowercaseValue)
-    );
+    const searchWords = lowercaseValue.split(' ');
+    const searchResult =
+      data.length !== 0
+        ? data.filter((item) =>
+            searchWords.every((word) => item.UOM.toLowerCase().includes(word))
+          )
+        : [];
 
-    setdata(searchResult);
+    setitem(searchResult);
   };
 
   const handlemodal = (id) => {
@@ -68,15 +80,39 @@ function Uom() {
   };
 
   const handleCountryedit = () => {
-    dispatch(EditUom(countryId, modelval));
-    setSmShow(false);
+    axios
+      .put(`http://localhost:3000/api/UOM/update-UOM/${uomId}`, {
+        UOM,
+      })
+      .then((res) => {
+        toast.success(res.data.message);
+        setSmShow(false);
+        Fetchdata();
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
   };
-
-  const searchvalue = query ? data : storedaa;
+  const handledelete = (id) => {
+    axios
+      .delete(`http://localhost:3000/api/UOM/delete-UOM/${id}`)
+      .then((res) => {
+        toast.success(res.data.message);
+        Fetchdata();
+      })
+      .catch((error) => console.log(error));
+  };
 
   useEffect(() => {
     handlesearch();
   }, [query]);
+
+  useEffect(() => {
+    Fetchdata();
+  }, []);
+
+  const searchvalue = query ? items : data;
+
   return (
     <Container>
       <h4>Add UOM</h4>
@@ -87,10 +123,10 @@ function Uom() {
               <Form.Label>UOM</Form.Label>
               <Form.Control
                 type='text'
-                placeholder='uom'
-                onChange={handlechange}
-                name='color'
-                value={inputval.color}
+                placeholder='UOM'
+                onChange={(event) => setuom(event.target.value)}
+                name='UOM'
+                value={UOM}
               />
             </Form.Group>
           </Col>
@@ -126,16 +162,24 @@ function Uom() {
                 searchvalue.map((item, index) => {
                   return (
                     <tr>
-                      <td>{index === 0 ? index + 1 : index + 1}</td>
+                      <td>{index + 1}</td>
 
-                      <td>{item.uom}</td>
+                      <td>{item.UOM}</td>
                       <td>
                         <Button
                           size='sm'
-                          onClick={() => handlemodal(item.id)}
+                          onClick={() => handlemodal(item._id)}
                           className='me-2'
                         >
                           <BiEdit />
+                        </Button>
+                        <Button
+                          size='sm'
+                          variant='danger'
+                          onClick={() => handledelete(item._id)}
+                          className='me-2'
+                        >
+                          <AiOutlineDelete />
                         </Button>
                       </td>
                     </tr>
@@ -164,7 +208,7 @@ function Uom() {
                 <Form.Control
                   type='text'
                   placeholder='Country'
-                  onChange={(e) => setmodalval(e.target.value)}
+                  onChange={(e) => setuom(e.target.value)}
                 />
               </Form.Group>
             </Col>
@@ -182,4 +226,4 @@ function Uom() {
   );
 }
 
-export default Uom;
+export default UOM;

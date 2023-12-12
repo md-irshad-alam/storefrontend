@@ -2,7 +2,6 @@ import React from 'react';
 import { useReducer } from 'react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
 import {
   Container,
   Row,
@@ -13,73 +12,101 @@ import {
   Button,
   Modal,
 } from 'react-bootstrap';
-
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import {
-  AddCountry,
-  AddDesignation,
-  EditCountry,
-  EditDesignation,
-} from '../../Redux/Actions';
-
+import { AiOutlineDelete } from 'react-icons/ai';
 import { BiEdit } from 'react-icons/bi';
+import axios from 'axios';
 function Designation() {
   const [smShow, setSmShow] = useState(false);
   const [query, setquery] = useState('');
   const [data, setdata] = useState([]);
-  const dispatch = useDispatch();
-  const [inputval, setinputval] = useState('');
-  const [countryId, setid] = useState();
-  const [modelval, setmodalval] = useState('');
+  const [designation, setdigination] = useState('');
+  const [setId, setid] = useState();
+  const [isActive, setActive] = useState(false);
+  const [items, setitems] = useState([]);
+
   const history = useNavigate();
 
-  const storedaa = useSelector((item) => item.designation);
-
-  const handlechange = (event) => {
-    const data = {
-      id: Math.floor(100 + Math.random() * 900),
-      designation: event.target.value,
-    };
-    setinputval(data);
-  };
-
   const handlesubmit = () => {
-    dispatch(AddDesignation(inputval));
-    if (inputval.country.length > 1) {
-      toast.success('Color added suessfully ', {
-        position: 'bottom-right',
+    axios
+      .post('http://localhost:3000/api/designation/add-designation', {
+        designation,
+        isActive,
+      })
+      .then((res) => {
+        toast.success(res.data.message);
+        Fetchdata();
+      })
+      .catch((error) => {
+        toast.error(error.responce.data.message);
       });
-    } else {
-      toast.warn('invalid input ', {
-        position: 'bottom-right',
-      });
-    }
   };
+
+  const Fetchdata = () => {
+    axios
+      .get('http://localhost:3000/api/designation/get-designation')
+      .then((res) => {
+        setdata(res.data.designations);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const hndleDelete = (id) => {
+    axios
+      .delete(` http://localhost:3000/api/designation/delete-designation/${id}`)
+      .then((res) => {
+        toast.success(res.data.message);
+        Fetchdata();
+      })
+      .catch((error) => toast.error(error.responce.data.message));
+  };
+
+  const handleedit = () => {
+    axios
+      .put(
+        `http://localhost:3000/api/designation/update-designation/${setId}`,
+        {
+          designation,
+        }
+      )
+      .then((res) => {
+        Fetchdata();
+        toast.success(res.data.message);
+      })
+      .catch((error) => toast.error(error.responce.data.message));
+  };
+
   const handlesearch = () => {
     const lowercaseValue = query.toLowerCase();
-    const searchResult = storedaa.filter((item) =>
-      item.designation.toLowerCase().includes(lowercaseValue)
-    );
-
-    setdata(searchResult);
+    const searchWords = lowercaseValue.split(' ');
+    const searchResult =
+      data.length !== 0
+        ? data.filter((item) =>
+            searchWords.every((word) =>
+              item.designation.toLowerCase().includes(word)
+            )
+          )
+        : [];
+    setitems(searchResult);
   };
+
   const handlemodal = (id) => {
     setid(id);
     setSmShow(true);
   };
 
-  const handleCountryedit = () => {
-    dispatch(EditDesignation(countryId, modelval));
-    setSmShow(false);
-  };
+  const searchvalue = query ? items : data;
 
-  const searchvalue = query ? data : storedaa;
-  console.log(searchvalue);
   useEffect(() => {
     handlesearch();
   }, [query]);
+
+  useEffect(() => {
+    Fetchdata();
+  }, []);
+
   return (
     <Container>
       <h4>Add Designation</h4>
@@ -91,9 +118,8 @@ function Designation() {
               <Form.Control
                 type='text'
                 placeholder='Designation'
-                onChange={handlechange}
+                onChange={(e) => setdigination(e.target.value)}
                 name='color'
-                value={inputval.color}
               />
             </Form.Group>
           </Col>
@@ -129,17 +155,20 @@ function Designation() {
               {Array.isArray(searchvalue) &&
                 searchvalue.map((item, index) => {
                   return (
-                    <tr>
-                      <td>{index === 0 ? index + 1 : index + 1}</td>
+                    <tr key={index}>
+                      <td>{index + 1}</td>
 
                       <td>{item.designation}</td>
-                      <td>
+                      <td className='flex flex-row gap-x-2 justify-center'>
+                        <Button size='sm' onClick={() => handlemodal(item._id)}>
+                          <BiEdit />
+                        </Button>
                         <Button
                           size='sm'
-                          onClick={() => handlemodal(item.id)}
-                          className='me-2'
+                          variant='danger'
+                          onClick={() => hndleDelete(item._id)}
                         >
-                          <BiEdit />
+                          <AiOutlineDelete />
                         </Button>
                       </td>
                     </tr>
@@ -168,16 +197,18 @@ function Designation() {
                 <Form.Control
                   type='text'
                   placeholder='Country'
-                  onChange={(e) => setmodalval(e.target.value)}
+                  onChange={(e) => setdigination(e.target.value)}
                 />
               </Form.Group>
             </Col>
 
             <div className='flex justify-end gap-x-4 mt-4'>
-              <Button variant='primary' onClick={() => handleCountryedit()}>
+              <Button variant='primary' onClick={() => handleedit()} size='sm'>
                 Submit
               </Button>
-              <Button variant='danger'>Cancel</Button>
+              <Button variant='danger' size='sm'>
+                Cancel
+              </Button>
             </div>
           </Row>
         </Modal.Body>

@@ -16,13 +16,13 @@ export const Links = [
     ],
   },
   {
-    title: "Stock",
-    links:[
+    title: 'Stock',
+    links: [
       {
-        name:"stock-list",
-        sendto:"stock-list"
-      }
-    ]
+        name: 'stock-list',
+        sendto: 'stock-list',
+      },
+    ],
   },
   {
     titleIcon: <CgScreen />,
@@ -31,14 +31,6 @@ export const Links = [
       {
         name: 'Orders',
         sendto: 'orders',
-      },
-      {
-        name: 'Login',
-        sendto: 'login',
-      },
-      {
-        name: 'Register',
-        sendto: 'register',
       },
       {
         name: 'Employee',
@@ -95,6 +87,10 @@ export const Links = [
       {
         name: 'Color',
         sendto: 'color ',
+      },
+      {
+        name: 'Curency',
+        sendto: 'curency ',
       },
       {
         name: 'Country',

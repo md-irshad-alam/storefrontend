@@ -88,6 +88,8 @@ const EditCustomer = () => {
           })
           .then((res) => {
             toast.success(res.data.message);
+            setTimeout(() => {}, 3000);
+            localStorage.removeItem('billId');
           })
           .catch((error) => toast.error(error.response.data.message));
       } else {
@@ -131,6 +133,9 @@ const EditCustomer = () => {
           })
           .then((res) => {
             toast.success(res.data.message);
+            setTimeout(() => {
+              localStorage.removeItem('shipId');
+            }, 3000);
           })
           .catch((error) => toast.error(error.response.data.message));
       } else {

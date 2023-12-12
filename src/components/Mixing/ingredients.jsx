@@ -19,70 +19,111 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { AddIngredient, EditIngredient } from '../../Redux/Actions';
 import { BiEdit } from 'react-icons/bi';
+import axios from 'axios';
+import { AiOutlineDelete } from 'react-icons/ai';
 
 function Ingredients() {
   const [smShow, setSmShow] = useState(false);
   const [query, setquery] = useState('');
   const [data, setdata] = useState([]);
-  const dispatch = useDispatch();
-  const [inputval, setinputval] = useState({
-    id: 0,
-    gredint: '',
-    detail: '',
-  });
-  const [inputdata, setinputdata] = useState();
-  const [countryId, setid] = useState();
-  const [modelval, setmodalval] = useState('');
+  const [Ingredient, setgredient] = useState('');
+  const [Details, setdetails] = useState('');
+  const [graidId, setid] = useState();
+  const [items, setitem] = useState([]);
+  const [isActive, setActive] = useState(false);
   const history = useNavigate();
 
-  const storedaa = useSelector((item) => item.gredient);
-
   const handlechange = (event) => {
-    setinputval({ ...inputval, [event.target.name]: event.target.value });
+    setinputval({ [event.target.name]: event.target.value });
+  };
+
+  const Fetchdata = () => {
+    axios
+      .get('http://localhost:3000/api/Ingredient/get-Ingredient')
+      .then((res) => {
+        setdata(res.data.Ingredients);
+      })
+      .catch((error) => toast.error(error.data.responce.message));
   };
 
   const handlesubmit = () => {
-    const { id, gredint, detail } = inputval;
-    const newObject = {
-      id: Math.floor(100 + Math.random() * 900),
-      gredint,
-      detail,
-    };
-    console.log(newObject);
-    dispatch(AddIngredient(inputval));
-    if (inputval.gredint.length > 1 && inputval.detail.length > 1) {
-      toast.success('Color added suessfully ', {
-        position: 'bottom-right',
+    axios
+      .post('http://localhost:3000/api/Ingredient/add-Ingredient', {
+        Ingredient,
+        Details,
+        isActive,
+      })
+      .then((res) => {
+        toast.success(res.data.message);
+        Fetchdata();
+      })
+      .catch((error) => {
+        console.log(error.responce);
+        toast.error(error.response.data.message);
       });
-    } else {
-      toast.warn('invalid input ', {
-        position: 'bottom-right',
-      });
-    }
   };
+
   const handlesearch = () => {
     const lowercaseValue = query.toLowerCase();
-    const searchResult = storedaa.filter((item) =>
-      item.gredint.toLowerCase().includes(lowercaseValue)
-    );
-
-    setdata(searchResult);
+    const searchWords = lowercaseValue.split(' ');
+    const searchResult =
+      data.length !== 0
+        ? data.filter((item) =>
+            searchWords.every((word) =>
+              item.Ingredient.toLowerCase().includes(word)
+            )
+          )
+        : [];
+    setitem(searchResult);
   };
+
   const handlemodal = (id) => {
     setid(id);
     setSmShow(true);
   };
 
   const handleCountryedit = () => {
-    dispatch(EditIngredient(countryId, modelval));
+    axios
+      .put(
+        `http://localhost:3000/api/Ingredient/update-Ingredient/${graidId}`,
+        {
+          Ingredient,
+          Details,
+        }
+      )
+      .then((res) => {
+        console.log(res);
+        Fetchdata();
+        toast.success(res.data.message);
+      })
+      .catch((error) => {
+        console.log(error);
+        // toast.error(error.data.responce.message);
+      });
     setSmShow(false);
   };
 
-  const searchvalue = query ? data : storedaa;
-  //   console.log(storedaa);
+  const handledelete = (id) => {
+    axios
+      .delete(`http://localhost:3000/api/Ingredient/delete-Ingredient/${id}`)
+      .then((res) => {
+        toast.success(res.data.message);
+        Fetchdata();
+      })
+      .catch((error) => toast.error(error.data.responce.message));
+  };
+
+  const searchvalue = query ? items : data;
+  console.log(searchvalue);
+
   useEffect(() => {
     handlesearch();
   }, [query]);
+
+  useEffect(() => {
+    Fetchdata();
+  }, []);
+
   return (
     <Container>
       <h4>Add Ingredient</h4>
@@ -95,9 +136,8 @@ function Ingredients() {
               </Form.Label>
               <Form.Control
                 type='text'
-                onChange={handlechange}
-                name='gredint'
-                value={inputval.color}
+                onChange={(e) => setgredient(e.target.value)}
+                name='Ingredient'
               />
             </Form.Group>
           </Col>
@@ -108,9 +148,8 @@ function Ingredients() {
               </Form.Label>
               <Form.Control
                 type='text'
-                onChange={handlechange}
-                name='detail'
-                value={inputval.color}
+                onChange={(event) => setdetails(event.target.value)}
+                name='Details'
               />
             </Form.Group>
           </Col>
@@ -144,26 +183,27 @@ function Ingredients() {
               </tr>
             </thead>
             <tbody className='text-center'>
-              {Array.isArray(searchvalue) &&
-                searchvalue.map((item, index) => {
-                  return (
-                    <tr>
-                      <td>{index === 0 ? index + 1 : index + 1}</td>
-
-                      <td>{item.gredint}</td>
-                      <td>{item.detail}</td>
-                      <td>
-                        <Button
-                          size='sm'
-                          onClick={() => handlemodal(item.id)}
-                          className='me-2'
-                        >
-                          <BiEdit />
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
+              {searchvalue.map((item, index) => {
+                return (
+                  <tr>
+                    <td>{index + 1}</td>
+                    <td>{item.Ingredient}</td>
+                    <td>{item.Details}</td>
+                    <td className='flex flex-row gap-x-2 justify-center'>
+                      <Button size='sm' onClick={() => handlemodal(item._id)}>
+                        <BiEdit />
+                      </Button>
+                      <Button
+                        size='sm'
+                        variant='danger'
+                        onClick={() => handledelete(item._id)}
+                      >
+                        <AiOutlineDelete />
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </Table>
         </Row>
@@ -187,8 +227,17 @@ function Ingredients() {
                 <Form.Control
                   type='text'
                   placeholder='Country'
-                  name='gredint'
-                  onChange={(e) => setmodalval(e.target.value)}
+                  onChange={(e) => setgredient(e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6} className='mt-4'>
+              <Form.Group className='flex gap-x-4 items-center'>
+                <Form.Label>Ingredient </Form.Label>
+                <Form.Control
+                  type='text'
+                  placeholder='Country'
+                  onChange={(e) => setdetails(e.target.value)}
                 />
               </Form.Group>
             </Col>

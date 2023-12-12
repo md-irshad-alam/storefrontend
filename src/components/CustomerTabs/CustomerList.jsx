@@ -3,22 +3,14 @@ import { Link, UNSAFE_useScrollRestoration, useParams } from 'react-router-dom';
 import { AiFillEdit } from 'react-icons/ai';
 import { BsFillFileTextFill } from 'react-icons/bs';
 import axios from 'axios';
-
-const dummyData = [
-  { Id: 1, name: 'virat Kohli', country: 'India', state: 'Delhi' },
-  { Id: 2, name: 'Glenn Maxwell', country: 'Australia', state: 'Melbourne' },
-  { Id: 3, name: 'Ab Devillers', country: 'South Africa', state: 'cape Town' },
-  { Id: 4, name: 'chris Gayle', country: 'Westindies', state: 'Gayle Island' },
-  { Id: 5, name: 'Rohit Sharma', country: 'India', state: 'Mumbai' },
-  { Id: 6, name: 'Steven Smith', country: 'Australia', state: 'sydney' },
-  { Id: 7, name: 'Kl Rahul', country: 'India', state: 'Bangalore' },
-];
+import { Button } from 'react-bootstrap';
 
 const CustomerList = () => {
-  const [customerName, setCustomerName] = useState('');
+  const [customer_name, setCustomerName] = useState('');
   const [country, setCountry] = useState('');
-  const [filteredData, setFilteredData] = useState(dummyData);
+  const [filteredData, setFilteredData] = useState();
   const [customerData, setcustomerData] = useState();
+  const [state, setState] = useState('');
 
   useEffect(() => {
     axios
@@ -27,6 +19,7 @@ const CustomerList = () => {
         console.log(res.data);
 
         setcustomerData(res.data.customer);
+        setFilteredData(res.data.customer);
       })
       .catch((error) => {
         console.log(error);
@@ -34,19 +27,36 @@ const CustomerList = () => {
   }, []);
 
   const handleSearch = () => {
+    console.log(state, customer_name, country);
     // Filter data based on selected options
-    const updatedData = dummyData.filter((item) => {
+    const updatedData = customerData.filter((item) => {
       const nameMatch =
-        customerName === '' ||
-        item.name.toLowerCase().includes(customerName.toLowerCase());
+        customer_name === '' ||
+        item.customer_name.toLowerCase().includes(customer_name.toLowerCase());
       const countryMatch =
-        country === '' || item.country.toLowerCase() === country.toLowerCase();
+        country === '' ||
+        item.bill_address.country.toLowerCase().includes(country.toLowerCase());
+      const statematch =
+        state === '' ||
+        item.bill_address.country.toLowerCase().includes(state.toLowerCase());
 
-      return nameMatch && countryMatch;
+      return nameMatch && countryMatch && statematch;
     });
 
     // Update the state with the filtered data
-    setFilteredData(updatedData);
+    console.log(updatedData);
+    if (updatedData.length != 0) {
+      setFilteredData(updatedData);
+    } else {
+      setFilteredData(customerData);
+    }
+  };
+
+  const cancelfilter = () => {
+    setCountry('');
+    setState('');
+    setCustomerName('');
+    setFilteredData(customerData);
   };
 
   return (
@@ -65,7 +75,10 @@ const CustomerList = () => {
           >
             {customerData !== undefined ? (
               customerData.map((item) => (
-                <option key={item.Id}>{item.customer_name}</option>
+                <>
+                  <option>Choose options</option>
+                  <option key={item.Id}>{item.customer_name}</option>
+                </>
               ))
             ) : (
               <option>Select Name</option>
@@ -85,7 +98,10 @@ const CustomerList = () => {
           >
             {customerData !== undefined ? (
               customerData.map((item) => (
-                <option key={item.Id}>{item.bill_address.country}</option>
+                <>
+                  <option>Choose options</option>
+                  <option key={item.Id}>{item.bill_address.country}</option>
+                </>
               ))
             ) : (
               <option>Select Country</option>
@@ -105,7 +121,10 @@ const CustomerList = () => {
           >
             {customerData !== undefined ? (
               customerData.map((item) => (
-                <option key={item.Id}>{item.bill_address.state}</option>
+                <>
+                  <option>Choose option</option>
+                  <option key={item.Id}>{item.bill_address.state}</option>
+                </>
               ))
             ) : (
               <option>Select State</option>
@@ -113,13 +132,13 @@ const CustomerList = () => {
           </select>
         </div>
         <br />
-        <div className='sm:col-span-4'>
-          <button
-            className='bg-red-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded'
-            onClick={handleSearch}
-          >
+        <div className='sm:col-span-4 flex flex-row gap-x-2'>
+          <Button size='sm' onClick={handleSearch}>
             Search
-          </button>
+          </Button>
+          <Button size='sm' variant='danger' onClick={cancelfilter}>
+            Cancel
+          </Button>
         </div>
       </div>
       <div className='overflow-x-auto sm:-mx-6 lg:-mx-8'>
@@ -152,8 +171,8 @@ const CustomerList = () => {
                 </tr>
               </thead>
               <tbody>
-                {customerData !== undefined
-                  ? customerData.map((item, index) => (
+                {filteredData !== undefined
+                  ? filteredData.map((item, index) => (
                       <tr
                         key={index}
                         className={`border-b dark:border-neutral-500 `}

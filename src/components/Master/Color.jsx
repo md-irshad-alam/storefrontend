@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { BiEdit } from 'react-icons/bi';
 import {
   Container,
   Row,
@@ -11,8 +11,9 @@ import {
   Form,
   Table,
   Button,
+  Modal,
 } from 'react-bootstrap';
-
+import { AiOutlineDelete } from 'react-icons/ai';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -22,35 +23,92 @@ import axios from 'axios';
 function Color() {
   const [query, setquery] = useState('');
   const [data, setdata] = useState([]);
-  const storedaa = useSelector((item) => item.color);
+  const [items, setitem] = useState([]);
   const [color, setcolor] = useState('');
+  const [isActive, setActive] = useState(false);
+  const [smShow, setSmShow] = useState(false);
+  const [editId, setEditId] = useState('');
   const history = useNavigate();
+  const Fetchdata = () => {
+    axios
+      .get(`http://localhost:3000/api/color/get-color`)
+      .then((res) => {
+        setdata(res.data.colors);
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
+  };
 
   const handlesubmit = () => {
     if (color.length > 1) {
       axios
-        .post('https://erp-backend-ditn.onrender.com//api/color/add-color', {
+        .post('http://localhost:3000/api/color/add-color', {
           color,
+          isActive,
         })
-        .then((responce) => {})
-        .catch((error) => {});
+        .then((responce) => {
+          Fetchdata();
+          toast.success(responce.data.message);
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error(error.response.data.message);
+        });
     } else {
-      toast.warn('invalid input ', {
-        position: 'bottom-right',
-      });
+      toast.warn('invalid input ');
     }
   };
+
   const handlesearch = () => {
     const lowercaseValue = query.toLowerCase();
-    const searchResult = storedaa.filter((item) =>
-      item.color.toLowerCase().includes(lowercaseValue)
-    );
-    setdata(searchResult);
+    const searchWords = lowercaseValue.split(' ');
+    const searchResult =
+      data.length !== 0
+        ? data.filter((item) =>
+            searchWords.every((word) => item.color.toLowerCase().includes(word))
+          )
+        : [];
+    setitem(searchResult);
+  };
+  const editColor = () => {
+    axios
+      .put(`http://localhost:3000/api/color/update-color/${editId}`, {
+        color,
+      })
+      .then((res) => {
+        toast.success(res.data.message);
+        setSmShow(false);
+        Fetchdata();
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
   };
 
+  const handlemodal = (id) => {
+    setEditId(id);
+    setSmShow(true);
+  };
+
+  const deleteColor = (id) => {
+    axios
+      .delete(`http://localhost:3000/api/color/delete-color/${id}`)
+      .then((res) => {
+        Fetchdata();
+        toast.success(res.data.message);
+      })
+      .catch((error) => toast.error(error.response.data.message));
+  };
   useEffect(() => {
     handlesearch();
   }, [query]);
+
+  useEffect(() => {
+    Fetchdata();
+  }, []);
+  const getdata = query ? items : data;
+
   return (
     <Container>
       <h4>Add Colors</h4>
@@ -96,21 +154,69 @@ function Color() {
               </tr>
             </thead>
             <tbody className='text-center'>
-              {/* {searchvalue.map((item, index) => {
-                return (
-                  <tr>
-                    <td>{index === 0 ? index + 1 : index + 1}</td>
-                    <td>{item.color}</td>
-                    <td>
-                      <BiEdit />
-                    </td>
-                  </tr>
-                );
-              })} */}
+              {getdata !== undefined
+                ? getdata.map((item, index) => {
+                    return (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{item.color}</td>
+                        <td className='flex flex-row gap-x-2 justify-center'>
+                          <Button
+                            size='sm'
+                            onClick={() => handlemodal(item._id)}
+                          >
+                            <BiEdit />
+                          </Button>
+                          <Button
+                            size='sm'
+                            variant='danger'
+                            onClick={() => deleteColor(item._id)}
+                          >
+                            <AiOutlineDelete />
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                : ''}
             </tbody>
           </Table>
         </Row>
       </Card>
+      <Modal
+        size='md'
+        show={smShow}
+        onHide={() => setSmShow(false)}
+        aria-labelledby='example-modal-sizes-title-sm'
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id='example-modal-sizes-title-sm'>
+            Edit Color
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Row>
+            <Col md={6} className='mt-4'>
+              <Form.Group className='flex gap-x-4 items-center'>
+                <Form.Label>Color </Form.Label>
+                <Form.Control
+                  type='text'
+                  placeholder='Color'
+                  name='color'
+                  onChange={(event) => setcolor(event.target.value)}
+                />
+              </Form.Group>
+            </Col>
+
+            <div className='flex gap-x-4 mt-4 m-auto justify-center'>
+              <Button variant='primary' onClick={() => editColor()}>
+                Submit
+              </Button>
+              <Button variant='danger'>Cancel</Button>
+            </div>
+          </Row>
+        </Modal.Body>
+      </Modal>
     </Container>
   );
 }

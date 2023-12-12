@@ -31,7 +31,7 @@ function Store() {
 
   const Fetchdata = () => {
     axios
-      .get(`http://localhost:3100/api/store/get-store`)
+      .get(`http://localhost:3000/api/store/get-store`)
       .then((res) => {
         setdata(res.data.stores);
       })
@@ -42,7 +42,7 @@ function Store() {
 
   const handlesubmit = () => {
     axios
-      .post('http://localhost:3100/api/store/add-store', {
+      .post('http://localhost:3000/api/store/add-store', {
         store_name,
         remarks,
         isActive,
@@ -52,7 +52,8 @@ function Store() {
         toast.success(res.data.message);
       })
       .catch((error) => {
-        toast.error(error.response.data.message);
+        console.log(error);
+        // toast.error(error.response.data.message);
       });
   };
 
@@ -74,7 +75,7 @@ function Store() {
 
   const editStore = () => {
     axios
-      .put(`http://localhost:3100/api/store/update-store/${editId}`, {
+      .put(`http://localhost:3000/api/store/update-store/${editId}`, {
         store_name,
         remarks,
       })
@@ -87,9 +88,10 @@ function Store() {
         toast.error(error.response.data.message);
       });
   };
+
   const handleDelete = (id) => {
     axios
-      .delete(` http://localhost:3100/api/store/delete-store/${id}`)
+      .delete(` http://localhost:3000/api/store/delete-store/${id}`)
       .then((res) => {
         Fetchdata();
         toast.success('Store are deleted Successfylly ');
