@@ -31,7 +31,7 @@ function Store() {
 
   const Fetchdata = () => {
     axios
-      .get(`http://localhost:3000/api/store/get-store`)
+      .get(`http://localhost:3100/api/store/get-store`)
       .then((res) => {
         setdata(res.data.stores);
       })
@@ -42,7 +42,7 @@ function Store() {
 
   const handlesubmit = () => {
     axios
-      .post('http://localhost:3000/api/store/add-store', {
+      .post('http://localhost:3100/api/store/add-store', {
         store_name,
         remarks,
         isActive,
@@ -72,10 +72,9 @@ function Store() {
 
     setitem(searchResult);
   };
-
   const editStore = () => {
     axios
-      .put(`http://localhost:3000/api/store/update-store/${editId}`, {
+      .put(`http://localhost:3100/api/store/update-store/${editId}`, {
         store_name,
         remarks,
       })
@@ -91,7 +90,7 @@ function Store() {
 
   const handleDelete = (id) => {
     axios
-      .delete(` http://localhost:3000/api/store/delete-store/${id}`)
+      .delete(` http://localhost:3100/api/store/delete-store/${id}`)
       .then((res) => {
         Fetchdata();
         toast.success('Store are deleted Successfylly ');
@@ -248,7 +247,9 @@ function Store() {
               <Button variant='primary' onClick={() => editStore()}>
                 Submit
               </Button>
-              <Button variant='danger'>Cancel</Button>
+              <Button variant='danger' onClick={() => setSmShow(!smShow)}>
+                Cancel
+              </Button>
             </div>
           </Row>
         </Modal.Body>

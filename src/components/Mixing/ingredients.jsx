@@ -39,7 +39,7 @@ function Ingredients() {
 
   const Fetchdata = () => {
     axios
-      .get('http://localhost:3000/api/Ingredient/get-Ingredient')
+      .get('http://localhost:3100/api/Ingredient/get-Ingredient')
       .then((res) => {
         setdata(res.data.Ingredients);
       })
@@ -48,7 +48,7 @@ function Ingredients() {
 
   const handlesubmit = () => {
     axios
-      .post('http://localhost:3000/api/Ingredient/add-Ingredient', {
+      .post('http://localhost:3100/api/Ingredient/add-Ingredient', {
         Ingredient,
         Details,
         isActive,
@@ -85,7 +85,7 @@ function Ingredients() {
   const handleCountryedit = () => {
     axios
       .put(
-        `http://localhost:3000/api/Ingredient/update-Ingredient/${graidId}`,
+        `http://localhost:3100/api/Ingredient/update-Ingredient/${graidId}`,
         {
           Ingredient,
           Details,
@@ -105,7 +105,7 @@ function Ingredients() {
 
   const handledelete = (id) => {
     axios
-      .delete(`http://localhost:3000/api/Ingredient/delete-Ingredient/${id}`)
+      .delete(`http://localhost:3100/api/Ingredient/delete-Ingredient/${id}`)
       .then((res) => {
         toast.success(res.data.message);
         Fetchdata();

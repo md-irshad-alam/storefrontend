@@ -33,7 +33,7 @@ function GroupMaster() {
   const Fetchdata = () => {
     axios
       .get(
-        `http://localhost:3000/api/ArticleGroupMaster/get-ArticleGroupMaster`
+        `http://localhost:3100/api/ArticleGroupMaster/get-ArticleGroupMaster`
       )
       .then((res) => {
         console.log(res.data);
@@ -48,7 +48,7 @@ function GroupMaster() {
     if (group_name.length > 1) {
       axios
         .post(
-          'http://localhost:3000/api/ArticleGroupMaster/add-ArticleGroupMaster',
+          'http://localhost:3100/api/ArticleGroupMaster/add-ArticleGroupMaster',
           {
             group_name,
             isActive,
@@ -84,7 +84,7 @@ function GroupMaster() {
   const editArticleGroupMaster = () => {
     axios
       .put(
-        `http://localhost:3000/api/ArticleGroupMaster/update-ArticleGroupMaster/${editId}`,
+        `http://localhost:3100/api/ArticleGroupMaster/update-ArticleGroupMaster/${editId}`,
         {
           group_name,
         }
@@ -107,7 +107,7 @@ function GroupMaster() {
   const deleteArticleGroupMaster = (id) => {
     axios
       .delete(
-        `http://localhost:3000/api/ArticleGroupMaster/delete-ArticleGroupMaster/${id}`
+        `http://localhost:3100/api/ArticleGroupMaster/delete-ArticleGroupMaster/${id}`
       )
       .then((res) => {
         Fetchdata();

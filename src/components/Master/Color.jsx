@@ -31,7 +31,7 @@ function Color() {
   const history = useNavigate();
   const Fetchdata = () => {
     axios
-      .get(`http://localhost:3000/api/color/get-color`)
+      .get(`http://localhost:3100/api/color/get-color`)
       .then((res) => {
         setdata(res.data.colors);
       })
@@ -43,7 +43,7 @@ function Color() {
   const handlesubmit = () => {
     if (color.length > 1) {
       axios
-        .post('http://localhost:3000/api/color/add-color', {
+        .post('http://localhost:3100/api/color/add-color', {
           color,
           isActive,
         })
@@ -73,7 +73,7 @@ function Color() {
   };
   const editColor = () => {
     axios
-      .put(`http://localhost:3000/api/color/update-color/${editId}`, {
+      .put(`http://localhost:3100/api/color/update-color/${editId}`, {
         color,
       })
       .then((res) => {
@@ -93,7 +93,7 @@ function Color() {
 
   const deleteColor = (id) => {
     axios
-      .delete(`http://localhost:3000/api/color/delete-color/${id}`)
+      .delete(`http://localhost:3100/api/color/delete-color/${id}`)
       .then((res) => {
         Fetchdata();
         toast.success(res.data.message);

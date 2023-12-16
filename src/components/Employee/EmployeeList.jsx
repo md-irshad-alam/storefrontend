@@ -1,5 +1,5 @@
-import React from "react";
-import { useState } from "react";
+import React, { useEffect } from 'react';
+import { useState } from 'react';
 import {
   Button,
   Card,
@@ -9,52 +9,182 @@ import {
   Row,
   Table,
   Modal,
-} from "react-bootstrap";
-import { FaEdit } from "react-icons/fa";
-
+} from 'react-bootstrap';
+import { BiEdit } from 'react-icons/bi';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { AiOutlineDelete } from 'react-icons/ai';
 function EmployeeList() {
   const [smShow, setSmShow] = useState(false);
+  const [employee_cato, setemp_cato] = useState([]);
+  const [Designation, setdesign] = useState([]);
+  const [filterdata, setfilter] = useState({
+    Employee_Name: '',
+    Code_No: '',
+    Designation: '',
+  });
+  const [editdata, seteditdata] = useState();
+  const [filtereddata, setfilterdata] = useState([]);
+  const [itemId, setid] = useState('');
+  const [category, setcatogory] = useState([]);
+  const Fetchemployeecato = () => {
+    axios
+      .get('http://localhost:3100/api/Employee/get-AddEmployee')
+      .then((res) => {
+        setemp_cato(res.data.countries);
+      })
+      .catch((error) => toast.error(error.response.data.message));
+  };
+  const Fetchdesign = () => {
+    axios
+      .get('http://localhost:3100/api/designation/get-designation')
+      .then((res) => {
+        setdesign(res.data.designations);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const Fetchdata = () => {
+    axios
+      .get('http://localhost:3100/api/EmployeeCategory/get-EmployeeCategory')
+      .then((res) => {
+        setcatogory(res.data.EmployeeCategorys);
+      })
+      .catch((error) => toast.error(error.response.data.message));
+  };
+
+  useEffect(() => {
+    Fetchdesign();
+    Fetchemployeecato();
+    Fetchdata();
+  }, []);
+
+  const hanldefilterchange = (e) => {
+    const { name, value } = e.target;
+    setfilter((prevFilter) => ({ ...prevFilter, [name]: value }));
+  };
+
+  const hanldeFilter = () => {
+    const { Employee_Name, Card_No, Designation } = filterdata;
+    const newFilteredData = data.filter((employee) => {
+      const nameMatch =
+        employee.Employee_Name.toLowerCase().includes(
+          (Employee_Name || '').toLowerCase()
+        ) || Employee_Name.trim() === '';
+
+      const cardNoMatch =
+        employee.Card_No.includes(Card_No || '') || Card_No.trim() === '';
+
+      const designationMatch =
+        employee.Designation.toLowerCase().includes(
+          (Designation || '').toLowerCase()
+        ) || Designation.trim() === '';
+
+      return nameMatch && cardNoMatch && designationMatch;
+    });
+    console.log(newFilteredData);
+    setfilterdata(newFilteredData);
+    if (newFilteredData.length == 0) {
+      toast.warn('data is not found!');
+    }
+  };
+  const filtercancel = () => {
+    setfilterdata([]);
+  };
+  const edithandlechange = (e) => {
+    const { name, value } = e.target;
+    seteditdata((prev) => ({ ...prev, [name]: value }));
+  };
+  const handlemodal = (id) => {
+    setid(id);
+    setSmShow(true);
+  };
+  const hanldeEdit = () => {
+    try {
+      const { Employee_Name, Card_No, Designation } = editdata;
+      console.log(Employee_Name, Card_No, Designation);
+      axios
+        .put(
+          `http://localhost:3100/api/Employee/update-AddEmployee/${itemId}`,
+          {
+            Employee_Name,
+            Card_No,
+            Designation,
+          }
+        )
+        .then((res) => {
+          Fetchemployeecato();
+          toast.success(res.data.message);
+          setSmShow(false);
+        })
+        .catch((error) => toast.error(error.response.data.message));
+    } catch (error) {
+      toast.error('something went to wrong !');
+    }
+  };
+  const handledelte = (id) => {
+    try {
+      axios
+        .delete(`http://localhost:3100/api/Employee/delete-AddEmployee/${id}`)
+        .then((res) => {
+          Fetchemployeecato();
+          toast.success(res.data.message);
+        })
+        .catch((error) => toast.error(error.response.data.message));
+    } catch (error) {}
+  };
+
+  const data = filtereddata.length > 0 ? filtereddata : employee_cato;
 
   return (
     <Container>
-      <Card className="lg md:xl:w-soloForm p-4 m-auto relative top-20 sm:border-none">
-        <Row className="mb-8">
-          <Col md={4} className="mt-4">
+      <Card className='lg md:xl:w-soloForm p-4 m-auto relative top-20 sm:border-none'>
+        <Row className='mb-8'>
+          <Col md={4} className='mt-4'>
             <Form.Label>Employee Name</Form.Label>
             <Form.Group>
-              <Form.Select>
-                <option value={"emp1"}>Emp 1</option>
-                <option value={"emp2"}>Emp 1</option>
-                <option value={"emp3"}>Emp 1</option>
-                <option value={"emp4"}>Emp 1</option>
+              <Form.Select name='Employee_Name' onChange={hanldefilterchange}>
+                <option disabled>---select options --</option>
+                {employee_cato !== undefined &&
+                  employee_cato.map((ele, id) => (
+                    <option value={ele.Employee_Name}>
+                      {ele.Employee_Name}
+                    </option>
+                  ))}
               </Form.Select>
             </Form.Group>
           </Col>
-          <Col md={4} className="mt-4">
+          <Col md={4} className='mt-4'>
             <Form.Label>mployee Code</Form.Label>
             <Form.Group>
-              <Form.Select>
-                <option value={"emp1"}>Emp 1</option>
-                <option value={"emp2"}>Emp 1</option>
-                <option value={"emp3"}>Emp 1</option>
-                <option value={"emp4"}>Emp 1</option>
+              <Form.Select name='Card_No' onChange={hanldefilterchange}>
+                <option disabled>---select options --</option>
+                {employee_cato !== undefined &&
+                  employee_cato.map((ele, id) => (
+                    <option value={ele.Code_No}>{ele.Card_No}</option>
+                  ))}
               </Form.Select>
             </Form.Group>
           </Col>
-          <Col md={4} className="mt-4">
+          <Col md={4} className='mt-4'>
             <Form.Label>Designation</Form.Label>
             <Form.Group>
-              <Form.Select>
-                <option value={"emp1"}>Emp 1</option>
-                <option value={"emp2"}>Emp 1</option>
-                <option value={"emp3"}>Emp 1</option>
-                <option value={"emp4"}>Emp 1</option>
+              <Form.Select name='Designation' onChange={hanldefilterchange}>
+                <option disabled>---select options --</option>
+                {employee_cato !== undefined &&
+                  employee_cato.map((ele, id) => (
+                    <option value={ele.Designation}>{ele.Designation}</option>
+                  ))}
               </Form.Select>
             </Form.Group>
           </Col>
-          <div className="flex justify-center gap-x-4  border-none mt-4">
-            <Button variant="primary">Search</Button>
-            <Button variant="danger">Cancel</Button>
+          <div className='flex justify-center gap-x-4  border-none mt-4'>
+            <Button variant='primary' onClick={() => hanldeFilter()}>
+              Search
+            </Button>
+            <Button variant='danger' onClick={() => filtercancel()}>
+              Cancel
+            </Button>
           </div>
         </Row>
         <Table>
@@ -69,75 +199,99 @@ function EmployeeList() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td> 001</td>
-              <td> emp 1</td>
-              <td> Supervisor</td>
-              <td> normal</td>
-              <td>
-                {/* <FaEdit onClick={() => setSmShow(true)} className="me-2" /> */}
-                <Button
-                  size="sm"
-                  onClick={() => setSmShow(true)}
-                  className="me-2"
-                >
-                  <FaEdit />
-                </Button>
-              </td>
-            </tr>
+            {data !== undefined &&
+              data.map((ele, index) => (
+                <tr>
+                  <td>{index + 1}</td>
+                  <td>{ele.Card_No}</td>
+                  <td>{ele.Employee_Name}</td>
+                  <td>{ele.Designation}</td>
+                  <td>{ele.Category}</td>
+
+                  <td className='flex flex-row gap-x-2 justify-center'>
+                    <Button size='sm' onClick={() => handlemodal(ele._id)}>
+                      <BiEdit />
+                    </Button>
+                    <Button
+                      size='sm'
+                      variant='danger'
+                      onClick={() => handledelte(ele._id)}
+                    >
+                      <AiOutlineDelete />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </Table>
       </Card>
 
       <Modal
-        size="lg"
+        size='lg'
         show={smShow}
         onHide={() => setSmShow(false)}
-        aria-labelledby="example-modal-sizes-title-sm"
+        aria-labelledby='example-modal-sizes-title-sm'
       >
         <Modal.Header closeButton>
-          <Modal.Title id="example-modal-sizes-title-sm">
+          <Modal.Title id='example-modal-sizes-title-sm'>
             Edit Employee
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row>
-            <Col md={6} className="mt-4">
+            <Col md={6} className='mt-4'>
               <Form.Group>
                 <Form.Label>Employee Name: </Form.Label>
-                <Form.Control type="text" placeholder="Employee Name" />
+                <Form.Control
+                  type='text'
+                  placeholder='Employee Name'
+                  name='Employee_Name'
+                  onChange={edithandlechange}
+                />
               </Form.Group>
             </Col>
-            <Col md={6} className="mt-4">
+            <Col md={6} className='mt-4'>
               <Form.Group>
                 <Form.Label>Card No. </Form.Label>
-                <Form.Control type="text" placeholder="Employee Name" />
+                <Form.Control
+                  type='text'
+                  placeholder='Employee Code'
+                  name='Card_No'
+                  onChange={edithandlechange}
+                />
               </Form.Group>
             </Col>
-            <Col md={6} className="mt-4">
+            <Col md={6} className='mt-4'>
               <Form.Group>
                 <Form.Label>Designation </Form.Label>
-                <Form.Select>
-                  <option value={"passer"}>Passer</option>
-                  <option value={"Operator"}>Operator</option>
-                  <option value={"Supervisor"}>Supervisor</option>
+                <Form.Select name='Designation' onChange={edithandlechange}>
+                  <option disabled>---choose options---</option>
+                  {Designation !== undefined &&
+                    Designation.map((ele) => (
+                      <option value={ele.designation}>{ele.designation}</option>
+                    ))}
                 </Form.Select>
               </Form.Group>
             </Col>
-            <Col md={6} className="mt-4">
+            <Col md={6} className='mt-4'>
               <Form.Group>
                 <Form.Label>Category </Form.Label>
-                <Form.Select>
-                  <option value={"passer"}>Opt 1</option>
-                  <option value={"Operator"}>Opt 2</option>
-                  <option value={"Supervisor"}>Opt 3</option>
+                <Form.Select name='Category' onChange={edithandlechange}>
+                  <option disabled>---choose options---</option>
+                  {category !== undefined &&
+                    category.map((ele) => (
+                      <option value={ele.EmployeeCategory}>
+                        {ele.EmployeeCategory}
+                      </option>
+                    ))}
                 </Form.Select>
               </Form.Group>
             </Col>
-            <div className="flex justify-end gap-x-4 mt-4">
-              <Button variant="primary">Submit</Button>
-              <Button variant="danger">Cancel</Button>
+            <div className='flex justify-end gap-x-4 mt-4'>
+              <Button variant='primary' onClick={() => hanldeEdit()}>
+                Submit
+              </Button>
+              <Button variant='danger'>Cancel</Button>
             </div>
           </Row>
         </Modal.Body>

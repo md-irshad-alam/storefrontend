@@ -1,8 +1,5 @@
 import React from 'react';
-import { useReducer } from 'react';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-
 import {
   Container,
   Row,
@@ -13,49 +10,55 @@ import {
   Button,
   Modal,
 } from 'react-bootstrap';
-
+import { AiOutlineDelete } from 'react-icons/ai';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { AiOutlineDelete } from 'react-icons/ai';
 import { BiEdit } from 'react-icons/bi';
 import axios from 'axios';
-function ForePart_category() {
+function Add_employee_cato() {
+  const [smShow, setSmShow] = useState(false);
   const [query, setquery] = useState('');
   const [data, setdata] = useState([]);
-  const [items, setitem] = useState([]);
-  const [ForePartCategory, setforpart] = useState('');
-  const [isActive, setActive] = useState(false);
-  const [smShow, setSmShow] = useState(false);
-  const [editId, setEditId] = useState('');
 
+  const [EmployeeCategory, setEmployeeCategory] = useState('');
+  const [items, setitem] = useState([]);
+  const [EmployeeCategoryId, setid] = useState();
+  const [modelval, setmodalval] = useState('');
+  const [isActive, setActive] = useState(false);
   const history = useNavigate();
+
   const Fetchdata = () => {
     axios
-      .get(`http://localhost:3100/api/ForePartCategory/get-ForePartCategory`)
+      .get('http://localhost:3100/api/EmployeeCategory/get-EmployeeCategory')
       .then((res) => {
         console.log(res.data);
-        setdata(res.data.countries);
+        setdata(res.data.EmployeeCategorys);
       })
-      .catch((error) => {
-        console.log(error);
-        // toast.error(error.response.data.message);
-      });
+      .catch((error) => toast.error(error.response.data.message));
   };
+
   const handlesubmit = () => {
-    axios
-      .post('http://localhost:3100/api/ForePartCategory/add-ForePartCategory', {
-        ForePartCategory,
-        isActive,
-      })
-      .then((responce) => {
-        Fetchdata();
-        toast.success(responce.data.message);
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error(error.response.data.message);
-      });
+    if (EmployeeCategory) {
+      axios
+        .post(
+          'http://localhost:3100/api/EmployeeCategory/add-EmployeeCategory',
+          {
+            EmployeeCategory,
+            isActive,
+          }
+        )
+        .then((responce) => {
+          Fetchdata();
+          toast.success(responce.data.message);
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error(error.response.data.message);
+        });
+    } else {
+      toast.warn('invalid input ');
+    }
   };
 
   const handlesearch = () => {
@@ -65,19 +68,25 @@ function ForePart_category() {
       data.length !== 0
         ? data.filter((item) =>
             searchWords.every((word) =>
-              item.ForePartCategory.toLowerCase().includes(word)
+              item.EmployeeCategory.toLowerCase().includes(word)
             )
           )
         : [];
+
     setitem(searchResult);
   };
 
-  const editForePartCategory = () => {
+  const handlemodal = (id) => {
+    setid(id);
+    setSmShow(true);
+  };
+
+  const handleCountryedit = () => {
     axios
       .put(
-        `http://localhost:3100/api/ForePartCategory/update-ForePartCategory/${editId}`,
+        `http://localhost:3100/api/EmployeeCategory/update-EmployeeCategory/${EmployeeCategoryId}`,
         {
-          ForePartCategory,
+          EmployeeCategory,
         }
       )
       .then((res) => {
@@ -89,23 +98,18 @@ function ForePart_category() {
         toast.error(error.response.data.message);
       });
   };
-
-  const handlemodal = (id) => {
-    setEditId(id);
-    setSmShow(true);
-  };
-
-  const deleteForePartCategory = (id) => {
+  const handledelete = (id) => {
     axios
       .delete(
-        `http://localhost:3100/api/ForePartCategory/delete-ForePartCategory/${id}`
+        `http://localhost:3100/api/EmployeeCategory/delete-EmployeeCategory/${id}`
       )
       .then((res) => {
-        Fetchdata();
         toast.success(res.data.message);
+        Fetchdata();
       })
-      .catch((error) => toast.error(error.response.data.message));
+      .catch((error) => console.log(error));
   };
+
   useEffect(() => {
     handlesearch();
   }, [query]);
@@ -113,19 +117,23 @@ function ForePart_category() {
   useEffect(() => {
     Fetchdata();
   }, []);
-  const getdata = query ? items : data;
+
+  const searchvalue = query ? items : data;
+
   return (
     <Container>
-      <h4>ForePart Category</h4>
+      <h4>Add Employee Category</h4>
       <Card className='p-4 mb-4 mt-4'>
         <Row>
           <Col md={12} lg={6}>
             <Form.Group>
-              <Form.Label>ForePart Category</Form.Label>
+              <Form.Label>Category *</Form.Label>
               <Form.Control
                 type='text'
-                onChange={(ev) => setforpart(ev.target.value)}
-                name='forpart'
+                placeholder='Category '
+                onChange={(event) => setEmployeeCategory(event.target.value)}
+                name='EmployeeCategory'
+                value={EmployeeCategory}
               />
             </Form.Group>
           </Col>
@@ -140,39 +148,33 @@ function ForePart_category() {
       <Card className='p-4 mt-4'>
         <Row>
           <Table bordered>
-            <thead className='p-3 align-middle text-center bg-green-800'>
-              <tr className=' bg-red-500 '>
+            <thead className='p-3 align-middle text-center'>
+              <tr className='  '>
                 <th>S.No.</th>
-
-                <th className='flex items-center'>
-                  <Form.Control
-                    type='text'
-                    placeholder='search'
-                    onChange={(e) => setquery(e.target.value)}
-                    size='sm'
-                    className='search_input'
-                  />
-                  ForePart Category
-                </th>
+                <th>Category</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody className='text-center'>
-              {getdata !== undefined &&
-                getdata.map((item, index) => {
+              {Array.isArray(searchvalue) &&
+                searchvalue.map((item, index) => {
                   return (
                     <tr>
                       <td>{index + 1}</td>
-
-                      <td>{item.ForePartCategory}</td>
-                      <td className='flex flex-row gap-x-2 justify-center'>
-                        <Button size='sm' onClick={() => handlemodal(item._id)}>
+                      <td>{item.EmployeeCategory}</td>
+                      <td>
+                        <Button
+                          size='sm'
+                          onClick={() => handlemodal(item._id)}
+                          className='me-2'
+                        >
                           <BiEdit />
                         </Button>
                         <Button
                           size='sm'
                           variant='danger'
-                          onClick={() => deleteForePartCategory(item._id)}
+                          onClick={() => handledelete(item._id)}
+                          className='me-2'
                         >
                           <AiOutlineDelete />
                         </Button>
@@ -192,29 +194,27 @@ function ForePart_category() {
       >
         <Modal.Header closeButton>
           <Modal.Title id='example-modal-sizes-title-sm'>
-            Edit ForePart Category
+            Edit Employee Category
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row>
             <Col md={6} className='mt-4'>
               <Form.Group className='flex gap-x-4 items-center'>
-                <Form.Label>ForePart </Form.Label>
+                <Form.Label>Category </Form.Label>
                 <Form.Control
                   type='text'
-                  placeholder='ForePartCategory'
-                  onChange={(e) => setforpart(e.target.value)}
+                  placeholder='Category '
+                  onChange={(e) => setEmployeeCategory(e.target.value)}
                 />
               </Form.Group>
             </Col>
 
             <div className='flex justify-end gap-x-4 mt-4'>
-              <Button variant='primary' onClick={() => editForePartCategory()}>
+              <Button variant='primary' onClick={() => handleCountryedit()}>
                 Submit
               </Button>
-              <Button variant='danger' onClick={() => setSmShow(false)}>
-                Cancel
-              </Button>
+              <Button variant='danger'>Cancel</Button>
             </div>
           </Row>
         </Modal.Body>
@@ -223,4 +223,4 @@ function ForePart_category() {
   );
 }
 
-export default ForePart_category;
+export default Add_employee_cato;

@@ -4,7 +4,7 @@ import { FaFlask } from 'react-icons/fa';
 import { IoMdContacts } from 'react-icons/io';
 import { CgScreen } from 'react-icons/cg';
 import { RiContactsLine, RiStockLine } from 'react-icons/ri';
-
+import { FaUsersBetweenLines } from 'react-icons/fa6';
 export const Links = [
   {
     title: 'Dashboard',
@@ -20,7 +20,25 @@ export const Links = [
     links: [
       {
         name: 'stock-list',
-        sendto: 'stock-list',
+        sendto: 'stock_list',
+      },
+    ],
+  },
+  {
+    titleIcon: <FaUsersBetweenLines />,
+    title: 'Employee',
+    links: [
+      {
+        name: 'Employee',
+        sendto: 'employee',
+      },
+      {
+        name: 'Employee List',
+        sendto: 'employeelist',
+      },
+      {
+        name: 'Employee Category',
+        sendto: 'add_employee_cato',
       },
     ],
   },
@@ -32,14 +50,7 @@ export const Links = [
         name: 'Orders',
         sendto: 'orders',
       },
-      {
-        name: 'Employee',
-        sendto: 'employee',
-      },
-      {
-        name: 'Employee List',
-        sendto: 'employeelist',
-      },
+
       // Products
 
       {
@@ -58,19 +69,7 @@ export const Links = [
         name: 'Add Module',
         sendto: 'add_module ',
       },
-      {
-        name: 'Add Category',
-        sendto: 'add_category ',
-      },
-      // Category
-      {
-        name: 'Category Type',
-        sendto: 'category_type ',
-      },
-      {
-        name: 'Category List',
-        sendto: 'category_List ',
-      },
+
       // weight
       {
         name: 'Add Weight',
@@ -105,7 +104,7 @@ export const Links = [
         sendto: 'uom ',
       },
       {
-        name: 'Group',
+        name: 'Article Group',
         sendto: 'group ',
       },
       {

@@ -34,7 +34,7 @@ function UOM() {
 
   const Fetchdata = () => {
     axios
-      .get('http://localhost:3000/api/UOM/get-UOM')
+      .get('http://localhost:3100/api/UOM/get-UOM')
       .then((res) => {
         setdata(res.data.countries);
       })
@@ -44,7 +44,7 @@ function UOM() {
   const handlesubmit = () => {
     if (UOM) {
       axios
-        .post('http://localhost:3000/api/UOM/add-UOM', {
+        .post('http://localhost:3100/api/UOM/add-UOM', {
           UOM,
           isActive,
         })
@@ -81,7 +81,7 @@ function UOM() {
 
   const handleCountryedit = () => {
     axios
-      .put(`http://localhost:3000/api/UOM/update-UOM/${uomId}`, {
+      .put(`http://localhost:3100/api/UOM/update-UOM/${uomId}`, {
         UOM,
       })
       .then((res) => {
@@ -95,7 +95,7 @@ function UOM() {
   };
   const handledelete = (id) => {
     axios
-      .delete(`http://localhost:3000/api/UOM/delete-UOM/${id}`)
+      .delete(`http://localhost:3100/api/UOM/delete-UOM/${id}`)
       .then((res) => {
         toast.success(res.data.message);
         Fetchdata();

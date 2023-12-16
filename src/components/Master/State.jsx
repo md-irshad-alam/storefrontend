@@ -33,7 +33,7 @@ function State() {
   const history = useNavigate();
   const Fetchdata = () => {
     axios
-      .get(`http://localhost:3000/api/state/get-stateMaster`)
+      .get(`http://localhost:3100/api/state/get-stateMaster`)
       .then((res) => {
         console.log(res.data);
         setdata(res.data.countries);
@@ -45,7 +45,7 @@ function State() {
   };
   const Fetchcountry = () => {
     axios
-      .get(`http://localhost:3000/api/country/get-country`)
+      .get(`http://localhost:3100/api/country/get-country`)
       .then((res) => {
         setcntdata(res.data.countries);
       })
@@ -57,7 +57,7 @@ function State() {
 
   const handlesubmit = () => {
     axios
-      .post('http://localhost:3000/api/state/add-stateMaster', {
+      .post('http://localhost:3100/api/state/add-stateMaster', {
         state,
         country,
         isActive,
@@ -86,7 +86,7 @@ function State() {
 
   const editState = () => {
     axios
-      .put(`http://localhost:3000/api/state/update-stateMaster/${editId}`, {
+      .put(`http://localhost:3100/api/state/update-stateMaster/${editId}`, {
         state,
         country,
       })
@@ -107,7 +107,7 @@ function State() {
 
   const deletestate = (id) => {
     axios
-      .delete(`http://localhost:3000/api/state/delete-stateMaster/${id}`)
+      .delete(`http://localhost:3100/api/state/delete-stateMaster/${id}`)
       .then((res) => {
         Fetchdata();
         toast.success(res.data.message);

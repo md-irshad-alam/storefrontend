@@ -67,7 +67,7 @@ function Currency() {
 
   const Fetchdata = () => {
     axios
-      .get(`http://localhost:3000/api/currency/get-Currency`)
+      .get(`http://localhost:3100/api/currency/get-Currency`)
       .then((res) => {
         setdata(res.data.countries);
       })
@@ -80,7 +80,7 @@ function Currency() {
     const { Symbol, Currency } = currencies;
     if (Currency.length > 1) {
       axios
-        .post('http://localhost:3000/api/currency/add-Currency', {
+        .post('http://localhost:3100/api/currency/add-Currency', {
           Currency,
           Symbol,
           isActive,
@@ -114,7 +114,7 @@ function Currency() {
   const editCurrency = () => {
     const { Currency, Symbol } = currencies;
     axios
-      .put(`http://localhost:3000/api/currency/update-Currency/${editId}`, {
+      .put(`http://localhost:3100/api/currency/update-Currency/${editId}`, {
         Currency,
         Symbol,
       })
@@ -135,7 +135,7 @@ function Currency() {
 
   const deleteCurrency = (id) => {
     axios
-      .delete(`http://localhost:3000/api/currency/delete-Currency/${id}`)
+      .delete(`http://localhost:3100/api/currency/delete-Currency/${id}`)
       .then((res) => {
         Fetchdata();
         toast.success(res.data.message);

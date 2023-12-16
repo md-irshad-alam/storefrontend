@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Form,
   Card,
@@ -12,6 +12,8 @@ import style from '../../ModuleCss/Add_Product.module.css';
 
 import { addCategory } from '../../Redux/Actions';
 import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 // import { addCategory, AddColor, addstore } from "../../Redux/Actions";
 
 function Add_Category() {
@@ -24,11 +26,60 @@ function Add_Category() {
   });
   const [rows, setRows] = useState([{ id: 1 }]);
   const [rows2, setRows2] = useState([{ id: 1 }]);
-  const colordata = useSelector((item) => item.color);
-  const storedata = useSelector((item) => item.store);
-  const ingredientdata = useSelector((item) => item.gredient);
+  const [color, setcolor] = useState([]);
+  const [store, setstore] = useState([]);
+  const [ingredientdata, setgredient] = useState([]);
+  const [table1, settable1] = useState({});
+  const [table2, settable2] = useState({});
+
   const dispatch = useDispatch();
   // const { setTabledata, tabledata } = useStateContext(MyContext);
+
+  const getStore = () => {
+    try {
+      axios
+        .get(`http://localhost:3000/api/store/get-store`)
+        .then((res) => {
+          setstore(res.data.stores);
+        })
+        .catch((error) => {
+          console.warn('Fatching data faild  !');
+        });
+    } catch (error) {
+      toast.error('someting went wrong!');
+    }
+  };
+  const getColor = () => {
+    try {
+      axios
+        .get(`http://localhost:3000/api/color/get-color`)
+        .then((res) => {
+          setcolor(res.data.colors);
+        })
+        .catch((error) => {
+          console.warn('Fatching data faild  !');
+        });
+    } catch (error) {
+      toast.error('someting went to wrong ');
+    }
+  };
+  const getIngrediant = () => {
+    try {
+      axios
+        .get('http://localhost:3000/api/Ingredient/get-Ingredient')
+        .then((res) => {
+          setgredient(res.data.Ingredients);
+        })
+        .catch((error) => console.warn(error));
+    } catch (error) {
+      toast.error('someting went to wrong ');
+    }
+  };
+  useEffect(() => {
+    getColor();
+    getStore();
+    getIngrediant();
+  }, []);
 
   const handleAddRow = () => {
     const newRow = { id: rows.length + 1 };
@@ -45,26 +96,46 @@ function Add_Category() {
     setRows2([...rows2, newRow]);
   };
   const handleRemoveRow2 = () => {
-    if (rows2.length > 1) {
-      const updatedRows = rows2.slice(0, -1); // Remove the last row
-      setRows2(updatedRows);
-    }
+    // if (rows2.length > 1) {
+    //   const updatedRows = rows2.slice(0, -1); // Remove the last row
+    //   setRows2(updatedRows);
+    // }
   };
   const handleinputChange = (e) => {
     setdata({ ...data, [e.target.name]: e.target.value });
   };
-  const handlesubmitForm = (e) => {
-    // e.preventDefault();
-    dispatch(addCategory(data));
-    console.log('form submited');
+  var price = {};
+  const tabledata = useRef();
+
+  const handletablechage = (e, rowId) => {
+    const updatedTableData = { ...table1 };
+    updatedTableData[rowId] = {
+      ...updatedTableData[rowId],
+      [e.target.name]: e.target.value,
+    };
+    settable1(updatedTableData);
+    const price = table1[rowId];
   };
 
+  const handletable1 = (e) => {
+    settable2({ ...table2, [e.target.name]: e.target.value });
+  };
+
+  const handlesubmitForm = (e) => {
+    const formData = new FormData(tabledata.current);
+    const abcd = Object.fromEntries(formData.entries());
+    console.log(abcd);
+  };
+  const calculateprice = () => {
+    for (const key in table1) {
+    }
+  };
   return (
     <div className='container-fluid'>
       <Card className='lg md:xl:w-soloForm p-4 m-auto relative top-20 sm:border-none'>
         <h4 className='card-title  mb-4'>Add Category</h4>
 
-        <Form noValidate validated={validated}>
+        <Form noValidate validated={validated} ref={tabledata}>
           <Row>
             <Col lg={6} md={6} className='mb-4'>
               <Form.Group className=''>
@@ -83,9 +154,10 @@ function Add_Category() {
               <Form.Group>
                 <Form.Label>Select Color</Form.Label>
                 <Form.Select onChange={handleinputChange} name='color'>
-                  {colordata.map((item) => (
-                    <option value={item.color}>{item.color}</option>
-                  ))}
+                  {color !== undefined &&
+                    color.map((item, index) => (
+                      <option value={item.color}>{item.color}</option>
+                    ))}
                 </Form.Select>
               </Form.Group>
             </Col>
@@ -104,9 +176,12 @@ function Add_Category() {
               <Form.Group>
                 <Form.Label>Select Store"</Form.Label>
                 <Form.Select onChange={handleinputChange} name='store'>
-                  {storedata.map((item) => (
-                    <option value={item.store}>{item.store} </option>
-                  ))}
+                  {store !== undefined &&
+                    store.map((item) => (
+                      <option value={item.store_name}>
+                        {item.store_name}{' '}
+                      </option>
+                    ))}
                 </Form.Select>
               </Form.Group>
             </Col>
@@ -126,29 +201,57 @@ function Add_Category() {
               <tbody>
                 {rows.map((item, index) => (
                   <tr>
-                    <td scope='col'>1</td>
+                    <td scope='col'>{index}</td>
                     <td>
-                      <Form.Select>
-                        {ingredientdata.map((item) => (
-                          <>
-                            <option value=''>select option</option>
-                            <option value={item.gredient}>
-                              {item.gredint}
-                            </option>
-                          </>
-                        ))}
+                      <Form.Select
+                        name='Ingredient'
+                        onChange={(e) => handletablechage(e, item.id)}
+                      >
+                        {ingredientdata !== undefined &&
+                          ingredientdata.map((item) => {
+                            return (
+                              <>
+                                <option value={item.Ingredient}>
+                                  {item.Ingredient}
+                                </option>
+                              </>
+                            );
+                          })}
                       </Form.Select>
                     </td>
                     <td>
-                      <Form.Control type='number' required />
+                      <Form.Control
+                        name='weight'
+                        onChange={(e) => handletablechage(e, item.id)}
+                        type='number'
+                        required
+                      />
                     </td>
                     <td>
-                      <Form.Control type='number' required />
+                      <Form.Control
+                        type='number'
+                        name='phr'
+                        onChange={(e) => handletablechage(e, item.id)}
+                        required
+                      />
                     </td>
                     <td>
-                      <Form.Control type='number' required />
+                      <Form.Control
+                        type='number'
+                        name='rate'
+                        onChange={(e) => handletablechage(e, item.id)}
+                        required
+                      />
                     </td>
-                    <td>78.30</td>
+                    <td>
+                      <Form.Control
+                        type='number'
+                        disabled
+                        onChange={(e) => handletablechage(e, item.id)}
+                        name='price'
+                        value={price.length > 0 ? 0 : price.weight * price.rate}
+                      />
+                    </td>
                     <td>
                       <td>
                         <Button

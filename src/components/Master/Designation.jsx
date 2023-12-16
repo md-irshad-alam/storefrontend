@@ -31,7 +31,7 @@ function Designation() {
 
   const handlesubmit = () => {
     axios
-      .post('http://localhost:3000/api/designation/add-designation', {
+      .post('http://localhost:3100/api/designation/add-designation', {
         designation,
         isActive,
       })
@@ -46,7 +46,7 @@ function Designation() {
 
   const Fetchdata = () => {
     axios
-      .get('http://localhost:3000/api/designation/get-designation')
+      .get('http://localhost:3100/api/designation/get-designation')
       .then((res) => {
         setdata(res.data.designations);
       })
@@ -55,7 +55,7 @@ function Designation() {
 
   const hndleDelete = (id) => {
     axios
-      .delete(` http://localhost:3000/api/designation/delete-designation/${id}`)
+      .delete(` http://localhost:3100/api/designation/delete-designation/${id}`)
       .then((res) => {
         toast.success(res.data.message);
         Fetchdata();
@@ -66,7 +66,7 @@ function Designation() {
   const handleedit = () => {
     axios
       .put(
-        `http://localhost:3000/api/designation/update-designation/${setId}`,
+        `http://localhost:3100/api/designation/update-designation/${setId}`,
         {
           designation,
         }

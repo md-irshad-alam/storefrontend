@@ -4,6 +4,7 @@ import { AiFillEdit } from 'react-icons/ai';
 import { BsFillFileTextFill } from 'react-icons/bs';
 import axios from 'axios';
 import { Button } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 
 const CustomerList = () => {
   const [customer_name, setCustomerName] = useState('');
@@ -11,7 +12,11 @@ const CustomerList = () => {
   const [filteredData, setFilteredData] = useState();
   const [customerData, setcustomerData] = useState();
   const [state, setState] = useState('');
-
+  const [filterdata, setfilter] = useState({
+    country: '',
+    state: '',
+    customer_name: '',
+  });
   useEffect(() => {
     axios
       .get('http://localhost:3100/api/customer/getAll-customer')
@@ -25,10 +30,13 @@ const CustomerList = () => {
         console.log(error);
       });
   }, []);
-
+  const handlefiltechange = (event) => {
+    const { name, value } = event.target;
+    setfilter((prev) => ({ ...prev, [name]: value }));
+  };
   const handleSearch = () => {
+    const { state, customer_name, country } = filterdata;
     console.log(state, customer_name, country);
-    // Filter data based on selected options
     const updatedData = customerData.filter((item) => {
       const nameMatch =
         customer_name === '' ||
@@ -38,24 +46,20 @@ const CustomerList = () => {
         item.bill_address.country.toLowerCase().includes(country.toLowerCase());
       const statematch =
         state === '' ||
-        item.bill_address.country.toLowerCase().includes(state.toLowerCase());
+        item.bill_address.state.toLowerCase().includes(state.toLowerCase());
 
       return nameMatch && countryMatch && statematch;
     });
-
-    // Update the state with the filtered data
     console.log(updatedData);
     if (updatedData.length != 0) {
       setFilteredData(updatedData);
     } else {
-      setFilteredData(customerData);
+      toast.warn('item not found !');
     }
   };
 
   const cancelfilter = () => {
-    setCountry('');
-    setState('');
-    setCustomerName('');
+    setfilter({});
     setFilteredData(customerData);
   };
 
@@ -71,18 +75,18 @@ const CustomerList = () => {
           </label>
           <select
             className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
-            onChange={(e) => setCustomerName(e.target.value)}
+            onChange={handlefiltechange}
+            name='customer_name'
           >
-            {customerData !== undefined ? (
+            <option disabled>---choose option---</option>
+            {customerData !== undefined &&
               customerData.map((item) => (
                 <>
-                  <option>Choose options</option>
-                  <option key={item.Id}>{item.customer_name}</option>
+                  <option key={item.Id} value={item.customer_name}>
+                    {item.customer_name}
+                  </option>
                 </>
-              ))
-            ) : (
-              <option>Select Name</option>
-            )}
+              ))}
           </select>
         </div>
         <div className='sm:col-span-1'>
@@ -94,18 +98,18 @@ const CustomerList = () => {
           </label>
           <select
             className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
-            onChange={(e) => setCountry(e.target.value)}
+            onChange={handlefiltechange}
+            name='country'
           >
-            {customerData !== undefined ? (
+            <option disabled>---choose option---</option>
+            {customerData !== undefined &&
               customerData.map((item) => (
                 <>
-                  <option>Choose options</option>
-                  <option key={item.Id}>{item.bill_address.country}</option>
+                  <option key={item.Id} value={item.bill_address.country}>
+                    {item.bill_address.country}
+                  </option>
                 </>
-              ))
-            ) : (
-              <option>Select Country</option>
-            )}
+              ))}
           </select>
         </div>
         <div className='sm:col-span-1'>
@@ -117,18 +121,18 @@ const CustomerList = () => {
           </label>
           <select
             className='px-1.5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
-            onChange={(e) => setCountry(e.target.value)}
+            onChange={handlefiltechange}
+            name='state'
           >
-            {customerData !== undefined ? (
+            <option disabled>---Choose option---</option>
+            {customerData !== undefined &&
               customerData.map((item) => (
                 <>
-                  <option>Choose option</option>
-                  <option key={item.Id}>{item.bill_address.state}</option>
+                  <option key={item.Id} value={item.bill_address.state}>
+                    {item.bill_address.state}
+                  </option>
                 </>
-              ))
-            ) : (
-              <option>Select State</option>
-            )}
+              ))}
           </select>
         </div>
         <br />

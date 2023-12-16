@@ -31,7 +31,7 @@ function Country() {
   const history = useNavigate();
   const Fetchdata = () => {
     axios
-      .get(`http://localhost:3000/api/country/get-country`)
+      .get(`http://localhost:3100/api/country/get-country`)
       .then((res) => {
         console.log(res.data);
         setdata(res.data.countries);
@@ -44,7 +44,7 @@ function Country() {
   const handlesubmit = () => {
     if (country.length > 1) {
       axios
-        .post('http://localhost:3000/api/country/add-country', {
+        .post('http://localhost:3100/api/country/add-country', {
           country,
           isActive,
         })
@@ -77,7 +77,7 @@ function Country() {
 
   const editcountry = () => {
     axios
-      .put(`http://localhost:3000/api/country/update-country/${editId}`, {
+      .put(`http://localhost:3100/api/country/update-country/${editId}`, {
         country,
       })
       .then((res) => {
@@ -97,7 +97,7 @@ function Country() {
 
   const deletecountry = (id) => {
     axios
-      .delete(`http://localhost:3000/api/country/delete-country/${id}`)
+      .delete(`http://localhost:3100/api/country/delete-country/${id}`)
       .then((res) => {
         Fetchdata();
         toast.success(res.data.message);
