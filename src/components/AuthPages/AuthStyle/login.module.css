@@ -28,3 +28,12 @@
   right: 9px;
   font-size: 23px;
 }
+.imageCont{
+  width: 60%;
+  height: auto;
+  overflow: hidden;
+}
+.imageCont img{
+  width: 60%;
+  object-fit: cover;
+}

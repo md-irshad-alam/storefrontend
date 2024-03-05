@@ -49,6 +49,9 @@ function LoginForm() {
   return (
     <div className={style.login_box}>
       <ToastContainer />
+      <div className={style.imageCont}>
+        <img src='/signuplogo.jpg' alt='svg image' />
+      </div>
       <form onSubmit={handlesubmit} className={style.login_cont}>
         <div className='form-group'>
           <label htmlFor='email'>Email</label>
