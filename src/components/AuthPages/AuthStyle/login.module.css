@@ -18,9 +18,14 @@
   position: relative;
 }
 .login_box {
-  position: absolute;
+  /* position: absolute;
   top: 50%;
-  width: fit-content;
+  width: fit-content; */
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  column-gap: 10px;
+  margin-top: 4rem;
 }
 .eyebtn {
   position: absolute;
@@ -28,12 +33,23 @@
   right: 9px;
   font-size: 23px;
 }
-.imageCont{
-  width: 60%;
+.imageCont {
+  width: 50%;
   height: auto;
   overflow: hidden;
 }
-.imageCont img{
+.imageCont img {
   width: 60%;
   object-fit: cover;
+}
+@media only screen and (max-width: 720px) and (min-width: 320px) {
+  .login_box {
+    display: block;
+    width: 90%;
+    margin: auto;
+  }
+  .imageCont {
+    width: 80%;
+    margin: auto;
+  }
 }

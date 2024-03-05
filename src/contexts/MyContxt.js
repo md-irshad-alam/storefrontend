@@ -24,7 +24,7 @@ export function AuthContextProvider({ children }) {
         localStorage.setItem('auth-token', token);
         toast(`${response.data.message} with code ${response.status}`);
         navigate('/');
-        // window.location.reload();
+        window.location.reload();
       })
 
       //  localStorage.setItem('userdetails', userdata);

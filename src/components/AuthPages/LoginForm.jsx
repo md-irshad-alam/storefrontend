@@ -81,7 +81,7 @@ function LoginForm() {
           </div>
         </div>
 
-        <div className='row gap-y-5 text-center mb-7 mt-3'>
+        <div className='row w-full m-auto text-center mb-7 mt-3'>
           <button type='submit' className='btn btn-primary'>
             Sign in
           </button>

@@ -12,7 +12,7 @@ const UserProfile = () => {
   const { currentColor } = useStateContext();
   const { loggedUser, logout } = useContext(AuthContext);
   const { email, mobile, fname, lname } = loggedUser ? loggedUser : {};
-  console.log(loggedUser);
+
   const history = useNavigate();
 
   const token = false;

@@ -5,10 +5,12 @@ import { IoEyeOutline } from 'react-icons/io5';
 import { IoEyeOffOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import style from './Signup.module.css';
+
 const SignUpForm = () => {
   const [input, setinput] = useState({});
   const [userdata, setdata] = useState();
   const [hide, sethide] = useState(false);
+
   const history = useNavigate();
   const handlechange = (event) => {
     const { name, value } = event.target;
@@ -20,8 +22,11 @@ const SignUpForm = () => {
     if (input) {
       const { fname, lname, email, password, mobile, confirmpassword } = input;
       registerApi(fname, lname, email, mobile, password, confirmpassword)
-        .then((responce) => console.log(responce))
-        .catch((error) => console.log(error));
+        .then((responce) => {
+          history('/auth/login');
+          toast.success('Registration successfull');
+        })
+        .catch((error) => toast.error('Registration faild !'));
     } else {
       toast('invalid input');
     }
@@ -112,7 +117,7 @@ const SignUpForm = () => {
           Already registered{' '}
           <span
             className='text-blue-300 font-light active:text-red-500'
-            onClick={() => history('/login')}
+            onClick={() => history('/auth/login')}
           >
             click here
           </span>
