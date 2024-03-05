@@ -30,6 +30,7 @@ function UOM() {
   const [uomId, setid] = useState();
   const [modelval, setmodalval] = useState('');
   const [isActive, setActive] = useState(false);
+
   const history = useNavigate();
 
   const Fetchdata = () => {
@@ -38,27 +39,25 @@ function UOM() {
       .then((res) => {
         setdata(res.data.countries);
       })
-      .catch((error) => toast.error(error.response.data.message));
+      .catch((error) => console.log(error));
   };
 
   const handlesubmit = () => {
-    if (UOM) {
-      axios
-        .post('http://localhost:3100/api/UOM/add-UOM', {
-          UOM,
-          isActive,
-        })
-        .then((responce) => {
-          Fetchdata();
-          toast.success(responce.data.message);
-        })
-        .catch((error) => {
-          console.log(error);
-          toast.error(error.response.data.message);
-        });
-    } else {
-      toast.warn('invalid input ');
-    }
+    console.log(UOM);
+    axios
+      .post('http://localhost:3100/api/UOM/add-UOM', {
+        UOM,
+        isActive,
+      })
+      .then((responce) => {
+        Fetchdata();
+        toast.success(responce.data.message);
+        setuom('');
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(error.response.data.message);
+      });
   };
 
   const handlesearch = () => {
@@ -74,9 +73,11 @@ function UOM() {
     setitem(searchResult);
   };
 
-  const handlemodal = (id) => {
-    setid(id);
+  const handlemodal = (item) => {
+    const { UOM, _id } = item;
+    setid(_id);
     setSmShow(true);
+    setmodalval(UOM);
   };
 
   const handleCountryedit = () => {
@@ -168,7 +169,7 @@ function UOM() {
                       <td>
                         <Button
                           size='sm'
-                          onClick={() => handlemodal(item._id)}
+                          onClick={() => handlemodal(item)}
                           className='me-2'
                         >
                           <BiEdit />
@@ -196,18 +197,16 @@ function UOM() {
         aria-labelledby='example-modal-sizes-title-sm'
       >
         <Modal.Header closeButton>
-          <Modal.Title id='example-modal-sizes-title-sm'>
-            Edit Country
-          </Modal.Title>
+          <Modal.Title id='example-modal-sizes-title-sm'>Edit UOM</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row>
             <Col md={6} className='mt-4'>
               <Form.Group className='flex gap-x-4 items-center'>
-                <Form.Label>Country </Form.Label>
+                <Form.Label>UOM </Form.Label>
                 <Form.Control
                   type='text'
-                  placeholder='Country'
+                  defaultValue={modelval}
                   onChange={(e) => setuom(e.target.value)}
                 />
               </Form.Group>
@@ -217,7 +216,9 @@ function UOM() {
               <Button variant='primary' onClick={() => handleCountryedit()}>
                 Submit
               </Button>
-              <Button variant='danger'>Cancel</Button>
+              <Button variant='danger' onClick={() => setSmShow(false)}>
+                Cancel
+              </Button>
             </div>
           </Row>
         </Modal.Body>

@@ -6,7 +6,6 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ContextProvider } from './contexts/ContextProvider';
 import Store from './Redux/Store';
-
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={Store}>

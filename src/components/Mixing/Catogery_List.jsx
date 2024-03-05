@@ -3,6 +3,7 @@ import { Form, Card, FloatingLabel, Button, Table } from 'react-bootstrap';
 import style from '../../ModuleCss/Add_Product.module.css';
 import data from '../Data';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 function Catogery_List() {
   const [filterdata, setFilterdata] = useState([]);
   const [items, setItems] = useState(data); // Assuming 'data' is your default data source
@@ -11,16 +12,26 @@ function Catogery_List() {
   const [selcetdCato, setselectcato] = useState('');
   const [selcetColor, setselctColor] = useState('');
   const [selcetdType, setselectType] = useState('');
-
+  const fetcdata = () => {
+    axios
+      .get('http://localhost:3100/api/Type/get-AddEmployee')
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((error) => toast.error('someting went to wrong '));
+  };
+  useEffect(() => {
+    fetcdata();
+  }, []);
   const handleSearch = () => {
     const lowercaseValue = query.toLowerCase();
     const searchResult =
       filterdata.length != 0
         ? filterdata.filter((item) =>
-            item.type.toLowerCase().includes(lowercaseValue)
+            item.Type.toLowerCase().includes(lowercaseValue)
           )
         : data.filter((item) =>
-            item.type.toLowerCase().includes(lowercaseValue)
+            item.Type.toLowerCase().includes(lowercaseValue)
           );
 
     setFilterdata(searchResult);

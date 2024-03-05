@@ -1,7 +1,6 @@
 import React from 'react';
 import { useReducer } from 'react';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import {
   Container,
@@ -17,7 +16,7 @@ import {
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { AddIngredient, EditIngredient } from '../../Redux/Actions';
+
 import { BiEdit } from 'react-icons/bi';
 import axios from 'axios';
 import { AiOutlineDelete } from 'react-icons/ai';
@@ -31,6 +30,8 @@ function Ingredients() {
   const [graidId, setid] = useState();
   const [items, setitem] = useState([]);
   const [isActive, setActive] = useState(false);
+  const [modelva11, setmodelval1] = useState('');
+  const [modelva12, setmodelval2] = useState('');
   const history = useNavigate();
 
   const handlechange = (event) => {
@@ -43,7 +44,7 @@ function Ingredients() {
       .then((res) => {
         setdata(res.data.Ingredients);
       })
-      .catch((error) => toast.error(error.data.responce.message));
+      .catch((error) => toast.error('someting went to wrong '));
   };
 
   const handlesubmit = () => {
@@ -56,6 +57,8 @@ function Ingredients() {
       .then((res) => {
         toast.success(res.data.message);
         Fetchdata();
+        setgredient('');
+        setdetails('');
       })
       .catch((error) => {
         console.log(error.responce);
@@ -77,9 +80,12 @@ function Ingredients() {
     setitem(searchResult);
   };
 
-  const handlemodal = (id) => {
-    setid(id);
+  const handlemodal = (item) => {
+    const { Ingredient, Details, _id } = item;
+    setid(_id);
     setSmShow(true);
+    setmodelval1(Ingredient);
+    setmodelval2(Details);
   };
 
   const handleCountryedit = () => {
@@ -98,7 +104,7 @@ function Ingredients() {
       })
       .catch((error) => {
         console.log(error);
-        // toast.error(error.data.responce.message);
+        toast.error('Already exit, please try with new ');
       });
     setSmShow(false);
   };
@@ -138,6 +144,7 @@ function Ingredients() {
                 type='text'
                 onChange={(e) => setgredient(e.target.value)}
                 name='Ingredient'
+                value={Ingredient}
               />
             </Form.Group>
           </Col>
@@ -150,6 +157,7 @@ function Ingredients() {
                 type='text'
                 onChange={(event) => setdetails(event.target.value)}
                 name='Details'
+                value={Details}
               />
             </Form.Group>
           </Col>
@@ -190,7 +198,7 @@ function Ingredients() {
                     <td>{item.Ingredient}</td>
                     <td>{item.Details}</td>
                     <td className='flex flex-row gap-x-2 justify-center'>
-                      <Button size='sm' onClick={() => handlemodal(item._id)}>
+                      <Button size='sm' onClick={() => handlemodal(item)}>
                         <BiEdit />
                       </Button>
                       <Button
@@ -223,20 +231,20 @@ function Ingredients() {
           <Row>
             <Col md={6} className='mt-4'>
               <Form.Group className='flex gap-x-4 items-center'>
-                <Form.Label>Ingredient </Form.Label>
+                <Form.Label>Ingredient</Form.Label>
                 <Form.Control
                   type='text'
-                  placeholder='Country'
+                  defaultValue={modelva11}
                   onChange={(e) => setgredient(e.target.value)}
                 />
               </Form.Group>
             </Col>
             <Col md={6} className='mt-4'>
               <Form.Group className='flex gap-x-4 items-center'>
-                <Form.Label>Ingredient </Form.Label>
+                <Form.Label>Details</Form.Label>
                 <Form.Control
                   type='text'
-                  placeholder='Country'
+                  defaultValue={modelva12}
                   onChange={(e) => setdetails(e.target.value)}
                 />
               </Form.Group>
@@ -246,7 +254,9 @@ function Ingredients() {
               <Button variant='primary' onClick={() => handleCountryedit()}>
                 Submit
               </Button>
-              <Button variant='danger'>Cancel</Button>
+              <Button variant='danger' onClick={() => setSmShow(false)}>
+                Cancel
+              </Button>
             </div>
           </Row>
         </Modal.Body>

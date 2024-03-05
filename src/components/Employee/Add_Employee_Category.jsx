@@ -35,7 +35,7 @@ function Add_employee_cato() {
         console.log(res.data);
         setdata(res.data.EmployeeCategorys);
       })
-      .catch((error) => toast.error(error.response.data.message));
+      .catch((error) => toast.error('someting went to wrong '));
   };
 
   const handlesubmit = () => {
@@ -76,9 +76,11 @@ function Add_employee_cato() {
     setitem(searchResult);
   };
 
-  const handlemodal = (id) => {
-    setid(id);
+  const handlemodal = (item) => {
+    const { EmployeeCategory, _id } = item;
+    setid(_id);
     setSmShow(true);
+    setmodalval(EmployeeCategory);
   };
 
   const handleCountryedit = () => {
@@ -165,7 +167,7 @@ function Add_employee_cato() {
                       <td>
                         <Button
                           size='sm'
-                          onClick={() => handlemodal(item._id)}
+                          onClick={() => handlemodal(item)}
                           className='me-2'
                         >
                           <BiEdit />
@@ -204,6 +206,7 @@ function Add_employee_cato() {
                 <Form.Label>Category </Form.Label>
                 <Form.Control
                   type='text'
+                  defaultValue={modelval}
                   placeholder='Category '
                   onChange={(e) => setEmployeeCategory(e.target.value)}
                 />
@@ -214,7 +217,9 @@ function Add_employee_cato() {
               <Button variant='primary' onClick={() => handleCountryedit()}>
                 Submit
               </Button>
-              <Button variant='danger'>Cancel</Button>
+              <Button variant='danger' onClick={() => setSmShow(false)}>
+                Cancel
+              </Button>
             </div>
           </Row>
         </Modal.Body>

@@ -28,7 +28,6 @@ function Product_List() {
   //       : data.filter((item) =>
   //           item.type.toLowerCase().includes(lowercaseValue)
   //         );
-
   //   setFilterdata(searchResult);
   // };
   // const CancelSearch = () => {
@@ -148,16 +147,16 @@ function Product_List() {
               : items.map((items, id) => {
                   return (
                     <tr key={id}>
-                      <th scope="col">{id === 0 ? 1 : id + 1}</th>
+                      <th scope='col'>{id === 0 ? 1 : id + 1}</th>
                       <td>{items.catogery}</td>
                       <td>{items.color}</td>
                       <td>{items.type}</td>
                       <td>{items.weight}</td>
                       <td>
-                        <div className="flex justify-center items-center gap-x-3">
+                        <div className='flex justify-center items-center gap-x-3'>
                           <FiEdit
-                            color="green"
-                            onClick={(e) => history("/product")}
+                            color='green'
+                            onClick={(e) => history('/update_product')}
                           />
                           <AiOutlineEye
                             onClick={(e) => handleviewproduct(items.id)}

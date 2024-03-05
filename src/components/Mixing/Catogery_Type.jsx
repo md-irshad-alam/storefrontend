@@ -24,40 +24,38 @@ function Catogery_Type() {
   const [query, setquery] = useState('');
   const [data, setdata] = useState([]);
   const [items, setitem] = useState([]);
-  const [color, setcolor] = useState('');
+  const [Type, setType] = useState('');
   const [isActive, setActive] = useState(false);
   const [smShow, setSmShow] = useState(false);
   const [editId, setEditId] = useState('');
+  const [modelval, setmodalval] = useState('');
   const history = useNavigate();
   const Fetchdata = () => {
     axios
-      .get(`http://localhost:3100/api/color/get-color`)
+      .get(`http://localhost:3100/api/Type/get-Type`)
       .then((res) => {
-        setdata(res.data.colors);
+        console.log(res.data);
+        setdata(res.data.countries);
       })
       .catch((error) => {
-        toast.error(error.response.data.message);
+        console.log('fetch error', error);
       });
   };
 
   const handlesubmit = () => {
-    if (color.length > 1) {
-      axios
-        .post('http://localhost:3100/api/color/add-color', {
-          color,
-          isActive,
-        })
-        .then((responce) => {
-          Fetchdata();
-          toast.success(responce.data.message);
-        })
-        .catch((error) => {
-          console.log(error);
-          toast.error(error.response.data.message);
-        });
-    } else {
-      toast.warn('invalid input ');
-    }
+    axios
+      .post('http://localhost:3100/api/Type/add-Type', {
+        Type,
+        isActive,
+      })
+      .then((responce) => {
+        Fetchdata();
+        toast.success(responce.data.message);
+        setType('');
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
   };
 
   const handlesearch = () => {
@@ -66,15 +64,15 @@ function Catogery_Type() {
     const searchResult =
       data.length !== 0
         ? data.filter((item) =>
-            searchWords.every((word) => item.color.toLowerCase().includes(word))
+            searchWords.every((word) => item.Type.toLowerCase().includes(word))
           )
         : [];
     setitem(searchResult);
   };
-  const editColor = () => {
+  const editType = () => {
     axios
-      .put(`http://localhost:3100/api/color/update-color/${editId}`, {
-        color,
+      .put(`http://localhost:3100/api/Type/update-Type/${editId}`, {
+        Type,
       })
       .then((res) => {
         toast.success(res.data.message);
@@ -86,14 +84,16 @@ function Catogery_Type() {
       });
   };
 
-  const handlemodal = (id) => {
-    setEditId(id);
+  const handlemodal = (item) => {
+    const { Type, _id } = item;
+    setEditId(_id);
     setSmShow(true);
+    setmodalval(Type);
   };
 
-  const deleteColor = (id) => {
+  const deleteType = (id) => {
     axios
-      .delete(`http://localhost:3100/api/color/delete-color/${id}`)
+      .delete(`http://localhost:3100/api/Type/delete-Type/${id}`)
       .then((res) => {
         Fetchdata();
         toast.success(res.data.message);
@@ -111,18 +111,18 @@ function Catogery_Type() {
 
   return (
     <Container>
-      <h4>Add Colors</h4>
+      <h4>Add Category Type</h4>
       <Card className='p-4 mb-4 mt-4'>
         <Row>
           <Col md={12} lg={6}>
             <Form.Group>
-              <Form.Label>Color</Form.Label>
+              <Form.Label>Type</Form.Label>
               <Form.Control
                 type='text'
-                placeholder='Color'
-                onChange={(event) => setcolor(event.target.value)}
-                name='color'
-                value={color}
+                placeholder='Type'
+                onChange={(event) => setType(event.target.value)}
+                name='Type'
+                value={Type}
               />
             </Form.Group>
           </Col>
@@ -148,7 +148,7 @@ function Catogery_Type() {
                     size='sm'
                     style={{ width: '50%' }}
                   />
-                  Color
+                  Type
                 </th>
                 <th>Action</th>
               </tr>
@@ -159,18 +159,15 @@ function Catogery_Type() {
                     return (
                       <tr key={index}>
                         <td>{index + 1}</td>
-                        <td>{item.color}</td>
+                        <td>{item.Type}</td>
                         <td className='flex flex-row gap-x-2 justify-center'>
-                          <Button
-                            size='sm'
-                            onClick={() => handlemodal(item._id)}
-                          >
+                          <Button size='sm' onClick={() => handlemodal(item)}>
                             <BiEdit />
                           </Button>
                           <Button
                             size='sm'
                             variant='danger'
-                            onClick={() => deleteColor(item._id)}
+                            onClick={() => deleteType(item._id)}
                           >
                             <AiOutlineDelete />
                           </Button>
@@ -191,28 +188,31 @@ function Catogery_Type() {
       >
         <Modal.Header closeButton>
           <Modal.Title id='example-modal-sizes-title-sm'>
-            Edit Color
+            Edit Category Type
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row>
-            <Col md={6} className='mt-4'>
-              <Form.Group className='flex gap-x-4 items-center'>
-                <Form.Label>Color </Form.Label>
+            <Col md={6} className='mt-4 w-full'>
+              <Form.Group className='flex gap-x-5 w-full items-center'>
+                <Form.Label>Category Type </Form.Label>
                 <Form.Control
                   type='text'
-                  placeholder='Color'
-                  name='color'
-                  onChange={(event) => setcolor(event.target.value)}
+                  placeholder='Type'
+                  defaultValue={modelval}
+                  name='Type'
+                  onChange={(event) => setType(event.target.value)}
                 />
               </Form.Group>
             </Col>
 
             <div className='flex gap-x-4 mt-4 m-auto justify-center'>
-              <Button variant='primary' onClick={() => editColor()}>
+              <Button variant='primary' onClick={() => editType()}>
                 Submit
               </Button>
-              <Button variant='danger'>Cancel</Button>
+              <Button variant='danger' onClick={() => setSmShow(false)}>
+                Cancel
+              </Button>
             </div>
           </Row>
         </Modal.Body>

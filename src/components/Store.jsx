@@ -25,7 +25,8 @@ function Store() {
   const [smShow, setSmShow] = useState(false);
   const [data, setdata] = useState([]);
   const [items, setitem] = useState([]);
-
+  const [modelval1, setmodelval1] = useState('');
+  const [modelval2, setmodelval2] = useState('');
   const [editId, setEditId] = useState();
   const history = useNavigate();
 
@@ -36,7 +37,7 @@ function Store() {
         setdata(res.data.stores);
       })
       .catch((error) => {
-        toast.error(error.response.data.message);
+        toast.error('someting went to wrong ');
       });
   };
 
@@ -55,6 +56,8 @@ function Store() {
         console.log(error);
         // toast.error(error.response.data.message);
       });
+    setStore('');
+    setRemarks('');
   };
 
   const handlesearch = () => {
@@ -80,7 +83,7 @@ function Store() {
       })
       .then((res) => {
         toast.success(res.data.message);
-        setSmShow(true);
+        setSmShow(false);
         Fetchdata();
       })
       .catch((error) => {
@@ -98,9 +101,12 @@ function Store() {
       .catch((error) => toast.error(error.message));
   };
 
-  const handlemodal = (id) => {
-    setEditId(id);
+  const handlemodal = (item) => {
+    const { store_name, remarks, _id } = item;
+    setEditId(_id);
     setSmShow(true);
+    setmodelval1(store_name);
+    setmodelval2(remarks);
   };
 
   useEffect(() => {
@@ -115,7 +121,7 @@ function Store() {
 
   return (
     <Container>
-      <h4>Store</h4>
+      <h4> Add Store</h4>
       <Card className='p-4 mt-4 mb-4'>
         <Row>
           <Col>
@@ -183,7 +189,7 @@ function Store() {
                         <td className='flex gap-x-1 items-center justify-center'>
                           <Button
                             size='sm'
-                            onClick={() => handlemodal(item._id)}
+                            onClick={() => handlemodal(item)}
                             className='me-2'
                           >
                             <BiEdit color='white' />
@@ -227,6 +233,7 @@ function Store() {
                   type='text'
                   placeholder='Store'
                   name='store_name'
+                  defaultValue={modelval1}
                   onChange={(event) => setStore(event.target.value)}
                 />
               </Form.Group>
@@ -237,6 +244,7 @@ function Store() {
                 <Form.Control
                   type='text'
                   placeholder='Remarks'
+                  defaultValue={modelval2}
                   name='remarks'
                   onChange={(event) => setRemarks(event.target.value)}
                 />

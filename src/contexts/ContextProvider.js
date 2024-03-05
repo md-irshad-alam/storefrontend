@@ -20,7 +20,7 @@ export const ContextProvider = ({ children }) => {
   const [prodData, SetProductionRef] = useState({});
   const [ClintData, SetClintRef] = useState({});
   const [userdetails, setuserDetails] = useState(null);
- 
+  const [tablechange, settablechange] = useState([]);
   const setMode = (e) => {
     setCurrentMode(e.target.value);
     localStorage.setItem('themeMode', e.target.value);
@@ -63,6 +63,8 @@ export const ContextProvider = ({ children }) => {
         SetClintRef,
         userdetails,
         setuserDetails,
+        tablechange,
+        settablechange,
       }}
     >
       {children}

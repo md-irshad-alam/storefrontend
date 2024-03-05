@@ -1,6 +1,7 @@
 import { createStore, combineReducers } from 'redux';
-import Reducer from './Actions';
 
-const Store = createStore(Reducer);
+import { AuthReducer } from './AuthAction';
+
+const Store = createStore(AuthReducer);
 
 export default Store;

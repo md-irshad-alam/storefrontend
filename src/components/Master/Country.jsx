@@ -27,18 +27,16 @@ function Country() {
   const [isActive, setActive] = useState(false);
   const [smShow, setSmShow] = useState(false);
   const [editId, setEditId] = useState('');
-
+  const [modelval, setmodelval] = useState('');
   const history = useNavigate();
   const Fetchdata = () => {
     axios
       .get(`http://localhost:3100/api/country/get-country`)
       .then((res) => {
-        console.log(res.data);
         setdata(res.data.countries);
       })
       .catch((error) => {
         console.log(error);
-        // toast.error(error.response.data.message);
       });
   };
   const handlesubmit = () => {
@@ -49,12 +47,14 @@ function Country() {
           isActive,
         })
         .then((responce) => {
+          console.log(responce.data.country._id);
+          localStorage.setItem('countryId', responce.data.country._id);
           Fetchdata();
+          setCountry('');
           toast.success(responce.data.message);
         })
         .catch((error) => {
-          console.log(error);
-          toast.error(error.response.data.message);
+          toast.error('faild to add country');
         });
     } else {
       toast.warn('invalid input ');
@@ -90,9 +90,11 @@ function Country() {
       });
   };
 
-  const handlemodal = (id) => {
-    setEditId(id);
+  const handlemodal = (item) => {
+    const { country, _id } = item;
+    setEditId(_id);
     setSmShow(true);
+    setmodelval(country);
   };
 
   const deletecountry = (id) => {
@@ -165,10 +167,7 @@ function Country() {
                         <td>{index === 0 ? index + 1 : index + 1}</td>
                         <td>{item.country}</td>
                         <td className='flex flex-row gap-x-2 justify-center'>
-                          <Button
-                            size='sm'
-                            onClick={() => handlemodal(item._id)}
-                          >
+                          <Button size='sm' onClick={() => handlemodal(item)}>
                             <BiEdit />
                           </Button>
                           <Button
@@ -205,6 +204,7 @@ function Country() {
                 <Form.Label>Country </Form.Label>
                 <Form.Control
                   type='text'
+                  defaultValue={modelval}
                   placeholder='Country'
                   onChange={(e) => setCountry(e.target.value)}
                 />
@@ -215,7 +215,9 @@ function Country() {
               <Button variant='primary' onClick={() => editcountry()}>
                 Submit
               </Button>
-              <Button variant='danger'>Cancel</Button>
+              <Button variant='danger' onClick={() => setSmShow(false)}>
+                Cancel
+              </Button>
             </div>
           </Row>
         </Modal.Body>

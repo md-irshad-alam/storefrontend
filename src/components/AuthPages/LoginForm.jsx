@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import axios from 'axios';
 import { Container, FloatingLabel } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -6,13 +7,14 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card';
-import style from '../../ModuleCss/Login.css';
+import style from './AuthStyle/login.module.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import { IoEyeOutline } from 'react-icons/io5';
+import { IoEyeOffOutline } from 'react-icons/io5';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { Adddetails } from '../../Redux/Actions';
+import { ToastContainer } from 'react-toastify';
+import { AuthContext } from '../../contexts/MyContxt';
 
 function LoginForm() {
   const [Term, setTerm] = useState(false);
@@ -20,97 +22,77 @@ function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPass] = useState('');
   const { userdetails, setuserDetails } = useState(null);
+  const [input, setinput] = useState({});
+  const [hide, sethide] = useState(false);
+  const [userdata, setdata] = useState();
   const history = useNavigate();
-  const dispatch = useDispatch();
 
-  const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    event.preventDefault();
-    if (form.checkValidity() === false) {
-    } else {
-      axios
-        .post('http://localhost:3000/api/auth/login', {
-          email,
-          password,
-        })
-        .then((responce) => {
-          sessionStorage.setItem('token', responce.data.token);
-          const getSession = sessionStorage.getItem('token');
-          if (getSession) {
-            axios.defaults.headers.common[
-              'Authorization'
-            ] = `Bearer ${getSession}`;
-          }
-          dispatch(Adddetails(responce.data.user));
-          console.log('called');
-          history('');
-          toast.success(responce.data.message);
-        })
-        .catch((error) => {
-          console.log(error);
-          toast.error(error.response.data.message);
-        });
-    }
-    setvalidated(true);
+  const { login } = useContext(AuthContext);
+
+  const handlechange = (event) => {
+    const { name, value } = event.target;
+    setinput({ ...input, [name]: value });
   };
 
+  const handlesubmit = (ev) => {
+    ev.preventDefault();
+    const { email, password } = input;
+    if ((email, password)) {
+      login(email, password);
+    } else {
+      toast('invalid input');
+    }
+  };
+  const handlechangepassicon = (event) => {
+    sethide(!hide);
+  };
   return (
-    <div className='container mt-2'>
-      <Card className='w-400 m-auto p-2'>
-        <Card.Title>Login Form</Card.Title>
-        <Form
-          noValidate
-          validated={validated}
-          onSubmit={handleSubmit}
-          className={style.container}
-        >
-          <Form.Group as={Col} className='mb-4' controlId='validationCustom02'>
-            <Form.Label>Email Id : </Form.Label>
-            <Form.Control
-              required
-              type='email'
-              placeholder='Email ID'
-              name='fname'
-              onChange={(event) => setEmail(event.target.value)}
-            />
-          </Form.Group>
+    <div className={style.login_box}>
+      <ToastContainer />
+      <form onSubmit={handlesubmit} className={style.login_cont}>
+        <div className='form-group'>
+          <label htmlFor='email'>Email</label>
+          <input
+            type='email'
+            name='email'
+            className='form-control'
+            id='email'
+            onChange={handlechange}
+          />
+        </div>
 
-          <Form.Group as={Col} className='mb-4' controlId='validationCustom03'>
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              required
-              type='password'
-              placeholder='password'
-              onChange={(event) => setPass(event.target.value)}
+        <div className='form-group relative'>
+          <label htmlFor='password'>Password</label>
+          <div className='flex '>
+            <input
+              type={hide ? 'text' : 'password'}
+              name='password'
+              className='form-control'
+              id='password'
+              onChange={handlechange}
             />
-          </Form.Group>
-          <Row className=' m-auto mb-2'>
-            <Form.Text className='flex items-center gap-x-2  '>
-              Forgot password
-              <span
-                className='text-red-500 font-semibold active:text-green-700'
-                onClick={() => history('/auth/reset_password')}
-              >
-                click here
-              </span>
-            </Form.Text>
-          </Row>
-          <Row className='w-1/2 m-auto'>
-            <Button type='submit' style={{ marginTop: '10px' }}>
-              Login
-            </Button>
-          </Row>
-        </Form>
-        <Card.Text className='mt-4 font-medium'>
-          Already Registered{' '}
-          <Link
-            to={'/auth/register'}
-            className='text-blue active:text-orange cursor-pointer visited:text-purple-600 '
-          >
-            Click Here
-          </Link>
-        </Card.Text>
-      </Card>
+
+            <p className={style.eyebtn} onClick={handlechangepassicon}>
+              {hide ? <IoEyeOutline color='teal' /> : <IoEyeOffOutline />}
+            </p>
+          </div>
+        </div>
+
+        <div className='row gap-y-5 text-center mb-7 mt-3'>
+          <button type='submit' className='btn btn-primary'>
+            Sign in
+          </button>
+          <p className='w-full m-auto content-center text-black font-bold'>
+            New user, want to register{' '}
+            <span
+              className='text-blue-500 font-light active:text-red-500 font-body'
+              onClick={() => history('/auth/register')}
+            >
+              click here
+            </span>
+          </p>
+        </div>
+      </form>
     </div>
   );
 }

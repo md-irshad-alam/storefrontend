@@ -6,6 +6,7 @@ module.exports = {
       display: ['Open Sans', 'sans-serif'],
       body: ['Open Sans', 'sans-serif'],
     },
+
     extend: {
       fontSize: {
         14: '14px',
@@ -35,12 +36,19 @@ module.exports = {
       height: {
         80: '80px',
       },
+
       minHeight: {
         590: '590px',
       },
+      top: {
+        "None": '-1px',
+        "two": '2px',
+      },
+      bottom: {
+        "None": '-1px',
+      },
       backgroundImage: {
-        'hero-pattern':
-          'url(\'https://i.ibb.co/MkvLDfb/Rectangle-4389.png\')',
+        'hero-pattern': "url('https://i.ibb.co/MkvLDfb/Rectangle-4389.png')",
       },
     },
   },

@@ -30,12 +30,13 @@ function State() {
   const [editId, setEditId] = useState('');
   const [country, setCountry] = useState('');
   const [cntdata, setcntdata] = useState([]);
+  const [modelval1, setmodelval] = useState('');
+  const [modelval2, setmodelval2] = useState('');
   const history = useNavigate();
   const Fetchdata = () => {
     axios
       .get(`http://localhost:3100/api/state/get-stateMaster`)
       .then((res) => {
-        console.log(res.data);
         setdata(res.data.countries);
       })
       .catch((error) => {
@@ -63,7 +64,9 @@ function State() {
         isActive,
       })
       .then((responce) => {
+        localStorage.setItem('stateId', responce.data.state._id);
         Fetchdata();
+        setstate('');
         toast.success(responce.data.message);
       })
       .catch((error) => {
@@ -100,9 +103,12 @@ function State() {
       });
   };
 
-  const handlemodal = (id) => {
-    setEditId(id);
+  const handlemodal = (item) => {
+    const { country, state, _id } = item;
+    setEditId(_id);
     setSmShow(true);
+    setmodelval(state);
+    setmodelval2(country);
   };
 
   const deletestate = (id) => {
@@ -149,6 +155,7 @@ function State() {
                 placeholder='State'
                 onChange={(e) => setstate(e.target.value)}
                 name='color'
+                value={state}
               />
             </Form.Group>
           </Col>
@@ -190,10 +197,7 @@ function State() {
                         <td>{item.country}</td>
                         <td>{item.state}</td>
                         <td className='flex flex-row gap-x-2 justify-center'>
-                          <Button
-                            size='sm'
-                            onClick={() => handlemodal(item._id)}
-                          >
+                          <Button size='sm' onClick={() => handlemodal(item)}>
                             <BiEdit />
                           </Button>
                           <Button
@@ -231,6 +235,7 @@ function State() {
                 <Form.Control
                   type='text'
                   placeholder='state'
+                  defaultValue={modelval1}
                   onChange={(e) => setstate(e.target.value)}
                 />
               </Form.Group>
@@ -238,8 +243,14 @@ function State() {
             <Col md={6} className='mt-4'>
               <Form.Group className='flex gap-x-4 items-center'>
                 <Form.Label>Country </Form.Label>
-                <Form.Select onChange={(e) => setCountry(e.target.value)}>
-                  <option value=''>Choose country</option>
+                <Form.Select
+                  value={country}
+                  defaultValue={modelval2}
+                  onChange={(e) => setCountry(e.target.value)}
+                >
+                  <option value='' disabled>
+                    Choose country
+                  </option>
                   {cntdata !== undefined &&
                     cntdata.map((ele, id) => {
                       return <option value={ele.country}>{ele.country}</option>;
@@ -252,7 +263,9 @@ function State() {
               <Button variant='primary' onClick={() => editState()}>
                 Submit
               </Button>
-              <Button variant='danger'>Cancel</Button>
+              <Button variant='danger' onClick={() => setSmShow(false)}>
+                Cancel
+              </Button>
             </div>
           </Row>
         </Modal.Body>

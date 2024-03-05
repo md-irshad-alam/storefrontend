@@ -1,7 +1,7 @@
-import React, { useState, useRef, useContext } from "react";
-import { Form, Col, FloatingLabel, Row } from "react-bootstrap";
-
-import { useStateContext } from "../../contexts/ContextProvider";
+import React, { useState, useRef, useContext } from 'react';
+import { Form, Col, FloatingLabel, Row } from 'react-bootstrap';
+import { saveProduct } from '../../contexts/User';
+import { useStateContext } from '../../contexts/ContextProvider';
 function ForProductionRef() {
   const { prodData, SetProductionRef } = useStateContext();
 
@@ -10,113 +10,113 @@ function ForProductionRef() {
   };
 
   return (
-    <div className="container-fluid">
-      <h4 className="card-title text-left text-lg mb-4">
+    <div className='container-fluid'>
+      <h4 className='card-title text-left text-lg mb-4'>
         For Production Reference
       </h4>
-      <Row className="mb-4">
-        <Col lg={6} md={6} className="mb-4">
+      <Row className='mb-4'>
+        <Col lg={6} md={6} className='mb-4'>
           <Form.Label>Logo (R) </Form.Label>
           <Form.Control
-            type="text"
+            type='text'
             required
-            placeholder=""
+            placeholder=''
             onChange={handleInputFun}
-            name="logoR"
+            name='logo_rs'
           />
         </Col>
-        <Col lg={6} md={6} className="mb-4">
+        <Col lg={6} md={6} className='mb-4'>
           <Form.Label> Logo (L)</Form.Label>
           <Form.Control
-            type="text"
+            type='text'
             onChange={handleInputFun}
-            name="logoL"
+            name='logo_ls'
             required
-            placeholder=""
+            placeholder=''
           />
         </Col>
 
-        <Col lg={6} md={6} className="mb-4">
+        <Col lg={6} md={6} className='mb-4'>
           <Form.Label>Outsole Color </Form.Label>
           <Form.Control
-            type="text"
+            type='text'
             required
-            placeholder=""
+            placeholder=''
             onChange={handleInputFun}
-            name="outsolecol"
+            name='outsoles'
           />
         </Col>
-        <Col lg={6} md={6} className="mb-4">
+        <Col lg={6} md={6} className='mb-4'>
           <Form.Label>Mid Sole color </Form.Label>
           <Form.Control
-            type="text"
+            type='text'
             required
-            placeholder=""
+            placeholder=''
             onChange={handleInputFun}
-            name="midSoleCol"
+            name='midsoles'
           />
         </Col>
 
-        <Col lg={6} md={6} className="mb-4">
+        <Col lg={6} md={6} className='mb-4'>
           <Form.Label>Bottom Color </Form.Label>
           <Form.Control
-            type="text"
+            type='text'
             required
-            placeholder=""
+            placeholder=''
             onChange={handleInputFun}
-            name="bottomCol"
+            name='bottoms'
           />
         </Col>
-        <Col lg={6} md={6} className="mb-4">
+        <Col lg={6} md={6} className='mb-4'>
           <Form.Label>Side Wall Color </Form.Label>
           <Form.Control
-            type="text"
+            type='text'
             required
-            placeholder=""
+            placeholder=''
             onChange={handleInputFun}
-            name="sideWallCol"
+            name='sidewall_color'
           />
         </Col>
 
-        <Col lg={6} md={6} className="mb-4">
+        <Col lg={6} md={6} className='mb-4'>
           <Form.Label> Heel Color</Form.Label>
           <Form.Control
-            type="text"
+            type='text'
             required
-            placeholder=""
+            placeholder=''
             onChange={handleInputFun}
-            name="heelCol"
+            name='heels'
           />
         </Col>
-        <Col lg={6} md={6} className="mb-4" l>
+        <Col lg={6} md={6} className='mb-4' l>
           <Form.Label>Fore Color </Form.Label>
           <Form.Control
-            type="text"
+            type='text'
             required
-            placeholder=""
+            placeholder=''
             onChange={handleInputFun}
-            name="forecol"
+            name='fores'
           />
         </Col>
 
-        <Col lg={6} md={6} className="mb-4">
+        <Col lg={6} md={6} className='mb-4'>
           <Form.Label>Side Wall & Logo </Form.Label>
           <Form.Control
-            type="text"
+            type='text'
             required
-            placeholder=""
+            placeholder=''
             onChange={handleInputFun}
-            name="sideWall"
+            name='sidewall_colors'
           />
         </Col>
-        <Col lg={6} md={6} className="mb-4">
+        <Col lg={6} md={6} className='mb-4'>
           <Form.Label>Remarks </Form.Label>
           <Form.Control
-            type="text"
+            type='text'
             required
-            placeholder=""
+            placeholder=''
             onChange={handleInputFun}
-            name="remarks"
+            name='remarkss'
           />
         </Col>
       </Row>

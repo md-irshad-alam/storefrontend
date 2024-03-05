@@ -39,9 +39,10 @@ const Navbar = () => {
     setScreenSize,
     screenSize,
   } = useStateContext();
+  // const useDetails = useSelector((state) => state.Reducer.user);
 
   const history = useNavigate();
-  const { userdetails } = useStateContext();
+  // const { userdetails } = useStateContext();
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
 
@@ -51,7 +52,6 @@ const Navbar = () => {
 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  const useDetails = useSelector((ele) => ele.user);
 
   useEffect(() => {
     if (screenSize <= 900) {
@@ -63,7 +63,7 @@ const Navbar = () => {
   const usertoken = sessionStorage.getItem('token');
   const handleLogout = () => {
     sessionStorage.removeItem('token');
-    history('/auth/login');
+
     // try {
     //   axios
     //     .post('http://localhost:3100/api/auth/logout', {
@@ -121,7 +121,7 @@ const Navbar = () => {
             src={avatar}
             alt='user-profile'
           />
-          {useDetails.map((ele) => {
+          {/* {useDetails.map((ele) => {
             return (
               <p>
                 <span className='text-gray-400 font-bold ml-1 text-14'>
@@ -129,7 +129,7 @@ const Navbar = () => {
                 </span>
               </p>
             );
-          })}
+          })} */}
           <MdKeyboardArrowDown className='text-gray-400 text-14' />
         </div>
 

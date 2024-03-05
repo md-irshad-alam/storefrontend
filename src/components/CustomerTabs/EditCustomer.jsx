@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 const EditCustomer = () => {
@@ -29,7 +30,9 @@ const EditCustomer = () => {
   const [customer_code, setcustumer] = useState('');
   const [validError, setValiderror] = useState('');
   const navigate = useNavigate();
+
   const { id } = useParams();
+  console.log(id);
   /* creating the random Id's */
   const randomId = Math.floor(Math.random() * 100);
   /* creating the random Id's */
@@ -73,7 +76,7 @@ const EditCustomer = () => {
         } = billDetails;
         const billId = localStorage.getItem('billId');
         axios
-          .put(`http://localhost:3100/api/customer/update-bill/${billId}`, {
+          .put(`http://localhost:3100/api/customer/update-bill/${id}`, {
             address,
             country,
             district,

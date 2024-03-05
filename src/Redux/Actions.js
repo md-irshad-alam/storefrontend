@@ -1,10 +1,5 @@
 // action creator
 
-export const Adddetails = (user) => ({
-  type: 'add_user',
-  payload: user,
-});
-
 export const addCategory = (category) => ({
   type: 'ADD_CATEGORY',
   payload: category,
@@ -151,14 +146,7 @@ const initalstate = {
       state: 'Utter predesh',
     },
   ],
-  user: [
-    {
-      id: 0,
-      fname: 'irshad',
-      lname: 'alam',
-      email: 'hayan@gmail.com',
-    },
-  ],
+
   designation: [],
   heel: [],
   uom: [],
@@ -186,11 +174,7 @@ const Reducer = (state = initalstate, action) => {
         categories: editcategory,
       };
     }
-    case 'add_user':
-      return {
-        ...state,
-        user: [action.payload],
-      };
+
     case 'ADD_STORE':
       return {
         ...state,

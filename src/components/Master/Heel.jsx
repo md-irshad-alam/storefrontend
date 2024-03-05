@@ -17,7 +17,6 @@ import {
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { AddHeels, EditHeels } from '../../Redux/Actions';
 import { BiEdit } from 'react-icons/bi';
 import { AiOutlineDelete } from 'react-icons/ai';
 import axios from 'axios';
@@ -29,7 +28,7 @@ function Heels() {
   const [isActive, setActive] = useState(false);
   const [smShow, setSmShow] = useState(false);
   const [editId, setEditId] = useState('');
-
+  const [modelval, setmodelval] = useState('');
   const history = useNavigate();
   const Fetchdata = () => {
     axios
@@ -53,6 +52,7 @@ function Heels() {
         .then((responce) => {
           Fetchdata();
           toast.success(responce.data.message);
+          setHeelCategory('');
         })
         .catch((error) => {
           console.log(error);
@@ -95,9 +95,11 @@ function Heels() {
       });
   };
 
-  const handlemodal = (id) => {
-    setEditId(id);
+  const handlemodal = (item) => {
+    const { HeelCategory, _id } = item;
+    setEditId(_id);
     setSmShow(true);
+    setmodelval(HeelCategory);
   };
 
   const deleteHeelCategory = (id) => {
@@ -132,6 +134,7 @@ function Heels() {
                 placeholder='heel'
                 onChange={(e) => setHeelCategory(e.target.value)}
                 name='color'
+                value={HeelCategory}
               />
             </Form.Group>
           </Col>
@@ -172,7 +175,7 @@ function Heels() {
 
                       <td>{item.HeelCategory}</td>
                       <td className='flex flex-row gap-x-2 justify-center'>
-                        <Button size='sm' onClick={() => handlemodal(item._id)}>
+                        <Button size='sm' onClick={() => handlemodal(item)}>
                           <BiEdit />
                         </Button>
                         <Button
@@ -208,6 +211,7 @@ function Heels() {
                 <Form.Label>HeelCategory </Form.Label>
                 <Form.Control
                   type='text'
+                  defaultValue={modelval}
                   placeholder='HeelCategory'
                   onChange={(e) => setHeelCategory(e.target.value)}
                 />
@@ -218,7 +222,9 @@ function Heels() {
               <Button variant='primary' onClick={() => editHeelCategory()}>
                 Submit
               </Button>
-              <Button variant='danger'>Cancel</Button>
+              <Button variant='danger' onClick={() => setSmShow(false)}>
+                Cancel
+              </Button>
             </div>
           </Row>
         </Modal.Body>

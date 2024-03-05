@@ -28,7 +28,9 @@ function Color() {
   const [isActive, setActive] = useState(false);
   const [smShow, setSmShow] = useState(false);
   const [editId, setEditId] = useState('');
+  const [nodelval, setmodelval] = useState('');
   const history = useNavigate();
+
   const Fetchdata = () => {
     axios
       .get(`http://localhost:3100/api/color/get-color`)
@@ -36,7 +38,7 @@ function Color() {
         setdata(res.data.colors);
       })
       .catch((error) => {
-        toast.error(error.response.data.message);
+        console.log(error);
       });
   };
 
@@ -49,6 +51,7 @@ function Color() {
         })
         .then((responce) => {
           Fetchdata();
+          setcolor('');
           toast.success(responce.data.message);
         })
         .catch((error) => {
@@ -80,15 +83,18 @@ function Color() {
         toast.success(res.data.message);
         setSmShow(false);
         Fetchdata();
+        setcolor('');
       })
       .catch((error) => {
         toast.error(error.response.data.message);
       });
   };
 
-  const handlemodal = (id) => {
-    setEditId(id);
+  const handlemodal = (item) => {
+    const { color, _id } = item;
+    setEditId(_id);
     setSmShow(true);
+    setmodelval(color);
   };
 
   const deleteColor = (id) => {
@@ -161,10 +167,7 @@ function Color() {
                         <td>{index + 1}</td>
                         <td>{item.color}</td>
                         <td className='flex flex-row gap-x-2 justify-center'>
-                          <Button
-                            size='sm'
-                            onClick={() => handlemodal(item._id)}
-                          >
+                          <Button size='sm' onClick={() => handlemodal(item)}>
                             <BiEdit />
                           </Button>
                           <Button
@@ -203,6 +206,7 @@ function Color() {
                   type='text'
                   placeholder='Color'
                   name='color'
+                  defaultValue={nodelval}
                   onChange={(event) => setcolor(event.target.value)}
                 />
               </Form.Group>
@@ -212,7 +216,9 @@ function Color() {
               <Button variant='primary' onClick={() => editColor()}>
                 Submit
               </Button>
-              <Button variant='danger'>Cancel</Button>
+              <Button variant='danger' onClick={() => setSmShow(false)}>
+                Cancel
+              </Button>
             </div>
           </Row>
         </Modal.Body>

@@ -26,7 +26,7 @@ function Designation() {
   const [setId, setid] = useState();
   const [isActive, setActive] = useState(false);
   const [items, setitems] = useState([]);
-
+  const [modelval, setmodelval] = useState('');
   const history = useNavigate();
 
   const handlesubmit = () => {
@@ -37,10 +37,11 @@ function Designation() {
       })
       .then((res) => {
         toast.success(res.data.message);
+        setdigination('');
         Fetchdata();
       })
       .catch((error) => {
-        toast.error(error.responce.data.message);
+        toast.error('Designation add successfully ');
       });
   };
 
@@ -60,7 +61,7 @@ function Designation() {
         toast.success(res.data.message);
         Fetchdata();
       })
-      .catch((error) => toast.error(error.responce.data.message));
+      .catch((error) => toast.error('Faild to Delete designation'));
   };
 
   const handleedit = () => {
@@ -73,9 +74,10 @@ function Designation() {
       )
       .then((res) => {
         Fetchdata();
+        setSmShow(false);
         toast.success(res.data.message);
       })
-      .catch((error) => toast.error(error.responce.data.message));
+      .catch((error) => toast.error('faild to edit designation !'));
   };
 
   const handlesearch = () => {
@@ -92,9 +94,11 @@ function Designation() {
     setitems(searchResult);
   };
 
-  const handlemodal = (id) => {
-    setid(id);
+  const handlemodal = (item) => {
+    const { designation, _id } = item;
+    setid(_id);
     setSmShow(true);
+    setmodelval(designation);
   };
 
   const searchvalue = query ? items : data;
@@ -120,6 +124,7 @@ function Designation() {
                 placeholder='Designation'
                 onChange={(e) => setdigination(e.target.value)}
                 name='color'
+                value={designation}
               />
             </Form.Group>
           </Col>
@@ -160,7 +165,7 @@ function Designation() {
 
                       <td>{item.designation}</td>
                       <td className='flex flex-row gap-x-2 justify-center'>
-                        <Button size='sm' onClick={() => handlemodal(item._id)}>
+                        <Button size='sm' onClick={() => handlemodal(item)}>
                           <BiEdit />
                         </Button>
                         <Button
@@ -197,6 +202,7 @@ function Designation() {
                 <Form.Control
                   type='text'
                   placeholder='Country'
+                  defaultValue={modelval}
                   onChange={(e) => setdigination(e.target.value)}
                 />
               </Form.Group>
@@ -206,7 +212,11 @@ function Designation() {
               <Button variant='primary' onClick={() => handleedit()} size='sm'>
                 Submit
               </Button>
-              <Button variant='danger' size='sm'>
+              <Button
+                variant='danger'
+                size='sm'
+                onClick={() => setSmShow(false)}
+              >
                 Cancel
               </Button>
             </div>

@@ -10,17 +10,19 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 function AddEmployee() {
   const [desigination, setdesi] = useState([]);
   const [catogory, setcato] = useState([]);
   const [inputdata, setinput] = useState({});
+  const history = useNavigate();
   const Fetchdesigination = () => {
     axios
       .get('http://localhost:3100/api/designation/get-designation')
       .then((res) => {
         setdesi(res.data.designations);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => toast.error('someting went to wrong '));
   };
   const Fetchcatogory = () => {
     axios
@@ -29,7 +31,7 @@ function AddEmployee() {
         console.log(res.data);
         setcato(res.data.EmployeeCategorys);
       })
-      .catch((error) => toast.error(error.response.data.message));
+      .catch((error) => toast.error('someting went to wrong '));
   };
 
   useEffect(() => {
@@ -42,22 +44,25 @@ function AddEmployee() {
     setinput({ ...inputdata, [name]: value });
   };
   const handlesubmit = (e) => {
-    console.log(inputdata);
     try {
       const { Employee_Name, Card_No, Designation, Category } = inputdata;
-
-      axios
-        .post('http://localhost:3100/api/Employee/add-AddEmployee', {
-          Employee_Name,
-          Card_No,
-          Designation,
-          Category,
-          isActive: false,
-        })
-        .then((res) => {
-          toast.success('Employee added successfully');
-        })
-        .catch((error) => toast.error(error.response.data.message));
+      if (inputdata) {
+        axios
+          .post('http://localhost:3100/api/Employee/add-AddEmployee', {
+            Employee_Name,
+            Card_No,
+            Designation,
+            Category,
+            isActive: false,
+          })
+          .then((res) => {
+            toast.success('Employee added successfully');
+            setinput({});
+          })
+          .catch((error) => toast.error(error.response.data.message));
+      } else {
+        toast.error('invalid input , please fill corectly');
+      }
     } catch (error) {
       toast.warn('data adding process faild');
     }
@@ -128,7 +133,9 @@ function AddEmployee() {
           <Button variant='primary' onClick={() => handlesubmit()}>
             Submit
           </Button>
-          <Button variant='danger'>Cancel</Button>
+          <Button variant='danger' onClick={() => history('/')}>
+            Cancel
+          </Button>
         </div>
       </Card>
     </Container>

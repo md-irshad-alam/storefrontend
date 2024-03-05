@@ -28,6 +28,7 @@ function ForePart_category() {
   const [isActive, setActive] = useState(false);
   const [smShow, setSmShow] = useState(false);
   const [editId, setEditId] = useState('');
+  const [modelval, setmodelval] = useState('');
 
   const history = useNavigate();
   const Fetchdata = () => {
@@ -50,6 +51,7 @@ function ForePart_category() {
       })
       .then((responce) => {
         Fetchdata();
+        setforpart('');
         toast.success(responce.data.message);
       })
       .catch((error) => {
@@ -90,9 +92,11 @@ function ForePart_category() {
       });
   };
 
-  const handlemodal = (id) => {
-    setEditId(id);
+  const handlemodal = (item) => {
+    const { ForePartCategory, _id } = item;
+    setEditId(_id);
     setSmShow(true);
+    setmodelval(ForePartCategory);
   };
 
   const deleteForePartCategory = (id) => {
@@ -126,6 +130,7 @@ function ForePart_category() {
                 type='text'
                 onChange={(ev) => setforpart(ev.target.value)}
                 name='forpart'
+                value={ForePartCategory}
               />
             </Form.Group>
           </Col>
@@ -166,7 +171,7 @@ function ForePart_category() {
 
                       <td>{item.ForePartCategory}</td>
                       <td className='flex flex-row gap-x-2 justify-center'>
-                        <Button size='sm' onClick={() => handlemodal(item._id)}>
+                        <Button size='sm' onClick={() => handlemodal(item)}>
                           <BiEdit />
                         </Button>
                         <Button
@@ -203,6 +208,7 @@ function ForePart_category() {
                 <Form.Control
                   type='text'
                   placeholder='ForePartCategory'
+                  defaultValue={modelval}
                   onChange={(e) => setforpart(e.target.value)}
                 />
               </Form.Group>

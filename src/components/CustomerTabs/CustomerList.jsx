@@ -8,15 +8,16 @@ import { toast } from 'react-toastify';
 
 const CustomerList = () => {
   const [customer_name, setCustomerName] = useState('');
-  const [country, setCountry] = useState('');
+  const [country, setCountry] = useState([]);
   const [filteredData, setFilteredData] = useState();
   const [customerData, setcustomerData] = useState();
-  const [state, setState] = useState('');
+  const [state, setState] = useState([]);
   const [filterdata, setfilter] = useState({
     country: '',
     state: '',
     customer_name: '',
   });
+
   useEffect(() => {
     axios
       .get('http://localhost:3100/api/customer/getAll-customer')
@@ -30,31 +31,73 @@ const CustomerList = () => {
         console.log(error);
       });
   }, []);
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3100/api/state/get-stateMaster`)
+      .then((res) => {
+        setState(res.data.countries);
+      })
+      .catch((error) => {
+        console.log(error);
+        // toast.error(error.response.data.message);
+      });
+  }, []);
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3100/api/country/get-country`)
+      .then((res) => {
+        setCountry(res.data.countries);
+      })
+      .catch((error) => {
+        console.log(error);
+        // toast.error(error.response.data.message);
+      });
+  }, []);
   const handlefiltechange = (event) => {
     const { name, value } = event.target;
     setfilter((prev) => ({ ...prev, [name]: value }));
   };
-  const handleSearch = () => {
-    const { state, customer_name, country } = filterdata;
-    console.log(state, customer_name, country);
-    const updatedData = customerData.filter((item) => {
-      const nameMatch =
-        customer_name === '' ||
-        item.customer_name.toLowerCase().includes(customer_name.toLowerCase());
-      const countryMatch =
-        country === '' ||
-        item.bill_address.country.toLowerCase().includes(country.toLowerCase());
-      const statematch =
-        state === '' ||
-        item.bill_address.state.toLowerCase().includes(state.toLowerCase());
 
-      return nameMatch && countryMatch && statematch;
-    });
-    console.log(updatedData);
-    if (updatedData.length != 0) {
-      setFilteredData(updatedData);
-    } else {
-      toast.warn('item not found !');
+  const handleSearch = () => {
+    try {
+      const { state, customer_name, country } = filterdata;
+      console.log(state, customer_name, country);
+
+      const updatedData = customerData.filter((item) => {
+        const nameMatch =
+          customer_name === '' ||
+          (item.customer_name &&
+            item.customer_name
+              .toLowerCase()
+              .includes(customer_name.toLowerCase()));
+
+        const countryMatch =
+          country === '' ||
+          (item.bill_address &&
+            item.bill_address.country &&
+            item.bill_address.country
+              .toLowerCase()
+              .includes(country.toLowerCase()));
+
+        const statematch =
+          state === '' ||
+          (item.bill_address &&
+            item.bill_address.state &&
+            item.bill_address.state
+              .toLowerCase()
+              .includes(state.toLowerCase()));
+
+        console.log(countryMatch, statematch, nameMatch);
+        return statematch && nameMatch && countryMatch;
+      });
+
+      if (updatedData.length !== 0) {
+        setFilteredData(updatedData);
+      } else {
+        toast.warn('Item not found!');
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -102,11 +145,11 @@ const CustomerList = () => {
             name='country'
           >
             <option disabled>---choose option---</option>
-            {customerData !== undefined &&
-              customerData.map((item) => (
+            {country !== undefined &&
+              country.map((item) => (
                 <>
-                  <option key={item.Id} value={item.bill_address.country}>
-                    {item.bill_address.country}
+                  <option key={item.Id} value={item.country}>
+                    {item.country}
                   </option>
                 </>
               ))}
@@ -125,11 +168,11 @@ const CustomerList = () => {
             name='state'
           >
             <option disabled>---Choose option---</option>
-            {customerData !== undefined &&
-              customerData.map((item) => (
+            {state !== undefined &&
+              state.map((item) => (
                 <>
-                  <option key={item.Id} value={item.bill_address.state}>
-                    {item.bill_address.state}
+                  <option key={item.Id} value={item.state}>
+                    {item.state}
                   </option>
                 </>
               ))}
@@ -189,16 +232,24 @@ const CustomerList = () => {
                         </td>
 
                         <td className='whitespace-nowrap px-4 py-2'>
-                          {item.bill_address.district}
+                          {item.bill_address !== null
+                            ? item.bill_address.district
+                            : '...'}
                         </td>
                         <td className='whitespace-nowrap px-4 py-2'>
-                          {item.bill_address.country}
+                          {item.bill_address !== null
+                            ? item.bill_address.country
+                            : '...'}
                         </td>
                         <td className='whitespace-nowrap px-4 py-2'>
-                          {item.bill_address.state}
+                          {item.bill_address !== null
+                            ? item.bill_address.state
+                            : '..'}
                         </td>
                         <td className='whitespace-nowrap px-4 py-2'>
-                          {item.bill_address.phone}
+                          {item.contact_phone !== null
+                            ? item.contact_phone
+                            : '...'}
                         </td>
 
                         <td className='whitespace-nowrap px-4 py-2'>

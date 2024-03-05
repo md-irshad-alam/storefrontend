@@ -103,10 +103,7 @@ export const Links = [
         name: 'UOM',
         sendto: 'uom ',
       },
-      {
-        name: 'Article Group',
-        sendto: 'group ',
-      },
+
       {
         name: 'Designation',
         sendto: 'designation ',
@@ -124,6 +121,10 @@ export const Links = [
       {
         name: 'Add ForePart',
         sendto: 'forpart',
+      },
+      {
+        name: 'Login',
+        sendto: 'newLogin',
       },
     ],
   },

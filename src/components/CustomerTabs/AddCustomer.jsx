@@ -1,35 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import {
+  Container,
+  FormGroup,
+  InputGroup,
+  Row,
+  Col,
+  Card,
+  Form,
+  Button,
+} from 'react-bootstrap';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import Country from '../Master/Country';
 import { v4 as uuidv4 } from 'uuid';
 const AddCustomer = () => {
-  const [contry, setcountry] = useState('');
-  const [contry2, setcountry2] = useState('');
   const [billDetails, setFormData] = useState({});
   const [shipDetails, setbillmData] = useState({});
   const [formdata, setmaindata] = useState({});
-
-  const [selectedCountry, setSelectedCountry] = useState('');
-  const [selectedState, setSelectedState] = useState('');
-  const [selectedCountry2, setSelectedCountry2] = useState('');
-  const [selectedState2, setSelectedState2] = useState('');
-  const [countries, setCountries] = useState([]);
-  const [countries2, setCountries2] = useState([]);
+  const [countries, setcountry] = useState([]);
+  const [countries2, setcountry2] = useState([]);
   const [states, setStates] = useState([]);
   const [states2, setStates2] = useState([]);
   const [uniqueid, setUUId] = useState('');
-
-  const [sameAsAbove, setSameAsAbove] = useState(false);
+  const [sameAsAbove, setsameas] = useState(false);
   const [initials, setinitilas] = useState('');
   const [customer_name, set_Custumer] = useState('');
   const [currency, setCurency] = useState('');
   const [company, setCompany] = useState('');
   const [customer_code, setcustumer] = useState('');
   const [validError, setValiderror] = useState('');
+  const [samedata, setsamedata] = useState([]);
   const navigate = useNavigate();
 
   /* creating the random Id's */
@@ -160,6 +162,7 @@ const AddCustomer = () => {
         } = formdata;
         const ship_address = localStorage.getItem('shipId');
         const bill_address = localStorage.getItem('billId');
+
         axios
           .post('http://localhost:3100/api/customer/add-customer', {
             initials,
@@ -191,142 +194,54 @@ const AddCustomer = () => {
 
   const handleSameAsAbove = () => {};
   useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await fetch(
-          `https://referential.p.rapidapi.com/v1/country?fields=iso_a2&limit=250`,
-          {
-            method: 'GET',
-            headers: {
-              'X-RapidAPI-Key':
-                'eff51e33a2msh3c4977c37096d34p117ce3jsnad1634fb6450',
-              'X-RapidAPI-Host': 'referential.p.rapidapi.com',
-            },
-          }
-        );
-        const data = await response.json();
-
-        setCountries(data);
-      } catch (error) {
-        console.error('Error fetching countries:', error);
-      }
-    };
-
-    fetchCountries();
-  }, []);
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await fetch(
-          `https://referential.p.rapidapi.com/v1/country?fields=iso_a2&limit=250`,
-          {
-            method: 'GET',
-            headers: {
-              'X-RapidAPI-Key':
-                'eff51e33a2msh3c4977c37096d34p117ce3jsnad1634fb6450',
-              'X-RapidAPI-Host': 'referential.p.rapidapi.com',
-            },
-          }
-        );
-        const data = await response.json();
-
-        setCountries2(data);
-      } catch (error) {
-        console.error('Error fetching countries:', error);
-      }
-    };
-
-    fetchCountries();
+    axios
+      .get('http://localhost:3100/api/country/get-country')
+      .then((res) => setcountry(res.data.countries))
+      .catch((error) => console.log(`Fatching error, ${error}`));
   }, []);
 
-  // Fetch states data when the selected country changes
   useEffect(() => {
-    const fetchStates = async () => {
-      if (selectedCountry) {
-        try {
-          const countryCode = selectedCountry.iso_a2;
-          console.log(countryCode);
-          const response = await fetch(
-            `https://referential.p.rapidapi.com/v1/state?iso_a2=${countryCode}`,
-            {
-              method: 'GET',
-              headers: {
-                'X-RapidAPI-Key':
-                  'eff51e33a2msh3c4977c37096d34p117ce3jsnad1634fb6450',
-                'X-RapidAPI-Host': 'referential.p.rapidapi.com',
-              },
-            }
-          );
-
-          const data = await response.json();
-          setStates(data);
-        } catch (error) {
-          console.error('Error fetching states:', error);
-        }
-      }
-    };
-
-    fetchStates();
-  }, [selectedCountry]);
+    axios
+      .get('http://localhost:3100/api/state/get-stateMaster')
+      .then((res) => setStates(res.data.countries))
+      .catch((error) => console.log(`Fatching error, ${error}`));
+  }, []);
+  useEffect(() => {
+    axios
+      .get('http://localhost:3100/api/country/get-country')
+      .then((res) => setcountry2(res.data.countries))
+      .catch((error) => console.log(`Fatching error, ${error}`));
+  }, []);
 
   useEffect(() => {
-    const fetchStates = async () => {
-      if (selectedCountry2) {
-        try {
-          const countryCode = selectedCountry2.iso_a2;
-
-          const response = await fetch(
-            `https://referential.p.rapidapi.com/v1/state?iso_a2=${countryCode}`,
-            {
-              method: 'GET',
-              headers: {
-                'X-RapidAPI-Key':
-                  'eff51e33a2msh3c4977c37096d34p117ce3jsnad1634fb6450',
-                'X-RapidAPI-Host': 'referential.p.rapidapi.com',
-              },
-            }
-          );
-          const data = await response.json();
-
-          setStates2(data);
-        } catch (error) {
-          console.error('Error fetching states:', error);
-        }
-      }
-    };
-
-    fetchStates();
-  }, [selectedCountry2]);
+    axios
+      .get('http://localhost:3100/api/state/get-stateMaster')
+      .then((res) => {
+        setStates2(res.data.countries);
+        console.log(res.data.countries);
+      })
+      .catch((error) => console.log(`Fatching error, ${error}`));
+  }, []);
 
   const handleCountryChange = (event) => {
     let { name, value } = event.target;
-    const selectedCountry = countries.find(
-      (country) => country.value === event.target.value
-    );
-
-    setSelectedCountry(selectedCountry);
     setFormData((formdata) => ({
       ...formdata,
-      [event.target.name]: event.target.value,
+      [name]: value,
     }));
     console.log(billDetails);
   };
 
   const handleStateChange = (event) => {
     let { name, value } = event.target;
-    setSelectedState(event.target.value);
+
     setFormData((formdata) => ({
       ...formdata,
-      [event.target.name]: event.target.value,
+      [name]: value,
     }));
   };
 
   const handleCountryChange2 = (event) => {
-    const selectedCountry = countries.find(
-      (country) => country.value === event.target.value
-    );
-
-    setSelectedCountry2(selectedCountry);
     setbillmData((formdata) => ({
       ...formdata,
       [event.target.name]: event.target.value,
@@ -334,17 +249,29 @@ const AddCustomer = () => {
   };
 
   const handleStateChange2 = (event) => {
-    setSelectedState2(event.target.value);
     setbillmData((formdata) => ({
       ...formdata,
       [event.target.name]: event.target.value,
     }));
   };
+  const handlesameasinput = () => {
+    if (typeof billDetails === 'object' && billDetails.length != 0) {
+      setsameas(!sameAsAbove);
 
+      if (sameAsAbove === true) {
+        setsamedata(billDetails);
+      } else {
+        setsamedata({});
+      }
+    } else {
+    }
+  };
+  useEffect(() => {}, [sameAsAbove]);
   useEffect(() => {
     const uniqueId = uuidv4();
     setUUId(uniqueId);
   }, []);
+  const d = false;
   return (
     <div>
       <form onSubmit={handleFormSubmit}>
@@ -506,9 +433,9 @@ const AddCustomer = () => {
                   className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
                 >
                   <option selected>select country</option>
-                  {countries.map((country) => (
-                    <option key={country.cca2} value={country.value}>
-                      {country.value}
+                  {countries.map((ele) => (
+                    <option key={country.cca2} value={ele.country}>
+                      {ele.country}
                     </option>
                   ))}
                 </select>
@@ -531,7 +458,7 @@ const AddCustomer = () => {
                 >
                   {states.length != 0
                     ? states.map((state) => (
-                        <option key={state.key} value={state.value}>
+                        <option key={state.key} value={state}>
                           {state.value}
                         </option>
                       ))
@@ -730,264 +657,542 @@ const AddCustomer = () => {
             Ship the package to the customer
           </p>
 
-          <div className='mt-10  grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 '>
-            <div className='sm:col-span-4'>
-              <div className='flex items-center gap-x-3'>
-                <input
-                  id='same-as-above'
-                  name='same-as-above'
-                  type='radio'
-                  checked={sameAsAbove}
-                  onChange={handleSameAsAbove}
-                  className='h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600'
-                />
+          {/* <h1>asdfsdfsdjfhasjkfh</h1> */}
+          {samedata.length !== 0 ? (
+            <div className='mt-10  grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 '>
+              <div className='sm:col-span-4'>
+                <div className='flex items-center gap-x-3'>
+                  <input
+                    id='same-as-above'
+                    name='same-as-above'
+                    type='radio'
+                    checked={sameAsAbove}
+                    style={{ color: sameAsAbove ? 'green' : 'white' }}
+                    onClick={() => handlesameasinput()}
+                    className='h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600'
+                  />
+                  <label
+                    htmlFor='push-everything'
+                    className='block text-sm font-medium leading-6 text-gray-900'
+                  >
+                    same as bill to details
+                  </label>
+                </div>
+              </div>
+              <div className='sm:col-span-4'>
                 <label
-                  htmlFor='push-everything'
+                  htmlFor='shipAddress'
                   className='block text-sm font-medium leading-6 text-gray-900'
                 >
-                  same as bill to details
+                  Address
                 </label>
+                <div className='mt-2'>
+                  <input
+                    type='text'
+                    name='address'
+                    id='shipAddress'
+                    autoComplete='shipAddress'
+                    value={samedata.address}
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
               </div>
-            </div>
-            <div className='sm:col-span-4'>
-              <label
-                htmlFor='shipAddress'
-                className='block text-sm font-medium leading-6 text-gray-900'
-              >
-                Address
-              </label>
-              <div className='mt-2'>
-                <input
-                  type='text'
-                  name='address'
-                  id='shipAddress'
-                  autoComplete='shipAddress'
-                  onChange={billdetailsChange}
-                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                />
-              </div>
-            </div>
 
-            <br></br>
-            <div className='sm:col-span-2'>
-              <label
-                htmlFor='shipCountry'
-                className='block text-sm font-medium leading-6 text-gray-900'
-              >
-                Country
-              </label>
-              <div className='mt-2'>
-                <select
-                  id='shipCountry'
-                  name='country'
-                  onChange={handleCountryChange2}
-                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
+              <br></br>
+              <div className='sm:col-span-2'>
+                <label
+                  htmlFor='shipCountry'
+                  className='block text-sm font-medium leading-6 text-gray-900'
                 >
-                  <option selected>select country</option>
-                  {countries2.map((country) => (
-                    <option key={country.cca2} value={country.value}>
-                      {country.value}
+                  Country
+                </label>
+                <div className='mt-2'>
+                  <select
+                    id='shipCountry'
+                    name='country'
+                    onChange={handleCountryChange2}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
+                  >
+                    <option selected value={samedata.country}>
+                      {samedata.country}
                     </option>
-                  ))}
-                </select>
+                    {countries2.map((country) => (
+                      <option key={country.cca2} value={country.value}>
+                        {country.value}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-            </div>
 
-            <div className='sm:col-span-2'>
-              <label
-                htmlFor='shipState'
-                className='block text-sm font-medium leading-6 text-gray-900'
-              >
-                State
-              </label>
-              <div className='mt-2'>
-                <select
-                  id='shipState'
-                  name='state'
-                  autoComplete='shipState'
-                  onChange={handleStateChange2}
-                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
+              <div className='sm:col-span-2'>
+                <label
+                  htmlFor='shipState'
+                  className='block text-sm font-medium leading-6 text-gray-900'
                 >
-                  {states2.length != 0
-                    ? states2.map((state) => (
-                        <option key={state.key} value={state.value}>
-                          {state.value}
-                        </option>
-                      ))
-                    : ''}
-                </select>
+                  State
+                </label>
+                <div className='mt-2'>
+                  <select
+                    id='shipState'
+                    name='state'
+                    autoComplete='shipState'
+                    onChange={handleStateChange2}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
+                  >
+                    <option value={samedata.state} disabled>
+                      {samedata.state}
+                    </option>
+                    {states2.length != 0
+                      ? states2.map((state) => (
+                          <option key={state.key} value={state.value}>
+                            {state.value}
+                          </option>
+                        ))
+                      : ''}
+                  </select>
+                </div>
               </div>
-            </div>
 
-            <div className='sm:col-span-3'>
-              <label
-                htmlFor='shipDistrict'
-                className='block text-sm font-medium leading-6 text-gray-900'
-              >
-                District
-              </label>
-              <div className='mt-2'>
-                <input
-                  type='text'
-                  name='district'
-                  id='shipDistrict'
-                  autoComplete='district'
-                  onChange={billdetailsChange}
-                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                />
+              <div className='sm:col-span-3'>
+                <label
+                  htmlFor='shipDistrict'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  District
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='text'
+                    name='district'
+                    value={samedata.district}
+                    id='shipDistrict'
+                    autoComplete='district'
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
               </div>
-            </div>
-            <div className='sm:col-span-3'>
-              <label
-                htmlFor='ship_police-station'
-                className='block text-sm font-medium leading-6 text-gray-900'
-              >
-                Station
-              </label>
-              <div className='mt-2'>
-                <input
-                  type='text'
-                  name='station'
-                  id='ship_police-station'
-                  autoComplete='ship_police-station'
-                  onChange={billdetailsChange}
-                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                />
+              <div className='sm:col-span-3'>
+                <label
+                  htmlFor='ship_police-station'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  Station
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='text'
+                    name='station'
+                    id='ship_police-station'
+                    autoComplete='ship_police-station'
+                    onChange={billdetailsChange}
+                    value={samedata.station}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
               </div>
-            </div>
-            <div className='sm:col-span-2'>
-              <label
-                htmlFor='postal_code'
-                className='block text-sm font-medium leading-6 text-gray-900'
-              >
-                ZIP / Postal code
-              </label>
-              <div className='mt-2'>
-                <input
-                  type='text'
-                  name='postal_code'
-                  id='ship_postal-code'
-                  autoComplete='ship_postal-code'
-                  onChange={billdetailsChange}
-                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                />
+              <div className='sm:col-span-2'>
+                <label
+                  htmlFor='postal_code'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  ZIP / Postal code
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='text'
+                    name='postal_code'
+                    id='ship_postal-code'
+                    autoComplete='ship_postal-code'
+                    onChange={billdetailsChange}
+                    value={samedata.postal_code}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className='sm:col-span-3'>
-              <label
-                htmlFor='email'
-                className='block text-sm font-medium leading-6 text-gray-900'
-              >
-                Email
-              </label>
-              <div className='mt-2'>
-                <input
-                  type='email'
-                  name='email'
-                  id='shipEmail'
-                  autoComplete='email'
-                  onChange={billdetailsChange}
-                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                />
+              <div className='sm:col-span-3'>
+                <label
+                  htmlFor='email'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  Email
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='email'
+                    name='email'
+                    id='shipEmail'
+                    autoComplete='email'
+                    value={samedata.email}
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className='sm:col-span-2'>
-              <label
-                htmlFor='mobile'
-                className='block text-sm font-medium leading-6 text-gray-900'
-              >
-                Mobile
-              </label>
-              <div className='mt-2'>
-                <input
-                  type='tel'
-                  name='mobile'
-                  id='ship-mobile'
-                  autoComplete='ship-mobile'
-                  onChange={billdetailsChange}
-                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                />
+              <div className='sm:col-span-2'>
+                <label
+                  htmlFor='mobile'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  Mobile
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='tel'
+                    name='mobile'
+                    id='ship-mobile'
+                    autoComplete='ship-mobile'
+                    onChange={billdetailsChange}
+                    value={samedata.mobile}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className='sm:col-span-3'>
-              <label
-                htmlFor='gstin'
-                className='block text-sm font-medium leading-6 text-gray-900'
-              >
-                GST No.
-              </label>
-              <div className='mt-2'>
-                <input
-                  type='text'
-                  name='gstin'
-                  id='ship-GST No.'
-                  autoComplete='gstin'
-                  onChange={billdetailsChange}
-                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                />
+              <div className='sm:col-span-3'>
+                <label
+                  htmlFor='gstin'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  GST No.
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='text'
+                    name='gstin'
+                    id='ship-GST No.'
+                    autoComplete='gstin'
+                    value={samedata.gstin}
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className='sm:col-span-3'>
-              <label
-                htmlFor='tin_no'
-                className='block text-sm font-medium leading-6 text-gray-900'
-              >
-                TIN No.
-              </label>
-              <div className='mt-2'>
-                <input
-                  type='text'
-                  name='tin_no'
-                  id='ship-Tin No.'
-                  autoComplete='tin_no'
-                  onChange={billdetailsChange}
-                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                />
+              <div className='sm:col-span-3'>
+                <label
+                  htmlFor='tin_no'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  TIN No.
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='text'
+                    name='tin_no'
+                    id='ship-Tin No.'
+                    autoComplete='tin_no'
+                    value={samedata.tin_no}
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className='sm:col-span-3'>
-              <label
-                htmlFor='pan'
-                className='block text-sm font-medium leading-6 text-gray-900'
-              >
-                Pan
-              </label>
-              <div className='mt-2'>
-                <input
-                  type='text'
-                  name='pan'
-                  id='ship-pan'
-                  autoComplete='pan'
-                  onChange={billdetailsChange}
-                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                />
+              <div className='sm:col-span-3'>
+                <label
+                  htmlFor='pan'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  Pan
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='text'
+                    name='pan'
+                    id='ship-pan'
+                    autoComplete='pan'
+                    onChange={billdetailsChange}
+                    value={samedata.pan}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className='sm:col-span-3'>
-              <label
-                htmlFor='phone'
-                className='block text-sm font-medium leading-6 text-gray-900'
-              >
-                Phone
-              </label>
-              <div className='mt-2'>
-                <input
-                  type='tel'
-                  name='phone'
-                  id='ship-phone'
-                  autoComplete='phone'
-                  onChange={billdetailsChange}
-                  className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
-                />
+              <div className='sm:col-span-3'>
+                <label
+                  htmlFor='phone'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  Phone
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='tel'
+                    name='phone'
+                    id='ship-phone'
+                    autoComplete='phone'
+                    value={samedata.phone}
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className='mt-10  grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 '>
+              <div className='sm:col-span-4'>
+                <div className='flex items-center gap-x-3'>
+                  <input
+                    id='same-as-above'
+                    name='same-as-above'
+                    type='radio'
+                    checked={sameAsAbove}
+                    onClick={() => handlesameasinput()}
+                    className='h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600'
+                  />
+                  <label
+                    htmlFor='push-everything'
+                    className='block text-sm font-medium leading-6 text-gray-900'
+                  >
+                    same as bill to details
+                  </label>
+                </div>
+              </div>
+              <div className='sm:col-span-4'>
+                <label
+                  htmlFor='shipAddress'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  Address
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='text'
+                    name='address'
+                    id='shipAddress'
+                    autoComplete='shipAddress'
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
+              </div>
+
+              <br></br>
+              <div className='sm:col-span-2'>
+                <label
+                  htmlFor='shipCountry'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  Country
+                </label>
+                <div className='mt-2'>
+                  <select
+                    id='shipCountry'
+                    name='country'
+                    onChange={handleCountryChange2}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
+                  >
+                    <option selected>select country</option>
+                    {countries2.map((country) => (
+                      <option key={country.cca2} value={country.value}>
+                        {country.value}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className='sm:col-span-2'>
+                <label
+                  htmlFor='shipState'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  State
+                </label>
+                <div className='mt-2'>
+                  <select
+                    id='shipState'
+                    name='state'
+                    autoComplete='shipState'
+                    onChange={handleStateChange2}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus:outline-none sm:max-w-xs sm:text-sm sm:leading-6'
+                  >
+                    {states2.length != 0
+                      ? states2.map((state) => (
+                          <option key={state.key} value={state.value}>
+                            {state.value}
+                          </option>
+                        ))
+                      : ''}
+                  </select>
+                </div>
+              </div>
+
+              <div className='sm:col-span-3'>
+                <label
+                  htmlFor='shipDistrict'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  District
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='text'
+                    name='district'
+                    id='shipDistrict'
+                    autoComplete='district'
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
+              </div>
+              <div className='sm:col-span-3'>
+                <label
+                  htmlFor='ship_police-station'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  Station
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='text'
+                    name='station'
+                    id='ship_police-station'
+                    autoComplete='ship_police-station'
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
+              </div>
+              <div className='sm:col-span-2'>
+                <label
+                  htmlFor='postal_code'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  ZIP / Postal code
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='text'
+                    name='postal_code'
+                    id='ship_postal-code'
+                    autoComplete='ship_postal-code'
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
+              </div>
+
+              <div className='sm:col-span-3'>
+                <label
+                  htmlFor='email'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  Email
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='email'
+                    name='email'
+                    id='shipEmail'
+                    autoComplete='email'
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
+              </div>
+
+              <div className='sm:col-span-2'>
+                <label
+                  htmlFor='mobile'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  Mobile
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='tel'
+                    name='mobile'
+                    id='ship-mobile'
+                    autoComplete='ship-mobile'
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
+              </div>
+
+              <div className='sm:col-span-3'>
+                <label
+                  htmlFor='gstin'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  GST No.
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='text'
+                    name='gstin'
+                    id='ship-GST No.'
+                    autoComplete='gstin'
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
+              </div>
+
+              <div className='sm:col-span-3'>
+                <label
+                  htmlFor='tin_no'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  TIN No.
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='text'
+                    name='tin_no'
+                    id='ship-Tin No.'
+                    autoComplete='tin_no'
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
+              </div>
+
+              <div className='sm:col-span-3'>
+                <label
+                  htmlFor='pan'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  Pan
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='text'
+                    name='pan'
+                    id='ship-pan'
+                    autoComplete='pan'
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
+              </div>
+
+              <div className='sm:col-span-3'>
+                <label
+                  htmlFor='phone'
+                  className='block text-sm font-medium leading-6 text-gray-900'
+                >
+                  Phone
+                </label>
+                <div className='mt-2'>
+                  <input
+                    type='tel'
+                    name='phone'
+                    id='ship-phone'
+                    autoComplete='phone'
+                    onChange={billdetailsChange}
+                    className='px-1.5 block w-full rounded-md border-1 border-gray-600 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           <Row>
             <Col className='col-12'>

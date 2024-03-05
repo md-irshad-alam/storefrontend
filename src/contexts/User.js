@@ -1,41 +1,66 @@
-import axios from 'axios';
-axios.defaults.baseURL = 'http://localhost:3100/';
-
-export async function loginApi(email, password) {
-  return axios.post('/auth/login', {
+import { Axios } from './index';
+export async function LoginAPI(email, password) {
+  return Axios.post('/auth/login', {
     email,
     password,
   });
 }
 
-export async function registerApi(
-  fname,
-  lname,
-  email,
-  mobile,
-  countrycode,
-  password
-) {
-  return axios.post('auth/register', {
+export async function registerApi(fname, lname, email, mobile, password) {
+  return Axios.post('auth/register', {
     fname,
     lname,
     email,
     mobile,
-    countrycode,
     password,
   });
 }
-
+export const getusers = () => {
+  return Axios.get('auth/users');
+};
+export const loggedout = (token) => {
+  return Axios.post('/auth/logout', { token });
+};
 export const addCategory = () => {
-  return axios.post('');
+  return Axios.post('');
 };
 export const getCategory = () => {
-  return axios.get();
+  return Axios.get();
 };
 export const updateCategory = () => {
-  return axios.put('');
+  return Axios.put('');
 };
 
+export const getstore = () => {
+  return Axios.get('/Store/get-store');
+};
+export const getcolor = () => {
+  return Axios.get('/Color/get-color');
+};
+export const getuom = () => {
+  return Axios.get('/UOM/get_UOM');
+};
+export const getheel = () => {
+  return Axios.get('/HeelCategory/get-HeelCategory');
+};
+export const getforpart = () => {
+  return Axios.get('/ForePartCategory/get-ForePartCategory');
+};
+export const gettype = () => {
+  return Axios.get('/Type/get-Type');
+};
+export const getcategory = () => {
+  return Axios.get('ForePartCategory/');
+};
+export const getgroup = () => {
+  return Axios.get('/ArticleGroupMaster/get-ArticleGroupMaster');
+};
+export const getstate = () => {
+  return Axios.get('/country/get-country');
+};
+export const getState = () => {
+  return Axios.get('/state/get-state');
+};
 // product
 export const saveProduct = (
   article_code,
@@ -92,7 +117,7 @@ export const saveProduct = (
   dummy_moulds,
   store
 ) => {
-  return axios.post('Product/add-Product', {
+  return Axios.post('Product/add-Product', {
     article_code,
     article_name,
     group,
@@ -204,7 +229,7 @@ export const UpdateProduct = (
   dummy_moulds,
   store
 ) => {
-  return axios.put(`Product/update-Product/${id}`, {
+  return Axios.put(`Product/update-Product/${id}`, {
     article_code,
     article_name,
     group,
@@ -261,8 +286,8 @@ export const UpdateProduct = (
   });
 };
 export const getProduct = () => {
-  return axios.get('Product/get-Product');
+  return Axios.get('Product/get-Product');
 };
 export const DeleteProduct = (id) => {
-  return axios.delete(`Product/delete-Product/${id}`);
+  return Axios.delete(`Product/delete-Product/${id}`);
 };

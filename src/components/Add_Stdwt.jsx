@@ -10,9 +10,11 @@ import {
 } from 'react-bootstrap';
 import style from '../ModuleCss/Table.module.css';
 import { toast } from 'react-toastify';
+import SizeWeight from './AddProduct/Size&weight';
 
 function Add_Stdwt() {
   const [tabledata, settabledata] = useState([]);
+  const [tablechange, settablechange] = useState([]);
   const [rows, setRows] = useState([{ id: 1 }]);
 
   // const { setTabledata, tabledata } = useStateContext(MyContext);
@@ -21,24 +23,30 @@ function Add_Stdwt() {
     const newRow = { id: rows.length + 1 };
     setRows([...rows, newRow]);
   };
-  const handleRemoveRow = () => {
-    if (rows.length > 1) {
-      const updatedRows = rows.slice(0, -1); // Remove the last row
-      setRows(updatedRows);
-    }
+  const handleRemoveRow = (rowId) => {
+    settablechange((prevTableData) => {
+      const { [rowId]: removedRow, ...rest } = prevTableData;
+      return rest;
+    });
+
+    const updatedRows = rows.slice(0, -1); // Remove the last row
+    setRows(updatedRows);
   };
 
   const handleChange = (e, rowId) => {
-    console.log(rowId);
     // Create a new array with the updated data for the specific row
-    const updatedTableData = { ...tabledata };
+    const updatedTableData = { ...tablechange };
     updatedTableData[rowId] = {
       ...updatedTableData[rowId],
       [e.target.name]: e.target.value,
     };
-    console.log(updatedTableData);
+    settablechange(updatedTableData);
+  };
+  console.log(tablechange);
+  const handlesubmit = (e) => {
+    settabledata(tablechange);
 
-    settabledata(updatedTableData);
+    console.log(tabledata);
   };
 
   return (
@@ -166,7 +174,9 @@ function Add_Stdwt() {
                   <Button
                     size='sm'
                     key={index}
-                    onClick={index === 0 ? handleAddRow : handleRemoveRow}
+                    onClick={() =>
+                      index === 0 ? handleAddRow() : handleRemoveRow(row.id)
+                    }
                     variant={index === 0 ? 'primary' : 'danger'}
                   >
                     {index === 0 ? '+' : '-'}
@@ -176,8 +186,11 @@ function Add_Stdwt() {
             ))}
           </tbody>
         </Table>
+
         <div className='  flex flex-row m-auto mt-3 gap-x-2'>
-          <Button size='md'>submit</Button>
+          <Button size='md' onClick={() => handlesubmit()}>
+            submit
+          </Button>
           <Button variant='danger' size='md'>
             Cancel
           </Button>

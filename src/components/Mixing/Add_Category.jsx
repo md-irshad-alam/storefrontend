@@ -10,7 +10,6 @@ import {
 } from 'react-bootstrap';
 import style from '../../ModuleCss/Add_Product.module.css';
 
-import { addCategory } from '../../Redux/Actions';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -70,7 +69,7 @@ function Add_Category() {
         .then((res) => {
           setgredient(res.data.Ingredients);
         })
-        .catch((error) => console.warn(error));
+        .catch((error) => toast.error('someting went to wrong '));
     } catch (error) {
       toast.error('someting went to wrong ');
     }

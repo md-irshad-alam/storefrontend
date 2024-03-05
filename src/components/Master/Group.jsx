@@ -28,7 +28,7 @@ function GroupMaster() {
   const [isActive, setActive] = useState(false);
   const [smShow, setSmShow] = useState(false);
   const [editId, setEditId] = useState('');
-
+  const [modelval, setmodelval] = useState('');
   const history = useNavigate();
   const Fetchdata = () => {
     axios
@@ -56,6 +56,7 @@ function GroupMaster() {
         )
         .then((responce) => {
           Fetchdata();
+          setArticleGroupMaster('');
           toast.success(responce.data.message);
         })
         .catch((error) => {
@@ -99,9 +100,11 @@ function GroupMaster() {
       });
   };
 
-  const handlemodal = (id) => {
-    setEditId(id);
+  const handlemodal = (item) => {
+    const { group_name, _id } = item;
+    setEditId(_id);
     setSmShow(true);
+    setmodelval(group_name);
   };
 
   const deleteArticleGroupMaster = (id) => {
@@ -136,6 +139,7 @@ function GroupMaster() {
                 placeholder='group'
                 onChange={(e) => setArticleGroupMaster(e.target.value)}
                 name='color'
+                value={group_name}
               />
             </Form.Group>
           </Col>
@@ -175,7 +179,7 @@ function GroupMaster() {
 
                       <td>{item.group_name}</td>
                       <td className='flex flex-row gap-x-2 justify-center'>
-                        <Button size='sm' onClick={() => handlemodal(item._id)}>
+                        <Button size='sm' onClick={() => handlemodal(item)}>
                           <BiEdit />
                         </Button>
                         <Button
@@ -201,30 +205,32 @@ function GroupMaster() {
       >
         <Modal.Header closeButton>
           <Modal.Title id='example-modal-sizes-title-sm'>
-            Edit Country
+            Edit Group
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row>
             <Col md={6} className='mt-4'>
-              <Form.Group className='flex gap-x-4 items-center'>
-                <Form.Label>Country </Form.Label>
+              <Form.Group className='flex justify-center gap-x-2 items-center'>
+                <Form.Label className='w-1/2'>Group Name </Form.Label>
                 <Form.Control
                   type='text'
-                  placeholder='Country'
+                  defaultValue={modelval}
                   onChange={(e) => setArticleGroupMaster(e.target.value)}
                 />
               </Form.Group>
             </Col>
 
-            <div className='flex justify-end gap-x-4 mt-4'>
+            <div className='flex justify-center gap-x-4 mt-4'>
               <Button
                 variant='primary'
                 onClick={() => editArticleGroupMaster()}
               >
                 Submit
               </Button>
-              <Button variant='danger'>Cancel</Button>
+              <Button variant='danger' onClick={() => setSmShow(false)}>
+                Cancel
+              </Button>
             </div>
           </Row>
         </Modal.Body>

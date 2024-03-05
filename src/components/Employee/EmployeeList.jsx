@@ -27,13 +27,15 @@ function EmployeeList() {
   const [filtereddata, setfilterdata] = useState([]);
   const [itemId, setid] = useState('');
   const [category, setcatogory] = useState([]);
+  const [modelval, setmodelval] = useState();
+
   const Fetchemployeecato = () => {
     axios
       .get('http://localhost:3100/api/Employee/get-AddEmployee')
       .then((res) => {
         setemp_cato(res.data.countries);
       })
-      .catch((error) => toast.error(error.response.data.message));
+      .catch((error) => toast.error('someting went to wrong '));
   };
   const Fetchdesign = () => {
     axios
@@ -41,7 +43,7 @@ function EmployeeList() {
       .then((res) => {
         setdesign(res.data.designations);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => toast.error('someting went to wrong '));
   };
 
   const Fetchdata = () => {
@@ -50,7 +52,7 @@ function EmployeeList() {
       .then((res) => {
         setcatogory(res.data.EmployeeCategorys);
       })
-      .catch((error) => toast.error(error.response.data.message));
+      .catch((error) => toast.error('someting went to wrong '));
   };
 
   useEffect(() => {
@@ -95,10 +97,15 @@ function EmployeeList() {
     const { name, value } = e.target;
     seteditdata((prev) => ({ ...prev, [name]: value }));
   };
-  const handlemodal = (id) => {
-    setid(id);
+  const handlemodal = (item) => {
+    setmodelval(item);
+    const { _id } = item;
+    setid(_id);
     setSmShow(true);
   };
+  useEffect(() => {}, [modelval]);
+  console.log(modelval);
+
   const hanldeEdit = () => {
     try {
       const { Employee_Name, Card_No, Designation } = editdata;
@@ -135,6 +142,7 @@ function EmployeeList() {
   };
 
   const data = filtereddata.length > 0 ? filtereddata : employee_cato;
+  console.log(modelval !== undefined ? modelval.Employee_Name : '');
 
   return (
     <Container>
@@ -209,7 +217,7 @@ function EmployeeList() {
                   <td>{ele.Category}</td>
 
                   <td className='flex flex-row gap-x-2 justify-center'>
-                    <Button size='sm' onClick={() => handlemodal(ele._id)}>
+                    <Button size='sm' onClick={() => handlemodal(ele)}>
                       <BiEdit />
                     </Button>
                     <Button
@@ -246,6 +254,9 @@ function EmployeeList() {
                   type='text'
                   placeholder='Employee Name'
                   name='Employee_Name'
+                  defaultValue={
+                    modelval !== undefined ? modelval.Employee_Name : ''
+                  }
                   onChange={edithandlechange}
                 />
               </Form.Group>
@@ -255,6 +266,7 @@ function EmployeeList() {
                 <Form.Label>Card No. </Form.Label>
                 <Form.Control
                   type='text'
+                  defaultValue={modelval !== undefined ? modelval.Card_No : ''}
                   placeholder='Employee Code'
                   name='Card_No'
                   onChange={edithandlechange}
@@ -268,7 +280,14 @@ function EmployeeList() {
                   <option disabled>---choose options---</option>
                   {Designation !== undefined &&
                     Designation.map((ele) => (
-                      <option value={ele.designation}>{ele.designation}</option>
+                      <option
+                        defaultValue={
+                          modelval !== undefined ? modelval.Designation : ''
+                        }
+                        value={ele.designation}
+                      >
+                        {ele.designation}
+                      </option>
                     ))}
                 </Form.Select>
               </Form.Group>
@@ -280,7 +299,12 @@ function EmployeeList() {
                   <option disabled>---choose options---</option>
                   {category !== undefined &&
                     category.map((ele) => (
-                      <option value={ele.EmployeeCategory}>
+                      <option
+                        defaultValue={
+                          modelval !== undefined ? modelval.Category : ''
+                        }
+                        value={ele.EmployeeCategory}
+                      >
                         {ele.EmployeeCategory}
                       </option>
                     ))}
@@ -291,7 +315,9 @@ function EmployeeList() {
               <Button variant='primary' onClick={() => hanldeEdit()}>
                 Submit
               </Button>
-              <Button variant='danger'>Cancel</Button>
+              <Button variant='danger' onClick={() => setSmShow(false)}>
+                Cancel
+              </Button>
             </div>
           </Row>
         </Modal.Body>

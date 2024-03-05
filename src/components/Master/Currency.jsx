@@ -72,7 +72,7 @@ function Currency() {
         setdata(res.data.countries);
       })
       .catch((error) => {
-        toast.error(error.response.data.message);
+        console.log(error);
       });
   };
 
@@ -238,7 +238,7 @@ function Currency() {
             <Col md={6} className='mt-4'>
               <Form.Group className='flex gap-x-4 items-center'>
                 <Form.Label>Currency</Form.Label>
-                <Form.Select onChange={handlecurecnychange}>
+                <Form.Select onChange={handlecurecnychange} className=' w-72'>
                   <option>choose Currency</option>
                   {Currencyname !== undefined
                     ? Object.entries(Currencyname).map(([key, value]) => {
