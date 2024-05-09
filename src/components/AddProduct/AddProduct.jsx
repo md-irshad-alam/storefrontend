@@ -21,7 +21,9 @@ function AddProduct() {
     const formData = new FormData(formRef.current);
     const fData = Object.fromEntries(formData.entries());
     axios
-      .post('http://localhost:3100/api/Product/add-Product', { fData })
+      .post('https://backend-hofa.onrender.com/api/Product/add-Product', {
+        fData,
+      })
       .then((res) => console.log('added'))
       .catch((error) => console.log(error));
     // saveProduct(fData);

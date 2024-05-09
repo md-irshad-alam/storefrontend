@@ -14,7 +14,7 @@ function Catogery_List() {
   const [selcetdType, setselectType] = useState('');
   const fetcdata = () => {
     axios
-      .get('http://localhost:3100/api/Type/get-AddEmployee')
+      .get('https://backend-hofa.onrender.com/api/Type/get-AddEmployee')
       .then((res) => {
         console.log(res.data);
       })

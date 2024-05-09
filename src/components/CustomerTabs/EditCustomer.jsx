@@ -76,19 +76,22 @@ const EditCustomer = () => {
         } = billDetails;
         const billId = localStorage.getItem('billId');
         axios
-          .put(`http://localhost:3100/api/customer/update-bill/${id}`, {
-            address,
-            country,
-            district,
-            state,
-            postal_code,
-            email,
-            mobile,
-            gstin,
-            tin_no,
-            pan,
-            phone,
-          })
+          .put(
+            `https://backend-hofa.onrender.com/api/customer/update-bill/${id}`,
+            {
+              address,
+              country,
+              district,
+              state,
+              postal_code,
+              email,
+              mobile,
+              gstin,
+              tin_no,
+              pan,
+              phone,
+            }
+          )
           .then((res) => {
             toast.success(res.data.message);
             setTimeout(() => {}, 3000);
@@ -121,19 +124,22 @@ const EditCustomer = () => {
         } = shipDetails;
         const shipId = localStorage.getItem('shipId');
         axios
-          .put(`http://localhost:3100/api/customer/update-ship/${shipId}`, {
-            address,
-            country,
-            district,
-            state,
-            postal_code,
-            email,
-            mobile,
-            gstin,
-            tin_no,
-            pan,
-            phone,
-          })
+          .put(
+            `https://backend-hofa.onrender.com/api/customer/update-ship/${shipId}`,
+            {
+              address,
+              country,
+              district,
+              state,
+              postal_code,
+              email,
+              mobile,
+              gstin,
+              tin_no,
+              pan,
+              phone,
+            }
+          )
           .then((res) => {
             toast.success(res.data.message);
             setTimeout(() => {
@@ -165,16 +171,19 @@ const EditCustomer = () => {
         } = formdata;
 
         axios
-          .put(`http://localhost:3100/api/customer/update-customer/${id}`, {
-            initials,
-            customer_name,
-            currency,
-            contact_person,
-            contact_mobile,
-            contact_phone,
-            fax,
-            company,
-          })
+          .put(
+            `https://backend-hofa.onrender.com/api/customer/update-customer/${id}`,
+            {
+              initials,
+              customer_name,
+              currency,
+              contact_person,
+              contact_mobile,
+              contact_phone,
+              fax,
+              company,
+            }
+          )
           .then((res) => {
             navigate('/customers');
             toast.success(res.data.message);

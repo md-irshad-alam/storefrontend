@@ -18,7 +18,7 @@ function AddEmployee() {
   const history = useNavigate();
   const Fetchdesigination = () => {
     axios
-      .get('http://localhost:3100/api/designation/get-designation')
+      .get('https://backend-hofa.onrender.com/api/designation/get-designation')
       .then((res) => {
         setdesi(res.data.designations);
       })
@@ -26,7 +26,9 @@ function AddEmployee() {
   };
   const Fetchcatogory = () => {
     axios
-      .get('http://localhost:3100/api/EmployeeCategory/get-EmployeeCategory')
+      .get(
+        'https://backend-hofa.onrender.com/api/EmployeeCategory/get-EmployeeCategory'
+      )
       .then((res) => {
         console.log(res.data);
         setcato(res.data.EmployeeCategorys);
@@ -48,13 +50,16 @@ function AddEmployee() {
       const { Employee_Name, Card_No, Designation, Category } = inputdata;
       if (inputdata) {
         axios
-          .post('http://localhost:3100/api/Employee/add-AddEmployee', {
-            Employee_Name,
-            Card_No,
-            Designation,
-            Category,
-            isActive: false,
-          })
+          .post(
+            'https://backend-hofa.onrender.com/api/Employee/add-AddEmployee',
+            {
+              Employee_Name,
+              Card_No,
+              Designation,
+              Category,
+              isActive: false,
+            }
+          )
           .then((res) => {
             toast.success('Employee added successfully');
             setinput({});

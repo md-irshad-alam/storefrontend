@@ -20,7 +20,7 @@ const CustomerList = () => {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3100/api/customer/getAll-customer')
+      .get('https://backend-hofa.onrender.com/api/customer/getAll-customer')
       .then((res) => {
         console.log(res.data);
 
@@ -33,7 +33,7 @@ const CustomerList = () => {
   }, []);
   useEffect(() => {
     axios
-      .get(`http://localhost:3100/api/state/get-stateMaster`)
+      .get(`https://backend-hofa.onrender.com/api/state/get-stateMaster`)
       .then((res) => {
         setState(res.data.countries);
       })
@@ -44,7 +44,7 @@ const CustomerList = () => {
   }, []);
   useEffect(() => {
     axios
-      .get(`http://localhost:3100/api/country/get-country`)
+      .get(`https://backend-hofa.onrender.com/api/country/get-country`)
       .then((res) => {
         setCountry(res.data.countries);
       })

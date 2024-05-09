@@ -32,7 +32,9 @@ function Heels() {
   const history = useNavigate();
   const Fetchdata = () => {
     axios
-      .get(`http://localhost:3100/api/HeelCategory/get-HeelCategory`)
+      .get(
+        `https://backend-hofa.onrender.com/api/HeelCategory/get-HeelCategory`
+      )
       .then((res) => {
         console.log(res.data);
         setdata(res.data.countries);
@@ -45,10 +47,13 @@ function Heels() {
   const handlesubmit = () => {
     if (HeelCategory.length > 1) {
       axios
-        .post('http://localhost:3100/api/HeelCategory/add-HeelCategory', {
-          HeelCategory,
-          isActive,
-        })
+        .post(
+          'https://backend-hofa.onrender.com/api/HeelCategory/add-HeelCategory',
+          {
+            HeelCategory,
+            isActive,
+          }
+        )
         .then((responce) => {
           Fetchdata();
           toast.success(responce.data.message);
@@ -80,7 +85,7 @@ function Heels() {
   const editHeelCategory = () => {
     axios
       .put(
-        `http://localhost:3100/api/HeelCategory/update-HeelCategory/${editId}`,
+        `https://backend-hofa.onrender.com/api/HeelCategory/update-HeelCategory/${editId}`,
         {
           HeelCategory,
         }
@@ -105,7 +110,7 @@ function Heels() {
   const deleteHeelCategory = (id) => {
     axios
       .delete(
-        `http://localhost:3100/api/HeelCategory/delete-HeelCategory/${id}`
+        `https://backend-hofa.onrender.com/api/HeelCategory/delete-HeelCategory/${id}`
       )
       .then((res) => {
         Fetchdata();

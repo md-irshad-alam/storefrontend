@@ -22,8 +22,10 @@ export function AuthContextProvider({ children }) {
       .then((response) => {
         const token = response.data.token;
         localStorage.setItem('auth-token', token);
-        toast(`${response.data.message} with code ${response.status}`);
+
         navigate('/');
+
+        toast(`${response.data.message} with code ${response.status}`);
         window.location.reload();
       })
 
@@ -43,6 +45,7 @@ export function AuthContextProvider({ children }) {
         setuser(userdata);
       });
     } else {
+      navigate('/auth/register');
       setuser();
     }
   }, []);

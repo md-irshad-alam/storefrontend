@@ -40,7 +40,7 @@ function Ingredients() {
 
   const Fetchdata = () => {
     axios
-      .get('http://localhost:3100/api/Ingredient/get-Ingredient')
+      .get('https://backend-hofa.onrender.com/api/Ingredient/get-Ingredient')
       .then((res) => {
         setdata(res.data.Ingredients);
       })
@@ -49,7 +49,7 @@ function Ingredients() {
 
   const handlesubmit = () => {
     axios
-      .post('http://localhost:3100/api/Ingredient/add-Ingredient', {
+      .post('https://backend-hofa.onrender.com/api/Ingredient/add-Ingredient', {
         Ingredient,
         Details,
         isActive,
@@ -91,7 +91,7 @@ function Ingredients() {
   const handleCountryedit = () => {
     axios
       .put(
-        `http://localhost:3100/api/Ingredient/update-Ingredient/${graidId}`,
+        `https://backend-hofa.onrender.com/api/Ingredient/update-Ingredient/${graidId}`,
         {
           Ingredient,
           Details,
@@ -111,7 +111,9 @@ function Ingredients() {
 
   const handledelete = (id) => {
     axios
-      .delete(`http://localhost:3100/api/Ingredient/delete-Ingredient/${id}`)
+      .delete(
+        `https://backend-hofa.onrender.com/api/Ingredient/delete-Ingredient/${id}`
+      )
       .then((res) => {
         toast.success(res.data.message);
         Fetchdata();

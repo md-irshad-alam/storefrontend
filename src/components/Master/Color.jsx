@@ -33,7 +33,7 @@ function Color() {
 
   const Fetchdata = () => {
     axios
-      .get(`http://localhost:3100/api/color/get-color`)
+      .get(`https://backend-hofa.onrender.com/api/color/get-color`)
       .then((res) => {
         setdata(res.data.colors);
       })
@@ -45,7 +45,7 @@ function Color() {
   const handlesubmit = () => {
     if (color.length > 1) {
       axios
-        .post('http://localhost:3100/api/color/add-color', {
+        .post('https://backend-hofa.onrender.com/api/color/add-color', {
           color,
           isActive,
         })
@@ -76,9 +76,12 @@ function Color() {
   };
   const editColor = () => {
     axios
-      .put(`http://localhost:3100/api/color/update-color/${editId}`, {
-        color,
-      })
+      .put(
+        `https://backend-hofa.onrender.com/api/color/update-color/${editId}`,
+        {
+          color,
+        }
+      )
       .then((res) => {
         toast.success(res.data.message);
         setSmShow(false);
@@ -99,7 +102,7 @@ function Color() {
 
   const deleteColor = (id) => {
     axios
-      .delete(`http://localhost:3100/api/color/delete-color/${id}`)
+      .delete(`https://backend-hofa.onrender.com/api/color/delete-color/${id}`)
       .then((res) => {
         Fetchdata();
         toast.success(res.data.message);

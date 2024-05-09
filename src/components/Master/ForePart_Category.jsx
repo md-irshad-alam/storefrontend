@@ -33,7 +33,9 @@ function ForePart_category() {
   const history = useNavigate();
   const Fetchdata = () => {
     axios
-      .get(`http://localhost:3100/api/ForePartCategory/get-ForePartCategory`)
+      .get(
+        `https://backend-hofa.onrender.com/api/ForePartCategory/get-ForePartCategory`
+      )
       .then((res) => {
         console.log(res.data);
         setdata(res.data.countries);
@@ -45,10 +47,13 @@ function ForePart_category() {
   };
   const handlesubmit = () => {
     axios
-      .post('http://localhost:3100/api/ForePartCategory/add-ForePartCategory', {
-        ForePartCategory,
-        isActive,
-      })
+      .post(
+        'https://backend-hofa.onrender.com/api/ForePartCategory/add-ForePartCategory',
+        {
+          ForePartCategory,
+          isActive,
+        }
+      )
       .then((responce) => {
         Fetchdata();
         setforpart('');
@@ -77,7 +82,7 @@ function ForePart_category() {
   const editForePartCategory = () => {
     axios
       .put(
-        `http://localhost:3100/api/ForePartCategory/update-ForePartCategory/${editId}`,
+        `https://backend-hofa.onrender.com/api/ForePartCategory/update-ForePartCategory/${editId}`,
         {
           ForePartCategory,
         }
@@ -102,7 +107,7 @@ function ForePart_category() {
   const deleteForePartCategory = (id) => {
     axios
       .delete(
-        `http://localhost:3100/api/ForePartCategory/delete-ForePartCategory/${id}`
+        `https://backend-hofa.onrender.com/api/ForePartCategory/delete-ForePartCategory/${id}`
       )
       .then((res) => {
         Fetchdata();

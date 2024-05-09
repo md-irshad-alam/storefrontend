@@ -30,7 +30,9 @@ function Add_employee_cato() {
 
   const Fetchdata = () => {
     axios
-      .get('http://localhost:3100/api/EmployeeCategory/get-EmployeeCategory')
+      .get(
+        'https://backend-hofa.onrender.com/api/EmployeeCategory/get-EmployeeCategory'
+      )
       .then((res) => {
         console.log(res.data);
         setdata(res.data.EmployeeCategorys);
@@ -42,7 +44,7 @@ function Add_employee_cato() {
     if (EmployeeCategory) {
       axios
         .post(
-          'http://localhost:3100/api/EmployeeCategory/add-EmployeeCategory',
+          'https://backend-hofa.onrender.com/api/EmployeeCategory/add-EmployeeCategory',
           {
             EmployeeCategory,
             isActive,
@@ -86,7 +88,7 @@ function Add_employee_cato() {
   const handleCountryedit = () => {
     axios
       .put(
-        `http://localhost:3100/api/EmployeeCategory/update-EmployeeCategory/${EmployeeCategoryId}`,
+        `https://backend-hofa.onrender.com/api/EmployeeCategory/update-EmployeeCategory/${EmployeeCategoryId}`,
         {
           EmployeeCategory,
         }
@@ -103,7 +105,7 @@ function Add_employee_cato() {
   const handledelete = (id) => {
     axios
       .delete(
-        `http://localhost:3100/api/EmployeeCategory/delete-EmployeeCategory/${id}`
+        `https://backend-hofa.onrender.com/api/EmployeeCategory/delete-EmployeeCategory/${id}`
       )
       .then((res) => {
         toast.success(res.data.message);

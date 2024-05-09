@@ -37,7 +37,7 @@ function Add_Category() {
   const getStore = () => {
     try {
       axios
-        .get(`http://localhost:3000/api/store/get-store`)
+        .get(`https://backend-hofa.onrender.com/api/store/get-store`)
         .then((res) => {
           setstore(res.data.stores);
         })
@@ -51,7 +51,7 @@ function Add_Category() {
   const getColor = () => {
     try {
       axios
-        .get(`http://localhost:3000/api/color/get-color`)
+        .get(`https://backend-hofa.onrender.com/api/color/get-color`)
         .then((res) => {
           setcolor(res.data.colors);
         })
@@ -65,7 +65,7 @@ function Add_Category() {
   const getIngrediant = () => {
     try {
       axios
-        .get('http://localhost:3000/api/Ingredient/get-Ingredient')
+        .get('https://backend-hofa.onrender.com/api/Ingredient/get-Ingredient')
         .then((res) => {
           setgredient(res.data.Ingredients);
         })
@@ -121,9 +121,42 @@ function Add_Category() {
   };
 
   const handlesubmitForm = (e) => {
-    const formData = new FormData(tabledata.current);
-    const abcd = Object.fromEntries(formData.entries());
-    console.log(abcd);
+    try {
+      const formData = new FormData(tabledata.current);
+      const abcd = Object.fromEntries(formData.entries());
+      if (abcd) {
+        toast.success('Category was added ');
+      } else {
+        toast.success('Invalid input, Please try again! ');
+      }
+      // const {
+      //   category,
+      //   color,
+      //   type,
+      //   store,
+      //   Ingredient,
+      //   weight,
+      //   phr,
+      //   rate,
+      //   flyAshRej,
+      // } = abcd;
+      // axios.post(
+      //   'https://backend-hofa.onrender.com/api/AddCategory/add-AddCategory',
+      //   {
+      //     category,
+      //     color,
+      //     type,
+      //     store,
+      //     Ingredient,
+      //     weight,
+      //     phr,
+      //     rate,
+      //     flyAshRej,
+      //   }
+      // );
+    } catch (error) {
+      toast.warn('Faild to add category !');
+    }
   };
   const calculateprice = () => {
     for (const key in table1) {

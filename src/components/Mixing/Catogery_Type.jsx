@@ -32,7 +32,7 @@ function Catogery_Type() {
   const history = useNavigate();
   const Fetchdata = () => {
     axios
-      .get(`http://localhost:3100/api/Type/get-Type`)
+      .get(`https://backend-hofa.onrender.com/api/Type/get-Type`)
       .then((res) => {
         console.log(res.data);
         setdata(res.data.countries);
@@ -44,7 +44,7 @@ function Catogery_Type() {
 
   const handlesubmit = () => {
     axios
-      .post('http://localhost:3100/api/Type/add-Type', {
+      .post('https://backend-hofa.onrender.com/api/Type/add-Type', {
         Type,
         isActive,
       })
@@ -71,7 +71,7 @@ function Catogery_Type() {
   };
   const editType = () => {
     axios
-      .put(`http://localhost:3100/api/Type/update-Type/${editId}`, {
+      .put(`https://backend-hofa.onrender.com/api/Type/update-Type/${editId}`, {
         Type,
       })
       .then((res) => {
@@ -93,7 +93,7 @@ function Catogery_Type() {
 
   const deleteType = (id) => {
     axios
-      .delete(`http://localhost:3100/api/Type/delete-Type/${id}`)
+      .delete(`https://backend-hofa.onrender.com/api/Type/delete-Type/${id}`)
       .then((res) => {
         Fetchdata();
         toast.success(res.data.message);

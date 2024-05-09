@@ -76,7 +76,7 @@ const AddCustomer = () => {
         } = billDetails;
 
         axios
-          .post('http://localhost:3100/api/customer/bill-address', {
+          .post('https://backend-hofa.onrender.com/api/customer/bill-address', {
             address,
             country,
             district,
@@ -119,7 +119,7 @@ const AddCustomer = () => {
         } = shipDetails;
 
         axios
-          .post('http://localhost:3100/api/customer/ship-address', {
+          .post('https://backend-hofa.onrender.com/api/customer/ship-address', {
             address,
             country,
             district,
@@ -164,7 +164,7 @@ const AddCustomer = () => {
         const bill_address = localStorage.getItem('billId');
 
         axios
-          .post('http://localhost:3100/api/customer/add-customer', {
+          .post('https://backend-hofa.onrender.com/api/customer/add-customer', {
             initials,
             customer_name,
             currency,
@@ -195,27 +195,27 @@ const AddCustomer = () => {
   const handleSameAsAbove = () => {};
   useEffect(() => {
     axios
-      .get('http://localhost:3100/api/country/get-country')
+      .get('https://backend-hofa.onrender.com/api/country/get-country')
       .then((res) => setcountry(res.data.countries))
       .catch((error) => console.log(`Fatching error, ${error}`));
   }, []);
 
   useEffect(() => {
     axios
-      .get('http://localhost:3100/api/state/get-stateMaster')
+      .get('https://backend-hofa.onrender.com/api/state/get-stateMaster')
       .then((res) => setStates(res.data.countries))
       .catch((error) => console.log(`Fatching error, ${error}`));
   }, []);
   useEffect(() => {
     axios
-      .get('http://localhost:3100/api/country/get-country')
+      .get('https://backend-hofa.onrender.com/api/country/get-country')
       .then((res) => setcountry2(res.data.countries))
       .catch((error) => console.log(`Fatching error, ${error}`));
   }, []);
 
   useEffect(() => {
     axios
-      .get('http://localhost:3100/api/state/get-stateMaster')
+      .get('https://backend-hofa.onrender.com/api/state/get-stateMaster')
       .then((res) => {
         setStates2(res.data.countries);
         console.log(res.data.countries);

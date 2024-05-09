@@ -33,7 +33,7 @@ function GroupMaster() {
   const Fetchdata = () => {
     axios
       .get(
-        `http://localhost:3100/api/ArticleGroupMaster/get-ArticleGroupMaster`
+        `https://backend-hofa.onrender.com/api/ArticleGroupMaster/get-ArticleGroupMaster`
       )
       .then((res) => {
         console.log(res.data);
@@ -48,7 +48,7 @@ function GroupMaster() {
     if (group_name.length > 1) {
       axios
         .post(
-          'http://localhost:3100/api/ArticleGroupMaster/add-ArticleGroupMaster',
+          'https://backend-hofa.onrender.com/api/ArticleGroupMaster/add-ArticleGroupMaster',
           {
             group_name,
             isActive,
@@ -85,7 +85,7 @@ function GroupMaster() {
   const editArticleGroupMaster = () => {
     axios
       .put(
-        `http://localhost:3100/api/ArticleGroupMaster/update-ArticleGroupMaster/${editId}`,
+        `https://backend-hofa.onrender.com/api/ArticleGroupMaster/update-ArticleGroupMaster/${editId}`,
         {
           group_name,
         }
@@ -110,7 +110,7 @@ function GroupMaster() {
   const deleteArticleGroupMaster = (id) => {
     axios
       .delete(
-        `http://localhost:3100/api/ArticleGroupMaster/delete-ArticleGroupMaster/${id}`
+        `https://backend-hofa.onrender.com/api/ArticleGroupMaster/delete-ArticleGroupMaster/${id}`
       )
       .then((res) => {
         Fetchdata();

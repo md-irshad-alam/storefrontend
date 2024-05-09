@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { Navbar, Footer, Sidebar } from './components';
-import './App.css';
 import { useStateContext } from './contexts/ContextProvider';
 import AllRoutes from './AllRouter/Routes';
 import AuthContextProvider from './contexts/MyContxt';

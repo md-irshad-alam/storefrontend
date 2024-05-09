@@ -67,7 +67,7 @@ function Currency() {
 
   const Fetchdata = () => {
     axios
-      .get(`http://localhost:3100/api/currency/get-Currency`)
+      .get(`https://backend-hofa.onrender.com/api/currency/get-Currency`)
       .then((res) => {
         setdata(res.data.countries);
       })
@@ -80,7 +80,7 @@ function Currency() {
     const { Symbol, Currency } = currencies;
     if (Currency.length > 1) {
       axios
-        .post('http://localhost:3100/api/currency/add-Currency', {
+        .post('https://backend-hofa.onrender.com/api/currency/add-Currency', {
           Currency,
           Symbol,
           isActive,
@@ -114,10 +114,13 @@ function Currency() {
   const editCurrency = () => {
     const { Currency, Symbol } = currencies;
     axios
-      .put(`http://localhost:3100/api/currency/update-Currency/${editId}`, {
-        Currency,
-        Symbol,
-      })
+      .put(
+        `https://backend-hofa.onrender.com/api/currency/update-Currency/${editId}`,
+        {
+          Currency,
+          Symbol,
+        }
+      )
       .then((res) => {
         toast.success(res.data.message);
         setSmShow(false);
@@ -135,7 +138,9 @@ function Currency() {
 
   const deleteCurrency = (id) => {
     axios
-      .delete(`http://localhost:3100/api/currency/delete-Currency/${id}`)
+      .delete(
+        `https://backend-hofa.onrender.com/api/currency/delete-Currency/${id}`
+      )
       .then((res) => {
         Fetchdata();
         toast.success(res.data.message);

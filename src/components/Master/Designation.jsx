@@ -31,10 +31,13 @@ function Designation() {
 
   const handlesubmit = () => {
     axios
-      .post('http://localhost:3100/api/designation/add-designation', {
-        designation,
-        isActive,
-      })
+      .post(
+        'https://backend-hofa.onrender.com/api/designation/add-designation',
+        {
+          designation,
+          isActive,
+        }
+      )
       .then((res) => {
         toast.success(res.data.message);
         setdigination('');
@@ -47,7 +50,7 @@ function Designation() {
 
   const Fetchdata = () => {
     axios
-      .get('http://localhost:3100/api/designation/get-designation')
+      .get('https://backend-hofa.onrender.com/api/designation/get-designation')
       .then((res) => {
         setdata(res.data.designations);
       })
@@ -56,7 +59,7 @@ function Designation() {
 
   const hndleDelete = (id) => {
     axios
-      .delete(` http://localhost:3100/api/designation/delete-designation/${id}`)
+      .delete(` https://backend-hofa.onrender.com/api/designation/delete-designation/${id}`)
       .then((res) => {
         toast.success(res.data.message);
         Fetchdata();
@@ -67,7 +70,7 @@ function Designation() {
   const handleedit = () => {
     axios
       .put(
-        `http://localhost:3100/api/designation/update-designation/${setId}`,
+        `https://backend-hofa.onrender.com/api/designation/update-designation/${setId}`,
         {
           designation,
         }

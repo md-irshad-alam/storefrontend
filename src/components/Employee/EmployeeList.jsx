@@ -31,7 +31,7 @@ function EmployeeList() {
 
   const Fetchemployeecato = () => {
     axios
-      .get('http://localhost:3100/api/Employee/get-AddEmployee')
+      .get('https://backend-hofa.onrender.com/api/Employee/get-AddEmployee')
       .then((res) => {
         setemp_cato(res.data.countries);
       })
@@ -39,7 +39,7 @@ function EmployeeList() {
   };
   const Fetchdesign = () => {
     axios
-      .get('http://localhost:3100/api/designation/get-designation')
+      .get('https://backend-hofa.onrender.com/api/designation/get-designation')
       .then((res) => {
         setdesign(res.data.designations);
       })
@@ -48,7 +48,9 @@ function EmployeeList() {
 
   const Fetchdata = () => {
     axios
-      .get('http://localhost:3100/api/EmployeeCategory/get-EmployeeCategory')
+      .get(
+        'https://backend-hofa.onrender.com/api/EmployeeCategory/get-EmployeeCategory'
+      )
       .then((res) => {
         setcatogory(res.data.EmployeeCategorys);
       })
@@ -112,7 +114,7 @@ function EmployeeList() {
       console.log(Employee_Name, Card_No, Designation);
       axios
         .put(
-          `http://localhost:3100/api/Employee/update-AddEmployee/${itemId}`,
+          `https://backend-hofa.onrender.com/api/Employee/update-AddEmployee/${itemId}`,
           {
             Employee_Name,
             Card_No,
@@ -132,7 +134,9 @@ function EmployeeList() {
   const handledelte = (id) => {
     try {
       axios
-        .delete(`http://localhost:3100/api/Employee/delete-AddEmployee/${id}`)
+        .delete(
+          `https://backend-hofa.onrender.com/api/Employee/delete-AddEmployee/${id}`
+        )
         .then((res) => {
           Fetchemployeecato();
           toast.success(res.data.message);

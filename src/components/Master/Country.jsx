@@ -31,7 +31,7 @@ function Country() {
   const history = useNavigate();
   const Fetchdata = () => {
     axios
-      .get(`http://localhost:3100/api/country/get-country`)
+      .get(`https://backend-hofa.onrender.com/api/country/get-country`)
       .then((res) => {
         setdata(res.data.countries);
       })
@@ -42,7 +42,7 @@ function Country() {
   const handlesubmit = () => {
     if (country.length > 1) {
       axios
-        .post('http://localhost:3100/api/country/add-country', {
+        .post('https://backend-hofa.onrender.com/api/country/add-country', {
           country,
           isActive,
         })
@@ -77,9 +77,12 @@ function Country() {
 
   const editcountry = () => {
     axios
-      .put(`http://localhost:3100/api/country/update-country/${editId}`, {
-        country,
-      })
+      .put(
+        `https://backend-hofa.onrender.com/api/country/update-country/${editId}`,
+        {
+          country,
+        }
+      )
       .then((res) => {
         toast.success(res.data.message);
         setSmShow(false);
@@ -99,7 +102,9 @@ function Country() {
 
   const deletecountry = (id) => {
     axios
-      .delete(`http://localhost:3100/api/country/delete-country/${id}`)
+      .delete(
+        `https://backend-hofa.onrender.com/api/country/delete-country/${id}`
+      )
       .then((res) => {
         Fetchdata();
         toast.success(res.data.message);
