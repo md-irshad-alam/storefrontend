@@ -40,6 +40,7 @@ import Curency from '../components/Master/Currency.jsx';
 import Add_employee_cato from '../components/Employee/Add_Employee_Category.jsx';
 import UpdateProducts from '../components/AddProduct/UpdatePro.jsx';
 import AuthContextProvider, { AuthContext } from '../contexts/MyContxt.js';
+import About from '../components/About.jsx';
 
 function AllRoutes() {
   const { loggedUser, logout } = useContext(AuthContext);
@@ -50,6 +51,7 @@ function AllRoutes() {
 
       <ToastContainer />
       <Routes>
+        <Route path='/' element={<About />} />
         <Route path='/auth/login' element={<LoginPage />} />
         <Route path='/auth/reset_password' element={<ForgotPass />} />
         <Route path='/product' element={<AddProduct />} />
