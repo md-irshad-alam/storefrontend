@@ -4,7 +4,7 @@ import { Row } from 'react-bootstrap';
 function About() {
   return (
     <div className='container p-4 '>
-      <h1>About the web applications </h1>
+      <h1>About web applications </h1>
       <Row>
         <div className='col'>
           <p className=' w-[80%] p-4'>
