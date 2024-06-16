@@ -7,15 +7,6 @@ import { RiContactsLine, RiStockLine } from 'react-icons/ri';
 import { FaUsersBetweenLines } from 'react-icons/fa6';
 export const Links = [
   {
-    title: 'Dashboard',
-    links: [
-      {
-        name: 'ecommerce',
-        // icon: <FiShoppingBag />,
-      },
-    ],
-  },
-  {
     title: 'Stock',
     links: [
       {
