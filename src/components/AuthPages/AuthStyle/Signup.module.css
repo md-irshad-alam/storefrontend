@@ -1,4 +1,4 @@
-.signup_page {
+/* .signup_page {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -30,4 +30,91 @@
 .signup_page {
   top: 20px;
   left: 20px;
+} */
+
+/* Signup.module.css */
+.form-group {
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+  border-color: #00bfa5;
+  box-shadow: 0 0 5px rgba(0, 191, 165, 0.5);
+  outline: none;
+}
+
+.relative {
+  position: relative;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.eyebtn {
+  cursor: pointer;
+  margin-left: -35px;
+  margin-top: 8px;
+  font-size: 1.2rem;
+  transition: transform 0.2s ease;
+}
+
+.eyebtn:hover {
+  transform: scale(1.2);
+}
+
+.btn-primary {
+  background-color: #00bfa5;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #009688;
+  transform: translateY(-2px);
+}
+
+.text-blue-300 {
+  cursor: pointer;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.text-blue-300:hover {
+  color: #00bfa5;
+}
+
+@media (max-width: 600px) {
+  input {
+    font-size: 14px;
+  }
+
+  .btn-primary {
+    font-size: 14px;
+  }
 }

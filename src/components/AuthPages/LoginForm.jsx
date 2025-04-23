@@ -1,34 +1,18 @@
-import React, { useContext, useState } from 'react';
-import axios from 'axios';
-import { Container, FloatingLabel } from 'react-bootstrap';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import Row from 'react-bootstrap/Row';
-import Card from 'react-bootstrap/Card';
-import style from './AuthStyle/login.module.css';
-import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { IoEyeOutline } from 'react-icons/io5';
-import { IoEyeOffOutline } from 'react-icons/io5';
+import React, { useContext, useState } from "react";
+import style from "./AuthStyle/login.module.css";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { IoEyeOutline } from "react-icons/io5";
+import { IoEyeOffOutline } from "react-icons/io5";
 
-import { ToastContainer } from 'react-toastify';
-import { AuthContext } from '../../contexts/MyContxt';
+import { ToastContainer } from "react-toastify";
+import { AuthContext } from "../../contexts/MyContxt";
 
 function LoginForm() {
-  const [Term, setTerm] = useState(false);
-  const [validated, setvalidated] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPass] = useState('');
-  const { userdetails, setuserDetails } = useState(null);
   const [input, setinput] = useState({});
   const [hide, sethide] = useState(false);
-  const [userdata, setdata] = useState();
   const history = useNavigate();
-
   const { login } = useContext(AuthContext);
-
   const handlechange = (event) => {
     const { name, value } = event.target;
     setinput({ ...input, [name]: value });
@@ -40,62 +24,89 @@ function LoginForm() {
     if ((email, password)) {
       login(email, password);
     } else {
-      toast('invalid input');
+      toast("invalid input");
     }
   };
   const handlechangepassicon = (event) => {
     sethide(!hide);
   };
   return (
-    <div className={style.login_box}>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-100 to-white">
       <ToastContainer />
-      <div className={style.imageCont}>
-        <img src='/signuplogo.jpg' alt='svg image' />
-      </div>
-      <form onSubmit={handlesubmit} className={style.login_cont}>
-        <div className='form-group'>
-          <label htmlFor='email'>Email</label>
-          <input
-            type='email'
-            name='email'
-            className='form-control'
-            id='email'
-            onChange={handlechange}
+      <div className="w-full max-w-md bg-white/30 backdrop-blur-md rounded-xl shadow-lg p-6 transition-all duration-300 ease-in-out">
+        <div className="flex justify-center mb-6">
+          <img
+            src="/signuplogo.jpg"
+            alt="Signup logo"
+            className="w-full max-h-44 shadow-md animate-bounce-slow"
           />
         </div>
 
-        <div className='form-group relative'>
-          <label htmlFor='password'>Password</label>
-          <div className='flex '>
+        <form onSubmit={handlesubmit} className="space-y-5">
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-gray-700 font-semibold mb-1"
+            >
+              Email
+            </label>
             <input
-              type={hide ? 'text' : 'password'}
-              name='password'
-              className='form-control'
-              id='password'
+              type="email"
+              name="email"
+              id="email"
               onChange={handlechange}
+              className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-teal-400 focus:outline-none transition duration-300"
             />
+          </div>
 
-            <p className={style.eyebtn} onClick={handlechangepassicon}>
-              {hide ? <IoEyeOutline color='teal' /> : <IoEyeOffOutline />}
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-gray-700 font-semibold mb-1"
+            >
+              Password
+            </label>
+            <div className="relative flex items-center">
+              <input
+                type={hide ? "text" : "password"}
+                name="password"
+                id="password"
+                onChange={handlechange}
+                className="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-teal-400 focus:outline-none transition duration-300"
+              />
+              <span
+                className="absolute right-3 cursor-pointer text-gray-600 hover:text-teal-500 transition"
+                onClick={handlechangepassicon}
+              >
+                {hide ? (
+                  <IoEyeOutline size={20} />
+                ) : (
+                  <IoEyeOffOutline size={20} />
+                )}
+              </span>
+            </div>
+          </div>
+
+          <div className="text-center mt-6">
+            <button
+              type="submit"
+              className="w-full bg-teal-500 text-white font-semibold py-2 rounded-md hover:bg-teal-600 transition duration-300"
+            >
+              Sign in
+            </button>
+
+            <p className="mt-4 text-gray-700 text-sm font-medium">
+              New user, want to register?{" "}
+              <span
+                className="text-teal-500 hover:text-teal-600 cursor-pointer"
+                onClick={() => history("/auth/register")}
+              >
+                Click here
+              </span>
             </p>
           </div>
-        </div>
-
-        <div className='row w-full m-auto text-center mb-7 mt-3'>
-          <button type='submit' className='btn btn-primary'>
-            Sign in
-          </button>
-          <p className='w-full m-auto content-center text-black font-bold'>
-            New user, want to register{' '}
-            <span
-              className='text-blue-500 font-light active:text-red-500 font-body'
-              onClick={() => history('/auth/register')}
-            >
-              click here
-            </span>
-          </p>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }
